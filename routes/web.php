@@ -26,16 +26,16 @@ Route::get('/', function () {
 });
 
 Route::group([
-    //'namespace'  => 'App\Http\Controllers\Admin',
+    'namespace'  => 'App\Http\Controllers\Admin',
     'prefix'     => 'admin',
     'middleware' => ['auth', 'can:admin page'],
 ], function () {
     Route::get('/', function() {
         return Inertia::render('Admin/Dashboard');
     })->name('admin');
-    //Route::resource('permission', 'PermissionController');
-    //Route::resource('role', 'RoleController');
-    //Route::resource('user', 'UserController');
+    Route::resource('permission', 'PermissionController');
+    Route::resource('role', 'RoleController');
+    Route::resource('user', 'UserController');
 });
 
 Route::get('/dashboard', function () {

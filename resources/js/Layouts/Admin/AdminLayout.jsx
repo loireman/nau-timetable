@@ -9,7 +9,7 @@ export default function Authenticated({ user, header, children }) {
     return (
         <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
             {navigationFull ? (
-                <div class="flex flex-col items-center w-64 h-screen overflow-hidden text-gray-400 bg-gray-900 border-r-2 border-gray-800">
+                <div class="flex flex-col items-center w-64 min-h-screen fixed overflow-hidden text-gray-400 bg-gray-900 border-r-2 border-gray-800">
                     <button
                         onClick={() => setNavigationFull(false)}
                         class="flex w-full items-center justify-center mt-3"
@@ -65,7 +65,10 @@ export default function Authenticated({ user, header, children }) {
                             </VerticalNavLink>
                         </div>
                         <div class="flex flex-col items-center w-full mt-2 border-t border-gray-700">
-                            <VerticalNavLink>
+                            <VerticalNavLink
+                                href={route("user.index")}
+                                active={route().current("user.index")}
+                            >
                                 <svg
                                     class="w-6 h-6 stroke-current"
                                     xmlns="http://www.w3.org/2000/svg"
@@ -84,7 +87,10 @@ export default function Authenticated({ user, header, children }) {
                                     Users
                                 </span>
                             </VerticalNavLink>
-                            <VerticalNavLink>
+                            <VerticalNavLink
+                                href={route("role.index")}
+                                active={route().current("role.index")}
+                            >
                                 <svg
                                     class="w-6 h-6 stroke-current"
                                     xmlns="http://www.w3.org/2000/svg"
@@ -103,7 +109,10 @@ export default function Authenticated({ user, header, children }) {
                                     Permissions
                                 </span>
                             </VerticalNavLink>
-                            <VerticalNavLink>
+                            <VerticalNavLink
+                                href={route("permission.index")}
+                                active={route().current("permission.index")}
+                            >
                                 <svg
                                     class="w-6 h-6 stroke-current"
                                     xmlns="http://www.w3.org/2000/svg"
@@ -140,7 +149,7 @@ export default function Authenticated({ user, header, children }) {
                     </a>
                 </div>
             ) : (
-                <div class="h-screen flex flex-col items-center w-16 overflow-hidden text-gray-400 bg-gray-900 border-r-2 border-gray-800">
+                <div class="min-h-screen fixed flex flex-col items-center w-16 overflow-hidden text-gray-400 bg-gray-900 border-r-2 border-gray-800">
                     <button
                         onClick={() => setNavigationFull(true)}
                         class="flex items-center justify-center mt-3"
@@ -188,7 +197,10 @@ export default function Authenticated({ user, header, children }) {
                         </VerticalNavLink>
                     </div>
                     <div class="flex flex-col items-center mt-2 border-t border-gray-700">
-                        <VerticalNavLink>
+                        <VerticalNavLink
+                            href={route("user.index")}
+                            active={route().current("user.index")}
+                        >
                             <svg
                                 class="w-6 h-6 stroke-current"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -204,7 +216,10 @@ export default function Authenticated({ user, header, children }) {
                                 />
                             </svg>
                         </VerticalNavLink>
-                        <VerticalNavLink>
+                        <VerticalNavLink
+                            href={route("role.index")}
+                            active={route().current("role.index")}
+                        >
                             <svg
                                 class="w-6 h-6 stroke-current"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -220,7 +235,10 @@ export default function Authenticated({ user, header, children }) {
                                 />
                             </svg>
                         </VerticalNavLink>
-                        <VerticalNavLink>
+                        <VerticalNavLink
+                            href={route("permission.index")}
+                            active={route().current("permission.index")}
+                        >
                             <svg
                                 class="w-6 h-6 stroke-current"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -252,7 +270,7 @@ export default function Authenticated({ user, header, children }) {
                     </a>
                 </div>
             )}
-            <div className="w-full">
+            <div className={navigationFull ? "w-full pl-64" : "w-full pl-16"}>
                 {header && (
                     <header className="bg-white dark:bg-gray-800 shadow">
                         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
