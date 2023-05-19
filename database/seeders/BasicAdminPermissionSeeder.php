@@ -45,7 +45,6 @@ class BasicAdminPermissionSeeder extends Seeder
         $role1->givePermissionTo('permission list');
         $role1->givePermissionTo('role list');
         $role1->givePermissionTo('user list');
-        $role1->givePermissionTo('admin page');
 
         $role2 = Role::create(['name' => 'admin']);
         foreach ($permissions as $permission) {

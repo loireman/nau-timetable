@@ -22,7 +22,7 @@ export default function Pagination({ pageContent, ...props }) {
                 ))}
             </div>
             <p>
-                Displaying items from {pageContent.from} to {pageContent.to}
+                Виводяться елементи {pageContent.from} - {pageContent.to}
             </p>
         </div>
     );
