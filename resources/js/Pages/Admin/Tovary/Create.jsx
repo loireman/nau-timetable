@@ -8,7 +8,11 @@ import { Head, useForm } from "@inertiajs/react";
 export default function CreateTovary({ auth }) {
   const { data, setData, post, processing, errors, reset } = useForm({
     name: "",
-    price: "",
+    price: 0,
+    slug: "",
+    property1: 0,
+    property2: 0,
+    body: ""
   });
 
   const submit = (e) => {
@@ -63,6 +67,57 @@ export default function CreateTovary({ auth }) {
                 required
               />
               <InputError message={errors.price} className="mt-2" />
+
+              <InputLabel htmlFor="slug" value="Slug" />
+              <TextInput
+                id="slug"
+                name="slug"
+                value={data.slug}
+                className="mt-1 block w-full"
+                autoComplete="off"
+                isFocused={false}
+                onChange={(e) => setData("slug", e.target.value)}
+                required
+              />
+              <InputError message={errors.slug} className="mt-2" />
+
+              <InputLabel htmlFor="property1" value="Властивість 1" />
+              <TextInput
+                id="property1"
+                name="property1"
+                value={data.property1}
+                className="mt-1 block w-full"
+                autoComplete="off"
+                isFocused={false}
+                onChange={(e) => setData("property1", e.target.value)}
+                required
+              />
+              <InputError message={errors.property1} className="mt-2" />
+
+              <InputLabel htmlFor="property2" value="Властивість 2" />
+              <TextInput
+                id="property2"
+                name="property2"
+                value={data.property2}
+                className="mt-1 block w-full"
+                autoComplete="off"
+                isFocused={false}
+                onChange={(e) => setData("property2", e.target.value)}
+                required
+              />
+              <InputError message={errors.property2} className="mt-2" />
+
+              <InputLabel htmlFor="body" value="Опис" />
+              <textarea
+                id="body"
+                name="body"
+                value={data.body}
+                className="mt-1 block w-full h-32"
+                autoComplete="off"
+                onChange={(e) => setData("body", e.target.value)}
+                required
+              />
+              <InputError message={errors.body} className="mt-2" />
 
               <PrimaryButton className="mt-16 w-full grid" disabled={processing}>
                 <span className="text-[1rem]">Створити</span>
