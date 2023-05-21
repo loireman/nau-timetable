@@ -36,6 +36,7 @@ Route::group([
     Route::resource('permission', 'PermissionController');
     Route::resource('role', 'RoleController');
     Route::resource('user', 'UserController');
+    Route::resource('tovary', 'TovaryController');
 });
 
 Route::get('/dashboard', function () {
