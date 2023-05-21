@@ -89,9 +89,10 @@ class TovaryController extends Controller
             ->with('message', __('Tovar updated successfully.'));
     }
 
-    public function destroy(Tovary $tovaries)
+    public function destroy($tovaries)
     {
-        $tovaries->delete();
+        Tovary::where('id', $tovaries)->delete();
+
         return redirect()->route('tovary.index')
             ->with('message', __('Tovar deleted successfully'));
     }

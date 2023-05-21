@@ -6,7 +6,6 @@ import { Icon } from "@iconify/react";
 import Dropdown from "@/Components/Dropdown";
 
 export default function Index({ auth, tovaries, can }) {
-
     const [search, setSearch] = useState("");
 
     const handleClick = () => {

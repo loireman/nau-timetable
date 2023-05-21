@@ -16,11 +16,12 @@ return new class extends Migration
         Schema::create('zakazies', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_klienta');
-            $table->foreign('id_klienta')->references('id')->on('users');
+            $table->foreign('id_klienta')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('id_tov');
-            $table->foreign('id_tov')->references('id')->on('tovaries');
+            $table->foreign('id_tov')->references('id')->on('tovaries')->onDelete('cascade');
             $table->integer('count_tov')->nullable(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
