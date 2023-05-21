@@ -9,23 +9,20 @@ export default function Show({ auth, role, roleHasPermissions }) {
     >
       <Head title="Dashboard" />
 
-      <div className="py-12 ">
-        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+      <div className="py-12">
+        <div className="max-w-5xl ml-20 sm:px-9s lg:px-8">
           <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-            <div className="p-6 text-gray-900 dark:text-gray-100">You're logged in admin!</div>
+            <div className="p-6 text-gray-900 dark:text-gray-100 font-bold text-3xl">Назва ролі: {role.name}</div>
 
             <div className="ml-8 dark:text-gray-100">
-            <span className="text-xl font-semibold ">Назва ролі: {role.name}</span>
-                <h3 className='mt-6'>Дозволи для ролі:</h3>
-                <ul>
-                    {roleHasPermissions.map((permission) => (
-                    <li key={permission.id}>{permission}</li>
-                    ))}
-                </ul>
+              <h3 className="mt-4 text-xl font-medium text-center">Дозволи для ролі</h3>
+              <div className="mt-10 grid grid-cols-3 gap-3">
+                {roleHasPermissions.map((permission) => (
+                  <div key={permission.id}>{permission}</div>
+                ))}
+              </div>
             </div>
-        </div>
-
-         
+          </div>
         </div>
       </div>
     </AuthenticatedLayout>
