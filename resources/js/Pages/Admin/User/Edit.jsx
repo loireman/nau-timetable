@@ -6,16 +6,16 @@ import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/Admin/AdminLayout";
 import { Head, useForm } from "@inertiajs/react";
 import { useState } from "react";
+import { Inertia } from "@inertiajs/inertia";
 
 export default function Edit({ auth, user, roles }) {
   const { data, setData, put, processing, errors, reset } = useForm({
     name: user.name,
     email: user.email,
     roles: user.roles.map((role) => role.id),
+    password: '',
+    password_confirmation: '',
   });
-
-  const [password, setPassword] = useState("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
   const handleCheckers = (event) => {
     const value = parseInt(event.target.value);
@@ -35,13 +35,7 @@ export default function Edit({ auth, user, roles }) {
   const submit = (e) => {
     e.preventDefault();
 
-    put(route("user.update", user.id), {
-      data: {
-        ...data,
-        password: password,
-        password_confirmation: passwordConfirmation,
-      },
-    });
+    Inertia.put(route("user.update", { user: user }), data);
   };
 
   return (
@@ -90,25 +84,25 @@ export default function Edit({ auth, user, roles }) {
               <TextInput
                 id="password"
                 name="password"
-                value={password}
+                value={data.password}
                 type="password"
                 className="mt-1 block w-full"
                 autoComplete="new-password"
                 isFocused={true}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => setData("password", e.target.value)}
                 required
               />
               <InputError message={errors.password} className="mt-2" />
-              <InputLabel htmlFor="passwordConfirmation" value="Підтвердіть пароль" />
+              <InputLabel htmlFor="password_confirmation" value="Підтвердіть пароль" />
               <TextInput
-                id="passwordConfirmation"
-                name="passwordConfirmation"
-                value={passwordConfirmation}
+                id="password_confirmation"
+                name="password_confirmation"
+                value={data.password_confirmation}
                 type="password"
                 className="mt-1 block w-full"
                 autoComplete="new-password"
                 isFocused={true}
-                onChange={(e) => setPasswordConfirmation(e.target.value)}
+                onChange={(e) => setData("password_confirmation", e.target.value)}
                 required
               />
               <InputError message={errors.password_confirmation} className="mt-2" />
