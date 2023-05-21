@@ -22,18 +22,18 @@ export default function Show({ auth, user, userHasRoles }) {
 
             <div className="dark:text-gray-100">
               <h3 className="ml-5 text-xl font-medium">Email: {user.email}</h3>
-              <div className="ml-8 dark:text-gray-100">
-              <h3 className="mt-4 text-xl font-medium text-center">Ролі для користувача</h3>
-              <div className="mt-10 grid grid-cols-3 gap-3">
+              <div className="ml-5 dark:text-gray-100">
+              <h3 className="mt-4 text-xl font-medium">Ролі для користувача:</h3>
+             
                 {userHasRoles.map((role) => (
-                  <div key={role.id}>{role}</div>
+                  <div className="text-xl font-medium" key={role.id}>{role}</div>
                 ))}
               </div>
             </div>
             </div>
           </div>
         </div>
-      </div>
+    
     </AuthenticatedLayout>
   );
 }
