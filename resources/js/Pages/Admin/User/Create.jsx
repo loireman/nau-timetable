@@ -10,6 +10,9 @@ import { useState } from "react";
 export default function Create({ auth, roles}) {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
         roles: [],
     });
 
@@ -69,6 +72,57 @@ export default function Create({ auth, roles}) {
                             />
                             <InputError
                                 message={errors.name}
+                                className="mt-2"
+                            />
+                            <InputLabel htmlFor="email" value="Пошта" />
+                            <TextInput
+                                id="email"
+                                name="email"
+                                value={data.email}
+                                className="mt-1 block w-full"
+                                autoComplete="mail"
+                                isFocused={true}
+                                onChange={(e) =>
+                                    setData("email", e.target.value)
+                                }
+                                required
+                            />
+                            <InputError
+                                message={errors.email}
+                                className="mt-2"
+                            />
+                            <InputLabel htmlFor="password" value="Пароль" />
+                            <TextInput
+                                id="password"
+                                name="password"
+                                value={data.password}
+                                className="mt-1 block w-full"
+                                autoComplete="password"
+                                isFocused={true}
+                                onChange={(e) =>
+                                    setData("password", e.target.value)
+                                }
+                                required
+                            />
+                            <InputError
+                                message={errors.password}
+                                className="mt-2"
+                            />
+                            <InputLabel htmlFor="password_confirmation" value="Підтвердіть пароль" />
+                            <TextInput
+                                id="password_confirmation"
+                                name="password_confirmation"
+                                value={data.password_confirmation}
+                                className="mt-1 block w-full"
+                                autoComplete="password"
+                                isFocused={true}
+                                onChange={(e) =>
+                                    setData("password_confirmation", e.target.value)
+                                }
+                                required
+                            />
+                            <InputError
+                                message={errors.password}
                                 className="mt-2"
                             />
                             <div className="block mt-4">
