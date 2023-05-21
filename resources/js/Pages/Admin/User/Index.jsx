@@ -156,7 +156,7 @@ export default function Index({ auth, users, can }) {
                                             </a>
                                         </td>
 
-                                        <td className="p-3 border-b border-gray-600">
+                                        <td className="p-3 border-b border-gray-600 text-white">
                                             <a
                                                 href={route(
                                                     "user.show",

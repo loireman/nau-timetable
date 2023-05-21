@@ -11,7 +11,7 @@ export default function Show({ auth, role, roleHasPermissions }) {
 
       <div className="py-12">
         <div className="max-w-5xl ml-20 sm:px-9s lg:px-8">
-          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg pb-8">
             <div className="p-6 text-gray-900 dark:text-gray-100 font-bold text-3xl">Назва ролі: {role.name}</div>
 
             <div className="ml-8 dark:text-gray-100">
