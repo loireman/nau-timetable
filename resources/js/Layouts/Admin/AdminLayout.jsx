@@ -44,7 +44,10 @@ export default function Authenticated({ user, header, children }) {
                                     Dasboard
                                 </span>
                             </VerticalNavLink>
-                            <VerticalNavLink>
+                            <VerticalNavLink
+                                href={route("tovary.index")}
+                                active={route().current("tovary.index")}
+                            >
                                 <svg
                                     class="w-6 h-6 stroke-current"
                                     xmlns="http://www.w3.org/2000/svg"
@@ -179,7 +182,10 @@ export default function Authenticated({ user, header, children }) {
                                 />
                             </svg>
                         </VerticalNavLink>
-                        <VerticalNavLink>
+                        <VerticalNavLink
+                            href={route("tovary.index")}
+                            active={route().current("tovary.index")}
+                        >
                             <svg
                                 class="w-6 h-6 stroke-current"
                                 xmlns="http://www.w3.org/2000/svg"

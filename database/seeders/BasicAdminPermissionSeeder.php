@@ -34,6 +34,10 @@ class BasicAdminPermissionSeeder extends Seeder
             'user create',
             'user edit',
             'user delete',
+            'tovary list',
+            'tovary create',
+            'tovary edit',
+            'tovary delete',
          ];
 
         foreach ($permissions as $permission) {
