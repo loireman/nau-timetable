@@ -1,7 +1,7 @@
 import AuthenticatedLayout from "@/Layouts/Admin/AdminLayout";
 import { Head } from "@inertiajs/react";
 
-export default function Show({ auth, user }) {
+export default function Show({ auth, user, userHasRoles }) {
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -22,9 +22,14 @@ export default function Show({ auth, user }) {
 
             <div className="dark:text-gray-100">
               <h3 className="ml-5 text-xl font-medium">Email: {user.email}</h3>
-              <h3 className="ml-5 text-xl font-medium">Роль: {user.role}</h3>
-              
-              {/* Add more user details here */}
+              <div className="ml-8 dark:text-gray-100">
+              <h3 className="mt-4 text-xl font-medium text-center">Ролі для користувача</h3>
+              <div className="mt-10 grid grid-cols-3 gap-3">
+                {userHasRoles.map((role) => (
+                  <div key={role.id}>{role}</div>
+                ))}
+              </div>
+            </div>
             </div>
           </div>
         </div>
