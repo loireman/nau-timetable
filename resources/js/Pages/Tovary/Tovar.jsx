@@ -66,7 +66,7 @@ export default function Tovar({ auth, tovar }) {
                                             Замовити зараз
                                         </span>
                                     </PrimaryButton>
-                                    <button className="grid content-center justify-center aspect-square px-2 h-full rounded-md bg-orange-700 hover:bg-orange-600 border border-orange-600">
+                                    <button className="grid content-center justify-center aspect-square px-2 h-full rounded-md text-gray-200 bg-orange-600 dark:bg-orange-700 hover:bg-orange-500 dark:hover:bg-orange-600 border border-orange-600">
                                         <span className="text-base">
                                             <Icon
                                                 icon="mdi:cart"

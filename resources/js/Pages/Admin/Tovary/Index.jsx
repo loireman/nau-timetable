@@ -53,7 +53,7 @@ export default function Index({ auth, tovaries, can }) {
                     <div className="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg mb-3 p-3 grid md:flex gap-3">
                         {can.create && (
                             <a href={route("tovary.create")}>
-                                <div className="px-4 py-2 rounded-full bg-green-900 hover:bg-green-800 text-white flex gap-1 justify-center md:w-fit">
+                                <div className="px-4 py-2 rounded-full bg-green-600 dark:bg-green-900 hover:bg-green-500 dark:hover:bg-green-800 text-white flex gap-1 justify-center md:w-fit">
                                     <Icon icon="mdi:plus" width={24} />
                                     <span className="font-medium text-xl">
                                         Створити
@@ -159,14 +159,14 @@ export default function Index({ auth, tovaries, can }) {
                                         <td className="hidden sm:table-cell p-3 border-b border-gray-600">
                                             {element.price}
                                         </td>
-                                        <td className="p-3 border-b border-gray-600">
+                                        <td className="p-3 border-b border-gray-600 text-gray-100">
                                             <a
                                                 href={route(
                                                     "tovary.show",
                                                     element.id
                                                 )}
                                             >
-                                                <div className="px-4 py-2 rounded-full bg-green-900 hover:bg-green-800">
+                                                <div className="px-4 py-2 rounded-full bg-green-600 dark:bg-green-900 hover:bg-green-500 dark:hover:bg-green-800">
                                                     <Icon
                                                         className="m-auto"
                                                         icon="mdi:eye-outline"
@@ -181,7 +181,7 @@ export default function Index({ auth, tovaries, can }) {
                                                         element.id
                                                     )}
                                                 >
-                                                    <div className="mt-2 px-4 py-2 rounded-full bg-blue-900 hover:bg-blue-800">
+                                                    <div className="mt-2 px-4 py-2 rounded-full bg-blue-600 dark:bg-blue-900 hover:bg-blue-500 dark:hover:bg-blue-800">
                                                         <Icon
                                                             className="m-auto"
                                                             icon="mdi:pencil"
@@ -191,7 +191,7 @@ export default function Index({ auth, tovaries, can }) {
                                             )}
                                             {can.delete && (
                                                 <button
-                                                    className="mt-2 px-4 py-2 w-full bg-red-900 hover:bg-red-800 rounded-full"
+                                                    className="mt-2 px-4 py-2 w-full bg-red-600 dark:bg-red-900 hover:bg-red-500 dark:hover:bg-red-800 rounded-full"
                                                     onClick={() =>
                                                         destroy(element.id)
                                                     }

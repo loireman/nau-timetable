@@ -9,8 +9,8 @@ export default function Pagination({ nameContent="елементи", pageContent
                     <a
                     className={
                             element.active
-                                ? "grid content-center justify-center w-10 h-10 bg-green-900 rounded-full"
-                                : "grid content-center justify-center w-10 h-10 bg-gray-700 rounded-full"
+                                ? "grid content-center justify-center w-10 h-10 text-gray-200 bg-green-600 dark:bg-green-900 rounded-full"
+                                : "grid content-center justify-center w-10 h-10 text-grat-200 bg-gray-400 dark:bg-gray-700 rounded-full"
                         }
                         href={element.url}
                         key={element}
