@@ -159,7 +159,7 @@ export default function Index({ auth, tovaries, can }) {
                                         <td className="hidden sm:table-cell p-3 border-b border-gray-600">
                                             {element.price}
                                         </td>
-                                        <td className="p-3 border-b border-gray-600">
+                                        <td className="p-3 border-b border-gray-600 text-white">
                                             <a
                                                 href={route(
                                                     "tovary.show",
