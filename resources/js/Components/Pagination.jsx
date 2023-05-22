@@ -1,7 +1,7 @@
 import ReactPaginate from "react-paginate";
 import { useState } from "react";
 
-export default function Pagination({ pageContent, ...props }) {
+export default function Pagination({ nameContent="елементи", pageContent, ...props }) {
     return (
         <div className="p-6 text-gray-900 dark:text-gray-100 font-semibold grid justify-items-center gap-3">
             <div className="flex gap-2">
@@ -22,7 +22,7 @@ export default function Pagination({ pageContent, ...props }) {
                 ))}
             </div>
             <p>
-                Виводяться елементи {pageContent.from} - {pageContent.to}
+                Виводяться {nameContent} {pageContent.from} - {pageContent.to}
             </p>
         </div>
     );

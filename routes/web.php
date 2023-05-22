@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\TovaryController;
+use App\Http\Controllers\TovarController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +45,13 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::group([
+    'middleware'=> ['auth', 'verified'],
+    'prefix' => 'products',
+], function() {
+    Route::get('/', [TovaryController::class, 'index'])->name('products');
+    Route::get('/{slug}', [TovarController::class, 'index']);
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

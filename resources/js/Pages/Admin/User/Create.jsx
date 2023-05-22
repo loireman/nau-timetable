@@ -44,17 +44,17 @@ export default function Create({ auth, roles}) {
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    Створення ролі доступу
+                    Створення користувача
                 </h2>
             }
         >
-            <Head title="Створення ролі доступу" />
+            <Head title="Створення користувача" />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-4 text-gray-300">
                         <span className="text-xl font-semibold">
-                            Створити роль доступу
+                            Створити користувача
                         </span>
                         <form className="px-4 py-8" onSubmit={submit}>
                             <InputLabel htmlFor="name" value="Назва" />

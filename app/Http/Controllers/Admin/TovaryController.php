@@ -61,15 +61,17 @@ class TovaryController extends Controller
         return Inertia::render('Admin/Tovary/Create');
     }
 
-    public function edit(Tovary $tovaries)
+    public function edit($tovaries)
     {
+        $tovaries = Tovary::where('id', $tovaries)->first();
         return Inertia::render('Admin/Tovary/Edit', [
             'tovaries' => $tovaries
         ]);
     }
 
-    public function show(Tovary $tovaries)
+    public function show($tovaries)
     {
+        $tovaries = Tovary::where('id', $tovaries)->first();
         return Inertia::render('Admin/Tovary/Show', [
             'tovaries' => $tovaries,
         ]);
@@ -82,9 +84,9 @@ class TovaryController extends Controller
             ->with('message', __('Tovar created successfully.'));
     }
 
-    public function update(UpdateTovaryRequest $request, Tovary $tovaries)
+    public function update(UpdateTovaryRequest $request, $tovaries)
     {
-        $tovaries->update($request->all());
+        Tovary::where('id', $tovaries)->update($request->all());
         return redirect()->route('tovary.index')
             ->with('message', __('Tovar updated successfully.'));
     }

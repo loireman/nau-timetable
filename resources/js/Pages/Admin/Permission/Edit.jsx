@@ -17,7 +17,10 @@ export default function Edit({ auth, permission }) {
     const submit = (e) => {
         e.preventDefault();
 
-        Inertia.put(route("permission.update", { permission: permission }), data);
+        Inertia.put(
+            route("permission.update", { permission: permission }),
+            data
+        );
     };
 
     return (
@@ -25,17 +28,17 @@ export default function Edit({ auth, permission }) {
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    Редагування правило доступу
+                    Редагування правила доступу
                 </h2>
             }
         >
-            <Head title="Створення правило доступу" />
+            <Head title="Редагування правила доступу" />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-4 text-gray-300">
                         <span className="text-xl font-semibold">
-                            Створити правило доступу
+                            Редагувати правило доступу
                         </span>
                         <form className="px-4 py-8" onSubmit={submit}>
                             <InputLabel htmlFor="name" value="Назва" />
