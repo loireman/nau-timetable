@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('tovaries')->onDelete('cascade');
             $table->unsignedBigInteger('product_count');
+            $table->decimal('product_price');
             $table->timestamps();
         });
     }

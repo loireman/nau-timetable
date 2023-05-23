@@ -27,6 +27,7 @@ class StoreCartRequest extends FormRequest
             'client_id' => 'required',
             'product_id' => 'required',
             'product_count' => 'required|integer|min:0|max:128',
+            'product_price' => 'required',
         ];
     }
 }

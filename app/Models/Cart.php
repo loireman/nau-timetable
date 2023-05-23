@@ -13,5 +13,6 @@ class Cart extends Model
         'client_id',
         'product_id',
         'product_count',
+        'product_price'
     ];
 }

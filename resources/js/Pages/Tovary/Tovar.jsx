@@ -4,11 +4,12 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Icon } from "@iconify/react";
 import { Head } from "@inertiajs/react";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Tovar({ auth, tovar }) {
     const [cartActive, setCartActive] = useState(false);
     const [productCount, setProductCount] = useState(1);
+    const [productPrice, setProductPrice] = useState(0);
 
     async function fetchData() {
         const response = await fetch("/api/cart/" + auth.user.id);
@@ -19,31 +20,47 @@ export default function Tovar({ auth, tovar }) {
         setCartActive(products.length != 0);
         if (products.length != 0) {
             setProductCount(products[0].product_count);
+            setProductPrice(products[0].product_count * tovar.price);
         }
     }
-    fetchData();
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const order = (e) => {
+        e.preventDefault();
+
+        axios.post("/api/order/", {
+            client_id: auth.user.id,
+            products: [
+                {
+                    product_id: tovar.id,
+                    product_count: productCount,
+                    product_price: productPrice,
+                },
+            ],
+        });
+    };
 
     async function addToCart(e, value) {
         e.preventDefault();
-        if (value == 0) {
-            if (cartActive == true) {
-                await axios.delete(
-                    "/api/cart/" + auth.user.id + "/" + tovar.id
-                );
-            } else {
-                await axios.post("/api/cart/", {
-                    client_id: auth.user.id,
-                    product_id: tovar.id,
-                    product_count: productCount,
-                });
-            }
-        } else {
-            await axios.delete(
-                "/api/cart/" + auth.user.id + "/" + tovar.id
-            );
-            setProductCount(value == 1 ? productCount - 1 : productCount + 1)
+        if (cartActive == true) {
+            await axios.delete("/api/cart/" + auth.user.id + "/" + tovar.id);
+            fetchData();
         }
-        fetchData();
+        if (value == 0 && cartActive == false) {
+            await axios.post("/api/cart/", {
+                client_id: auth.user.id,
+                product_id: tovar.id,
+                product_count: productCount,
+                product_price: productPrice,
+            });
+            fetchData();
+        } else if (value > 0) {
+            const count = value == 1 ? productCount - 1 : productCount + 1
+            setProductCount(count);
+            setProductPrice((count * tovar.price).toFixed(2));
+        }
     }
 
     return (
@@ -112,8 +129,9 @@ export default function Tovar({ auth, tovar }) {
                                         </span>
                                     </button>
                                 </div>
+                                <span className="font-bold text-2xl">Остаточна ціна: {productPrice}</span>
                                 <div className="flex items-stretch gap-3">
-                                    <PrimaryButton>
+                                    <PrimaryButton onClick={order}>
                                         <span className="text-[0.9rem]">
                                             Замовити зараз
                                         </span>
