@@ -33,7 +33,7 @@ export default function Index({ auth, tovaries }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg mb-3 p-3 grid md:flex justify-between gap-3">
+                    <div className="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg mb-3 p-3 grid md:flex md:justify-between gap-3">
                         <div className="w-full md:max-w-md border border-gray-300 rounded-full">
                             <div className="relative flex items-center w-full h-12 rounded-lg focus-within:shadow-lg overflow-hidden">
                                 <button

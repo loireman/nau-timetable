@@ -21,7 +21,7 @@ export default function Show({ auth, tovaries }) {
                         </div>
                         <span className="ml-5 text-xl font-medium">
                             Посилання:
-                            <a className="text-gray-200" href={"/products/" + tovaries.slug}>
+                            <a href={"/products/" + tovaries.slug}>
                                 {' ' + tovaries.slug}
                             </a>
                         </span>
