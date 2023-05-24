@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 export default function Tovar({ auth, tovar }) {
     const [cartActive, setCartActive] = useState(false);
     const [productCount, setProductCount] = useState(1);
-    const [productPrice, setProductPrice] = useState(0);
+    const [productPrice, setProductPrice] = useState(tovar.price);
 
     async function fetchData() {
         const response = await fetch("/api/cart/" + auth.user.id);

@@ -17,6 +17,15 @@ export default function Dashboard({ auth }) {
         setCartActive(products.length != 0);
         setCart(products);
     }
+
+    async function deleteFromCart(e, value) {
+        e.preventDefault();
+        if (cartActive == true) {
+            await axios.delete("/api/cart/" + auth.user.id + "/" + value);
+            fetchCart();
+        }
+    }
+
     async function fetchOrders() {
         const response = await axios.get("/api/orders/" + auth.user.id);
         const orders = response.data.orders;
@@ -44,14 +53,29 @@ export default function Dashboard({ auth }) {
                     <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="grid p-6 text-gray-900 dark:text-gray-100">
                             <span className="font-bold text-xl">Корзина</span>
-                            <div className="flex gap-3 h-64 items-center p-6">
+                            <div className="flex gap-3 items-center p-3">
                                 {(cartActive && (
                                     <div className="flex gap-3 h-full items-center">
                                         {Cart.reverse().map((p) => (
-                                            <div className="grid p-6 items-center w-48 rounded-lg h-full border border-gray-600" key={p.id}>
-                                                Id: {p.product_id}
-                                                <span className="font-bold text-2xl">${p.product_price}</span>
-                                                К-сть: {p.product_count}
+                                            <div
+                                                className="grid p-3 items-center w-48 rounded-lg border border-gray-600"
+                                                key={p.id}
+                                            >
+                                                <img
+                                                    src="https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg"
+                                                    alt="Front of men&#039;s Basic Tee in black."
+                                                    class="w-full aspect-square object-cover object-center rounded-md"
+                                                />
+                                                <span className="font-bold text-2xl">
+                                                    ${p.product_price}
+                                                </span>
+                                                <span className="mt-1 font-bold text-xl">
+                                                    Id: {p.product_id}
+                                                </span>
+                                                <span className="font-bold text-xl">
+                                                    К-сть: {p.product_count}
+                                                </span>
+                                                <PrimaryButton className="mt-2 m-auto" onClick={e => deleteFromCart(e, p.product_id)}>Прибрати</PrimaryButton>
                                             </div>
                                         ))}
                                     </div>
@@ -80,9 +104,14 @@ export default function Dashboard({ auth }) {
                                 {(ordersActive && (
                                     <div className="flex gap-3 h-full items-center">
                                         {Orders.reverse().map((order) => (
-                                            <div className="grid p-6 items-center w-48 rounded-lg h-full border border-gray-600" key={order.id}>
+                                            <div
+                                                className="grid p-6 items-center w-48 rounded-lg h-full border border-gray-600"
+                                                key={order.id}
+                                            >
                                                 Номер ордеру: №{order.id}
-                                                <span className="font-bold text-2xl">${order.product_price}</span>
+                                                <span className="font-bold text-2xl">
+                                                    ${order.product_price}
+                                                </span>
                                                 Статус доставки: {order.status}
                                                 Прибуде: {order.arriveDate}
                                             </div>
@@ -91,8 +120,7 @@ export default function Dashboard({ auth }) {
                                 )) || (
                                     <div className="m-auto grid gap-3">
                                         <span>
-                                            Схоже що нічого не замовлено
-                                            :(
+                                            Схоже що нічого не замовлено :(
                                         </span>
                                         <a href="/products" className="m-auto">
                                             <PrimaryButton>
