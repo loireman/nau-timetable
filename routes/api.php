@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CartApiController;
+use App\Http\Controllers\OrderApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,4 +27,11 @@ Route::group([
     Route::post('/', [CartApiController::class, 'addProduct'])->name('addToCart');
     Route::put('/{client_id}/{product_id}', [CartApiController::class, 'updateProduct'])->name('editInCart');
     Route::delete('/{client_id}/{product_id}', [CartApiController::class, 'deleteProduct'])->name('removeFromCart');
+});
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'orders',
+], function() {
+    Route::get('/{id}', [OrderApiController::class, 'index'])->name('getOrder');
+    Route::post('/', [OrderApiController::class, 'addOrder'])->name('addOrder');
 });

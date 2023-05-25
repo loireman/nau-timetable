@@ -8,12 +8,14 @@ import { useAsyncValue } from "react-router-dom";
 export default function Dashboard({ auth }) {
     const [cartActive, setCartActive] = useState(false);
     const [Cart, setCart] = useState([]);
+    const [totalPrice, setTotalPrice] = useState([]);
     const [ordersActive, setOrdersActive] = useState(false);
     const [Orders, setOrders] = useState([]);
 
     async function fetchCart() {
         const response = await axios.get("/api/cart/" + auth.user.id);
         const products = response.data.products;
+        setTotalPrice(response.data.totalPrice.toFixed(2));
         setCartActive(products.length != 0);
         setCart(products);
     }
@@ -33,8 +35,34 @@ export default function Dashboard({ auth }) {
         setOrders(orders);
     }
 
+    async function order(e) {
+        e.preventDefault()
+
+        Date.prototype.addDays = function(days) {
+            var currentDate = new Date(this.valueOf());
+            currentDate.setDate(currentDate.getDate() + days);
+            return currentDate;
+        }
+
+        var currentDate = new Date();
+
+        const date = currentDate.addDays(5).toISOString().split("T")[0] + " " + currentDate.toISOString().split("T")[1].slice(0,8);
+
+
+        axios.post("/api/orders/", {
+            client_id: auth.user.id,
+            total_price: totalPrice,
+            status: 'ordered',
+            arrival: date,
+            products: JSON.stringify(Cart),
+        });
+        Cart.map(p => {deleteFromCart(e, p.product_id)})
+        fetchOrders()
+    }
+
     useEffect(() => {
         fetchCart();
+        fetchOrders();
     }, []);
 
     return (
@@ -55,29 +83,49 @@ export default function Dashboard({ auth }) {
                             <span className="font-bold text-xl">Корзина</span>
                             <div className="flex gap-3 items-center p-3">
                                 {(cartActive && (
-                                    <div className="flex gap-3 h-full items-center">
-                                        {Cart.reverse().map((p) => (
-                                            <div
-                                                className="grid p-3 items-center w-48 rounded-lg border border-gray-600"
-                                                key={p.id}
-                                            >
-                                                <img
-                                                    src="https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg"
-                                                    alt="Front of men&#039;s Basic Tee in black."
-                                                    class="w-full aspect-square object-cover object-center rounded-md"
-                                                />
-                                                <span className="font-bold text-2xl">
-                                                    ${p.product_price}
-                                                </span>
-                                                <span className="mt-1 font-bold text-xl">
-                                                    Id: {p.product_id}
-                                                </span>
-                                                <span className="font-bold text-xl">
-                                                    К-сть: {p.product_count}
-                                                </span>
-                                                <PrimaryButton className="mt-2 m-auto" onClick={e => deleteFromCart(e, p.product_id)}>Прибрати</PrimaryButton>
-                                            </div>
-                                        ))}
+                                    <div className="w-full flex flex-col-reverse justify-center">
+                                        <div className="flex gap-3 w-[calc(88vw)] max-w-6xl items-center overflow-x-scroll">
+                                            {Cart.reverse().map((p) => (
+                                                <div
+                                                    className="grid p-3 items-center h-96 w-48 rounded-lg border border-gray-600"
+                                                    key={p.id}
+                                                >
+                                                    <img
+                                                        src="https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg"
+                                                        alt="Front of men&#039;s Basic Tee in black."
+                                                        class="object-cover object-center rounded-md"
+                                                    />
+                                                    <span className="font-bold text-2xl">
+                                                        ${p.product_price}
+                                                    </span>
+                                                    <span className="mt-1 font-bold text-xl">
+                                                        Id: {p.product_id}
+                                                    </span>
+                                                    <span className="font-bold text-xl">
+                                                        К-сть: {p.product_count}
+                                                    </span>
+                                                    <PrimaryButton
+                                                        className="mt-2 m-auto"
+                                                        onClick={(e) =>
+                                                            deleteFromCart(
+                                                                e,
+                                                                p.product_id
+                                                            )
+                                                        }
+                                                    >
+                                                        Прибрати
+                                                    </PrimaryButton>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className=" border border-gray-600 p-6 rounded-lg my-3 flex max-md:flex-col justify-between items-center gap-6">
+                                            <span className="font-bold text-2xl">
+                                                Загальна ціна: {totalPrice}
+                                            </span>
+                                            <PrimaryButton onClick={order}>
+                                                <span className="text-lg">Замовити</span>
+                                            </PrimaryButton>
+                                        </div>
                                     </div>
                                 )) || (
                                     <div className="m-auto grid gap-3">
@@ -100,23 +148,43 @@ export default function Dashboard({ auth }) {
                             <span className="font-bold text-xl">
                                 Замовлення
                             </span>
-                            <div className="flex gap-3 h-64 items-center p-6">
+                            <div className="flex gap-3 items-center p-6">
                                 {(ordersActive && (
-                                    <div className="flex gap-3 h-full items-center">
-                                        {Orders.reverse().map((order) => (
-                                            <div
-                                                className="grid p-6 items-center w-48 rounded-lg h-full border border-gray-600"
-                                                key={order.id}
-                                            >
-                                                Номер ордеру: №{order.id}
-                                                <span className="font-bold text-2xl">
-                                                    ${order.product_price}
-                                                </span>
+                                    <div className="flex gap-3 w-[calc(88vw)] max-w-6xl items-center overflow-x-scroll">
+                                    {Orders.sort((a, b) => b.id - a.id).map((order) => (
+                                        <div
+                                            className="grid p-3 items-center h-96 w-48 rounded-lg border border-gray-600"
+                                            key={order.id}
+                                        >
+                                            <span className="font-bold text-2xl">
+                                            Ордер: №{order.id}
+                                            </span>
+                                            <span className="font-bold text-xl">
+                                            ${order.total_price}
+                                            </span>
+                                            <span className="font-bold text-xl">
                                                 Статус доставки: {order.status}
-                                                Прибуде: {order.arriveDate}
-                                            </div>
-                                        ))}
-                                    </div>
+                                            </span>
+                                            <span className="font-bold text-xl">
+                                                Прибуде: {order.arrival}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                                    // <div className="flex gap-3 h-full items-center">
+                                    //     {Orders.reverse().map((order) => (
+                                    //         <div
+                                    //             className="grid p-6 items-center w-48 rounded-lg h-full border border-gray-600"
+                                    //             key={order.id}
+                                    //         >
+                                    //             Номер ордеру: №{order.id}
+                                    //             <span className="font-bold text-2xl">
+                                    //
+                                    //             </span>
+                                    //
+                                    //         </div>
+                                    //     ))}
+                                    // </div>
                                 )) || (
                                     <div className="m-auto grid gap-3">
                                         <span>

@@ -12,33 +12,46 @@ export default function Tovar({ auth, tovar }) {
     const [productPrice, setProductPrice] = useState(tovar.price);
 
     async function fetchData() {
-        const response = await fetch("/api/cart/" + auth.user.id);
-        const json = await response.json();
-        const products = json.products.filter((element) => {
+        const response = await axios.get("/api/cart/" + auth.user.id).then(response => {return response.data.products});
+        const products = response.filter((element) => {
             return element.product_id == tovar.id;
         });
         setCartActive(products.length != 0);
         if (products.length != 0) {
             setProductCount(products[0].product_count);
-            setProductPrice(products[0].product_count * tovar.price);
+            setProductPrice((products[0].product_count * tovar.price).toFixed(2));
         }
     }
     useEffect(() => {
         fetchData();
     }, []);
 
+
     const order = (e) => {
         e.preventDefault();
 
-        axios.post("/api/order/", {
+        Date.prototype.addDays = function(days) {
+            var currentDate = new Date(this.valueOf());
+            currentDate.setDate(currentDate.getDate() + days);
+            return currentDate;
+        }
+
+        var currentDate = new Date();
+
+        const date = currentDate.addDays(5).toISOString().split("T")[0] + " " + currentDate.toISOString().split("T")[1].slice(0,8);
+
+        axios.post("/api/orders/", {
             client_id: auth.user.id,
-            products: [
+            total_price: totalPrice,
+            status: 'ordered',
+            arrival: date,
+            products: JSON.stringify([
                 {
                     product_id: tovar.id,
                     product_count: productCount,
                     product_price: productPrice,
                 },
-            ],
+            ]),
         });
     };
 

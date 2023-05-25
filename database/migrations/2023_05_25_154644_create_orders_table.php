@@ -8,28 +8,26 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('zakazies', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('client_id');
             $table->foreign('client_id')->references('id')->on('users')->onDelete('cascade');
+            $table->decimal('total_price');
+            $table->string('status');
+            $table->date('arrival');
             $table->json('products');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('zakazies');
+        Schema::dropIfExists('orders');
     }
 };

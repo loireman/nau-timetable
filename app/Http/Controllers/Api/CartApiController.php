@@ -13,9 +13,15 @@ class CartApiController extends Controller
 {
     public function index($id) {
         $products = Cart::where('client_id', $id)->get();
+        $sum = 0;
+        foreach ($products as $product)
+        {
+            $sum += floatval($product->product_price);
+        }
         return response()->json([
             'status' => true,
             'isEmpty' => !isset($products),
+            'totalPrice' => $sum,
             'products' => $products,
         ]);
     }
