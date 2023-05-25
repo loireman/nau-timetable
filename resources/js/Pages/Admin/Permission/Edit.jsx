@@ -36,7 +36,7 @@ export default function Edit({ auth, permission }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-4 text-gray-300">
+                    <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-4 dark:text-gray-300 text-gray-800">
                         <span className="text-xl font-semibold">
                             Редагувати правило доступу
                         </span>

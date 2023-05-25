@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CartApiController;
-use App\Http\Controllers\OrderApiController;
+use App\Http\Controllers\Api\OrderApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 

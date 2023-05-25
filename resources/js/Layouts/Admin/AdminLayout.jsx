@@ -66,6 +66,19 @@ export default function Authenticated({ user, header, children }) {
                                     Products
                                 </span>
                             </VerticalNavLink>
+                            <VerticalNavLink
+                                href={route("orders.index")}
+                                active={route().current("orders.index")}
+                            >
+                                <Icon
+                                    width={24}
+                                    height={24}
+                                    icon="mdi:order-bool-descending-variant"
+                                ></Icon>
+                                <span class="ml-2 text-sm font-medium">
+                                    Orders
+                                </span>
+                            </VerticalNavLink>
                         </div>
                         <div class="flex flex-col items-center w-full mt-2 border-t border-gray-700">
                             <VerticalNavLink
@@ -200,6 +213,16 @@ export default function Authenticated({ user, header, children }) {
                                     d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                                 />
                             </svg>
+                        </VerticalNavLink>
+                        <VerticalNavLink
+                            href={route("orders.index")}
+                            active={route().current("orders.index")}
+                        >
+                            <Icon
+                                width={24}
+                                height={24}
+                                icon="mdi:order-bool-descending-variant"
+                            ></Icon>
                         </VerticalNavLink>
                     </div>
                     <div class="flex flex-col items-center mt-2 border-t border-gray-700">

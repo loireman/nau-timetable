@@ -5,6 +5,8 @@ import { Icon } from "@iconify/react";
 import { Head } from "@inertiajs/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Dashboard from "../Dashboard";
+import { Inertia } from "@inertiajs/inertia";
 
 export default function Tovar({ auth, tovar }) {
     const [cartActive, setCartActive] = useState(false);
@@ -27,7 +29,7 @@ export default function Tovar({ auth, tovar }) {
     }, []);
 
 
-    const order = (e) => {
+    async function order(e) {
         e.preventDefault();
 
         Date.prototype.addDays = function(days) {
@@ -40,10 +42,10 @@ export default function Tovar({ auth, tovar }) {
 
         const date = currentDate.addDays(5).toISOString().split("T")[0] + " " + currentDate.toISOString().split("T")[1].slice(0,8);
 
-        axios.post("/api/orders/", {
+        await axios.post("/api/orders/", {
             client_id: auth.user.id,
-            total_price: totalPrice,
-            status: 'ordered',
+            total_price: productPrice,
+            status: 'Очікує підтвердження',
             arrival: date,
             products: JSON.stringify([
                 {
@@ -53,6 +55,7 @@ export default function Tovar({ auth, tovar }) {
                 },
             ]),
         });
+        window.location.replace(route('dashboard'))
     };
 
     async function addToCart(e, value) {

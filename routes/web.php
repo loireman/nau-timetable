@@ -39,6 +39,7 @@ Route::group([
     Route::resource('role', 'RoleController');
     Route::resource('user', 'UserController');
     Route::resource('tovary', 'TovaryController');
+    Route::resource('orders', 'OrderController');
 });
 
 Route::get('/dashboard', function () {

@@ -52,7 +52,7 @@ export default function Dashboard({ auth }) {
         axios.post("/api/orders/", {
             client_id: auth.user.id,
             total_price: totalPrice,
-            status: 'ordered',
+            status: 'Очікує підтвердження',
             arrival: date,
             products: JSON.stringify(Cart),
         });
@@ -79,7 +79,7 @@ export default function Dashboard({ auth }) {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="grid p-6 text-gray-900 dark:text-gray-100">
+                        <div className="grid p-6 text-gray-900 dark:text-gray-100 w-full">
                             <span className="font-bold text-xl">Корзина</span>
                             <div className="flex gap-3 items-center p-3">
                                 {(cartActive && (
@@ -118,7 +118,7 @@ export default function Dashboard({ auth }) {
                                                 </div>
                                             ))}
                                         </div>
-                                        <div className=" border border-gray-600 p-6 rounded-lg my-3 flex max-md:flex-col justify-between items-center gap-6">
+                                        <div className="border border-gray-600 p-6 rounded-lg my-3 flex max-sm:flex-col justify-between items-center gap-6">
                                             <span className="font-bold text-2xl">
                                                 Загальна ціна: {totalPrice}
                                             </span>
@@ -171,20 +171,6 @@ export default function Dashboard({ auth }) {
                                         </div>
                                     ))}
                                 </div>
-                                    // <div className="flex gap-3 h-full items-center">
-                                    //     {Orders.reverse().map((order) => (
-                                    //         <div
-                                    //             className="grid p-6 items-center w-48 rounded-lg h-full border border-gray-600"
-                                    //             key={order.id}
-                                    //         >
-                                    //             Номер ордеру: №{order.id}
-                                    //             <span className="font-bold text-2xl">
-                                    //
-                                    //             </span>
-                                    //
-                                    //         </div>
-                                    //     ))}
-                                    // </div>
                                 )) || (
                                     <div className="m-auto grid gap-3">
                                         <span>
