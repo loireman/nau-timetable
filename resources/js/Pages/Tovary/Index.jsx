@@ -8,7 +8,7 @@ import Dropdown from "@/Components/Dropdown";
 export default function Index({ auth, tovaries }) {
     const [search, setSearch] = useState("");
 
-    const handleClick = () => {
+    const handleClick = (search) => {
         const url = new URL(window.location);
         url.searchParams.set("search", search);
         window.location = url;
@@ -35,11 +35,14 @@ export default function Index({ auth, tovaries }) {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg mb-3 p-3 grid md:flex md:justify-between gap-3">
                         <div className="w-full md:max-w-md border border-gray-300 rounded-full">
-                            <div className="relative flex items-center w-full h-12 rounded-lg focus-within:shadow-lg overflow-hidden">
-                                <button
-                                    onClick={handleClick}
-                                    class="grid place-items-center h-full w-16 text-gray-900 dark:text-gray-100"
-                                >
+                            <form
+                                onSubmitCapture={(event) => {
+                                    event.preventDefault();
+                                    handleClick(search);
+                                }}
+                                className="relative flex items-center w-full h-12 rounded-lg focus-within:shadow-lg overflow-hidden"
+                            >
+                                <button class="grid place-items-center h-full w-16 text-gray-900 dark:text-gray-100">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         className="h-6 w-6"
@@ -65,7 +68,7 @@ export default function Index({ auth, tovaries }) {
                                     }
                                     placeholder="Шукати за назвою.."
                                 />
-                            </div>
+                            </form>
                         </div>
 
                         <Dropdown>
