@@ -201,8 +201,8 @@ export default function Index({ auth, permissions, can }) {
                                 ))}
                             </tbody>
                         </table>
-                        <Pagination pageContent={permissions}></Pagination>
                     </div>
+                    <Pagination pageContent={permissions}></Pagination>
                 </div>
             </div>
         </AuthenticatedLayout>

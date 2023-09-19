@@ -1,0 +1,293 @@
+$color-bg: #FFFFFF
+$color-light: #F8FAFC
+$color-active: #E2E8F0
+$color-chip: #CBD5E1
+$color-text: #1E293B
+$color-text-light: #475569
+$color-link: #0D68D3
+$color-danger: #CB1414
+$color-warning: #c19614
+$color-green: #15B991
+$color-blue: #2563EB
+$color-blue-active: #1a46a6
+
+body
+    font-family: Montserrat
+    background-color: $color-bg
+
+.logo
+    display: flex
+
+    svg
+        fill: $color-text
+        width: 28px
+        height: 28px
+
+    span
+        color: $color-text
+        text-align: start
+        font-size: 14px
+        font-weight: 500
+        line-height: 100%
+        width: 48px
+
+.sidebar
+    background-color: $color-light
+    display: flex
+    flex-direction: column
+    align-items: center
+    width: 4rem
+    min-height: 100vh
+    position: fixed
+    overflow: hidden
+    &.open
+        width: 16rem
+
+.vertical-link
+    display: flex
+    align-items: center
+    width: 100%
+    padding: 1rem
+    border-radius: 0.5rem
+    color: $color-text
+    &.active, &:hover
+        background-color: $color-active
+
+.pagination
+    max-width: full
+    display: grid
+    justify-items: center
+    gap: 0.75rem
+    padding: 1.5rem
+    font-size: 12px
+
+    .content
+        display: flex
+        gap: 0.5rem
+        max-width: full
+        align-items: center
+
+        a
+          border-radius: 100%
+          width: 24px
+          height: 24px
+          display: grid
+          justify-content: center
+          align-items: center
+        a.first-page
+            width: 64px
+        a.active
+            background-color: $color-active
+
+        div
+            display: flex
+            align-items: center
+
+    p
+        color: $color-text-light
+
+.form
+    &-input
+        padding: 6px 8px
+        border-radius: 0.5rem
+        font-size: 12px
+        line-height: 130%
+
+        border: 1px solid $color-text-light
+        color: $color-text
+        font-weight: 400
+
+        &::placeholder
+            font-size: 10px
+            font-weight: 300
+            color: $color-text-light
+
+        &:focus-visible
+            outline: none
+
+        &:disabled
+            background-color: $color-active
+
+    &-required
+        color: $color-danger
+        font-size: 10px
+        font-weight: 400
+        vertical-align: middle
+
+    &-label
+        display: block
+        font-size: 10px
+        font-weight: 500
+        color: $color-text-light
+
+    &-switch
+        display: flex
+        align-items: center
+        margin-bottom: 10px
+
+        span
+            margin-left: 10px
+            font-size: 14px
+            line-height: 20px
+
+        .switch-container
+            position: relative
+            width: 40px
+            height: 20px
+            background-color: #ccc
+            border-radius: 10px
+            transition: background-color 0.2s
+            cursor: pointer
+
+            &.on
+                background-color: $color-blue
+
+            .hidden-checkbox
+                position: absolute
+                top: 0
+                left: 0
+                opacity: 0
+                width: 40px
+                height: 20px
+                cursor: pointer
+
+            .switch
+                position: absolute
+                top: 2px
+                left: 2px
+                width: 16px
+                height: 16px
+                background-color: white
+                border-radius: 50%
+                transform: translateX(0)
+                transition: transform 0.2s
+
+            &.on .switch
+                transform: translateX(20px)
+
+    &-checkbox
+        border-radius: 10px
+        color: $color-blue-active
+        border: 1px solid $color-text-light
+
+    &-radio
+        display: flex
+        align-items: center
+        gap: 10px
+        cursor: pointer
+
+        &-input
+            display: none
+
+        &-icon
+            width: 16px
+            height: 16px
+            border: 1px solid #ccc
+            border-radius: 50%
+            display: flex
+            justify-content: center
+            align-items: center
+            transition: border-color 0.2s, background-color 0.2s, opacity 0.2s
+            flex-shrink: 0
+
+            &.active
+                border-color: $color-blue
+                border-width: 5px
+
+        &.disabled
+            opacity: 0.5
+            pointer-events: none
+
+        &-label
+            cursor: pointer
+            display: flex
+            align-items: center
+            font-size: 14px
+
+    &-select
+        position: relative
+        min-width: 190px
+        width: fit-content
+        border: 1px solid #ccc
+        cursor: pointer
+        padding: 0
+
+        &.open
+            .options
+                display: block
+
+        .selected-option
+            width: 100%
+            height: 100%
+            padding: 8px 16px
+
+        .options
+            background-color: $color-bg
+            display: none
+            position: absolute
+            top: 100%
+            left: 0
+            width: 100%
+            max-height: 150px
+            overflow-y: auto
+            border: 1px solid #ccc
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1)
+            z-index: 1
+
+            .option
+                padding: 10px
+                cursor: pointer
+                transition: background-color 0.2s
+
+                &:hover
+                    background-color: #f4f4f4
+
+.text-editor
+    .ql-picker-label, .ql-picker-item, .ql-container, .ql-editor
+        border-color: transparent !important
+        font-family: Montserrat
+        &:focus-visible
+            outline: none
+
+.file-input-dropdown
+    position: relative
+
+    .file-input-container
+        display: flex
+        align-items: center
+        gap: 10px
+
+    .file-input-label
+        cursor: pointer
+        width: 100%
+        padding: 32px
+        text-align: center
+        border: 1px dashed $color-chip
+        background-color: $color-light
+
+    .file-input
+        display: none
+
+    .file-item
+        display: flex
+        justify-content: space-between
+        align-items: center
+        padding: 10px
+        cursor: pointer
+        transition: background-color 0.2s
+        svg
+            fill: $color-text-light
+            width: 14px
+            height: 14px
+
+.button-primary
+    background-color: $color-blue
+    text-align: center
+    color: $color-bg
+    padding: 12px 24px
+    border-radius: 8px
+    &:hover
+        background-color: $color-blue-active
+    &:disabled
+        background-color: $color-text-light
+        opacity: 50%

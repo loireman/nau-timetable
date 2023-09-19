@@ -1,5 +1,4 @@
-import ReactPaginate from "react-paginate";
-import { useState } from "react";
+import { Icon } from "@iconify/react";
 
 export default function Pagination({
     nameContent = "елементи",
@@ -7,23 +6,31 @@ export default function Pagination({
     ...props
 }) {
     return (
-        <div className="max-w-full p-6 text-gray-900 dark:text-gray-100 font-semibold grid justify-items-center gap-3">
-            <div className="flex gap-2 max-w-full">
+        <div className="pagination">
+            <div className="content">
                 {Object.entries(pageContent.links).map(([key, element]) => (
                     <a
-                        className={
-                            (((element.active &&
-                                "grid content-center justify-center w-10 h-10 text-gray-200 bg-green-600 dark:bg-green-900 rounded-full") ||
-                                (element.label == "&laquo; Previous" && "<") ||
-                                (element.label == "Next &raquo;" && ">")) &&
-                                "grid content-center justify-center w-10 h-10 text-grat-200 bg-green-600 dark:bg-green-900 rounded-full") ||
-                            "hidden md:grid content-center justify-center w-10 h-10 text-grat-200 bg-gray-400 dark:bg-gray-700 rounded-full"
-                        }
+                        className={`${element.active ? "active" : ""} ${
+                            (element.label === "&laquo; Previous") ||
+                            (element.label === "Next &raquo;")
+                                ? "first-page"
+                                : ""
+                        }`}
                         href={element.url}
-                        key={element}
+                        key={key}
                     >
-                        {(element.label == "&laquo; Previous" && "<") ||
-                            (element.label == "Next &raquo;" && ">") ||
+                        {(element.label == "&laquo; Previous" && (
+                            <div>
+                                <Icon icon="mdi:chevron-left" />
+                                Previous
+                            </div>
+                        )) ||
+                            (element.label == "Next &raquo;" && (
+                                <div>
+                                    Next
+                                    <Icon icon="mdi:chevron-right" />
+                                </div>
+                            )) ||
                             element.label}
                     </a>
                 ))}

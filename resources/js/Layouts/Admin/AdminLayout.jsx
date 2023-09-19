@@ -7,21 +7,17 @@ export default function Authenticated({ user, header, children }) {
     const [navigationFull, setNavigationFull] = useState(false);
 
     return (
-        <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div className="flex min-h-screen">
             {navigationFull ? (
-                <div class="flex flex-col items-center w-64 min-h-screen fixed overflow-hidden text-gray-400 bg-gray-900 border-r-2 border-gray-800">
-                    <button
-                        onClick={() => setNavigationFull(false)}
-                        class="flex w-full items-center justify-center mt-3"
-                    >
-                        <ApplicationLogo
-                            width="32"
-                            class="fill-gray-400"
-                        ></ApplicationLogo>
-                        <span class="ml-2 text-sm font-bold">Admin page</span>
+                <div class="sidebar open">
+                    <button onClick={() => setNavigationFull(false)} className="mt-3">
+                        <ApplicationLogo text></ApplicationLogo>
                     </button>
                     <div class="w-full px-2">
-                        <div class="flex flex-col items-center w-full mt-3 border-t border-gray-700">
+                        <div class="flex flex-col gap-2 items-center w-full mt-3">
+                            <span className="p-4 w-full text-start">
+                                Main elements
+                            </span>
                             <VerticalNavLink
                                 href={route("admin")}
                                 active={route().current("admin")}
@@ -41,46 +37,14 @@ export default function Authenticated({ user, header, children }) {
                                     />
                                 </svg>
                                 <span class="ml-2 text-sm font-medium">
-                                    Dasboard
-                                </span>
-                            </VerticalNavLink>
-                            <VerticalNavLink
-                                href={route("tovary.index")}
-                                active={route().current("tovary.index")}
-                            >
-                                <svg
-                                    class="w-6 h-6 stroke-current"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                                    />
-                                </svg>
-                                <span class="ml-2 text-sm font-medium">
-                                    Products
-                                </span>
-                            </VerticalNavLink>
-                            <VerticalNavLink
-                                href={route("orders.index")}
-                                active={route().current("orders.index")}
-                            >
-                                <Icon
-                                    width={24}
-                                    height={24}
-                                    icon="mdi:order-bool-descending-variant"
-                                ></Icon>
-                                <span class="ml-2 text-sm font-medium">
-                                    Orders
+                                    Dashboard
                                 </span>
                             </VerticalNavLink>
                         </div>
-                        <div class="flex flex-col items-center w-full mt-2 border-t border-gray-700">
+                        <div class="flex flex-col items-center w-full mt-2">
+                        <span className="p-4 w-full text-start">
+                                User edit
+                            </span>
                             <VerticalNavLink
                                 href={route("user.index")}
                                 active={route().current("user.index")}
@@ -165,17 +129,11 @@ export default function Authenticated({ user, header, children }) {
                     </a>
                 </div>
             ) : (
-                <div class="min-h-screen fixed flex flex-col items-center w-16 overflow-hidden text-gray-400 bg-gray-900 border-r-2 border-gray-800">
-                    <button
-                        onClick={() => setNavigationFull(true)}
-                        class="flex items-center justify-center mt-3"
-                    >
-                        <ApplicationLogo
-                            width="32"
-                            class="fill-gray-400"
-                        ></ApplicationLogo>
+                <div class="sidebar">
+                    <button onClick={() => setNavigationFull(true)} className="mt-3">
+                        <ApplicationLogo></ApplicationLogo>
                     </button>
-                    <div class="flex flex-col items-center mt-3 border-t border-gray-700">
+                    <div class="flex flex-col gap-2 items-center mt-3">
                         <VerticalNavLink
                             href={route("admin")}
                             active={route().current("admin")}
@@ -195,37 +153,8 @@ export default function Authenticated({ user, header, children }) {
                                 />
                             </svg>
                         </VerticalNavLink>
-                        <VerticalNavLink
-                            href={route("tovary.index")}
-                            active={route().current("tovary.index")}
-                        >
-                            <svg
-                                class="w-6 h-6 stroke-current"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                                />
-                            </svg>
-                        </VerticalNavLink>
-                        <VerticalNavLink
-                            href={route("orders.index")}
-                            active={route().current("orders.index")}
-                        >
-                            <Icon
-                                width={24}
-                                height={24}
-                                icon="mdi:order-bool-descending-variant"
-                            ></Icon>
-                        </VerticalNavLink>
                     </div>
-                    <div class="flex flex-col items-center mt-2 border-t border-gray-700">
+                    <div class="flex flex-col gap-2 items-center mt-2">
                         <VerticalNavLink
                             href={route("user.index")}
                             active={route().current("user.index")}
@@ -301,10 +230,8 @@ export default function Authenticated({ user, header, children }) {
             )}
             <div className={navigationFull ? "w-full pl-64" : "w-full pl-16"}>
                 {header && (
-                    <header className="bg-white dark:bg-gray-800 shadow">
-                        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    <header className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                             {header}
-                        </div>
                     </header>
                 )}
                 <main>{children}</main>

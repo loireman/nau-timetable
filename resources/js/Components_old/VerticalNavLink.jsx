@@ -5,10 +5,10 @@ export default function VerticalNavLink({ active = false, className = '', childr
         <Link
             {...props}
             className={
-                'vertical-link transition duration-600 ease-in-out focus:outline-none ' +
+                'flex items-center w-full p-4 mt-2 rounded transition duration-600 ease-in-out focus:outline-none ' +
                 (active
-                    ? 'active'
-                    : '') +
+                    ? ' text-gray-200 bg-gray-700'
+                    : 'hover:bg-gray-700 hover:text-gray-300') +
                 className
             }
         >

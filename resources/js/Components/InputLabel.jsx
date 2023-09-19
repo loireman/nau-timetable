@@ -1,6 +1,7 @@
-export default function InputLabel({ value, className = '', children, ...props }) {
+export default function InputLabel({ value, className = '', required = false, children, ...props }) {
     return (
-        <label {...props} className={`block font-medium text-sm text-gray-700 dark:text-gray-300 ` + className}>
+        <label {...props} className={`form-label` + className}>
+            {required && <span className="form-required">* </span>}
             {value ? value : children}
         </label>
     );
