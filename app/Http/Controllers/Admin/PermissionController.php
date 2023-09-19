@@ -45,7 +45,8 @@ class PermissionController extends Controller
                 'create' => Auth::user()->can('permission create'),
                 'edit' => Auth::user()->can('permission edit'),
                 'delete' => Auth::user()->can('permission delete'),
-            ]
+            ],
+            'message' => session('message'),
         ]);
     }
 
@@ -61,13 +62,6 @@ class PermissionController extends Controller
         ]);
     }
 
-    public function show(Permission $permission)
-    {
-        return Inertia::render('Admin/Permission/Show', [
-            'permission' => $permission,
-        ]);
-    }
-
     public function store(StorePermissionRequest $request)
     {
         Permission::create($request->all());
@@ -78,6 +72,7 @@ class PermissionController extends Controller
     public function update(UpdatePermissionRequest $request, Permission $permission)
     {
         $permission->update($request->all());
+
         return redirect()->route('permission.index')
             ->with('message', __('Permission updated successfully.'));
     }
@@ -92,6 +87,6 @@ class PermissionController extends Controller
     {
         $permission->delete();
         return redirect()->route('permission.index')
-            ->with('message', __('Permission deleted     successfully'));
+            ->with('message', __('Permission deleted successfully'));
     }
 }

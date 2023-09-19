@@ -1,6 +1,7 @@
+import { Icon } from '@iconify/react';
 import { Link } from '@inertiajs/react';
 
-export default function VerticalNavLink({ active = false, className = '', children, ...props }) {
+export default function VerticalNavLink({ active = false, className = '', title = '', icon = '', children, ...props }) {
     return (
         <Link
             {...props}
@@ -12,6 +13,8 @@ export default function VerticalNavLink({ active = false, className = '', childr
                 className
             }
         >
+            {icon && <Icon icon={icon} />}
+            {title && <span>{title}</span>}
             {children}
         </Link>
     );

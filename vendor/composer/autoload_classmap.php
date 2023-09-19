@@ -6,8 +6,13 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Actions\\Admin\\User\\CreateUser' => $baseDir . '/app/Actions/Admin/User/CreateUser.php',
+    'App\\Actions\\Admin\\User\\UpdateUser' => $baseDir . '/app/Actions/Admin/User/UpdateUser.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
+    'App\\Http\\Controllers\\Admin\\PermissionController' => $baseDir . '/app/Http/Controllers/Admin/PermissionController.php',
+    'App\\Http\\Controllers\\Admin\\RoleController' => $baseDir . '/app/Http/Controllers/Admin/RoleController.php',
+    'App\\Http\\Controllers\\Admin\\UserController' => $baseDir . '/app/Http/Controllers/Admin/UserController.php',
     'App\\Http\\Controllers\\Auth\\AuthenticatedSessionController' => $baseDir . '/app/Http/Controllers/Auth/AuthenticatedSessionController.php',
     'App\\Http\\Controllers\\Auth\\ConfirmablePasswordController' => $baseDir . '/app/Http/Controllers/Auth/ConfirmablePasswordController.php',
     'App\\Http\\Controllers\\Auth\\EmailVerificationNotificationController' => $baseDir . '/app/Http/Controllers/Auth/EmailVerificationNotificationController.php',
@@ -30,6 +35,12 @@ return array(
     'App\\Http\\Middleware\\TrustProxies' => $baseDir . '/app/Http/Middleware/TrustProxies.php',
     'App\\Http\\Middleware\\ValidateSignature' => $baseDir . '/app/Http/Middleware/ValidateSignature.php',
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
+    'App\\Http\\Requests\\Admin\\StorePermissionRequest' => $baseDir . '/app/Http/Requests/Admin/StorePermissionRequest.php',
+    'App\\Http\\Requests\\Admin\\StoreRoleRequest' => $baseDir . '/app/Http/Requests/Admin/StoreRoleRequest.php',
+    'App\\Http\\Requests\\Admin\\StoreUserRequest' => $baseDir . '/app/Http/Requests/Admin/StoreUserRequest.php',
+    'App\\Http\\Requests\\Admin\\UpdatePermissionRequest' => $baseDir . '/app/Http/Requests/Admin/UpdatePermissionRequest.php',
+    'App\\Http\\Requests\\Admin\\UpdateRoleRequest' => $baseDir . '/app/Http/Requests/Admin/UpdateRoleRequest.php',
+    'App\\Http\\Requests\\Admin\\UpdateUserRequest' => $baseDir . '/app/Http/Requests/Admin/UpdateUserRequest.php',
     'App\\Http\\Requests\\Auth\\LoginRequest' => $baseDir . '/app/Http/Requests/Auth/LoginRequest.php',
     'App\\Http\\Requests\\ProfileUpdateRequest' => $baseDir . '/app/Http/Requests/ProfileUpdateRequest.php',
     'App\\Models\\Permission' => $baseDir . '/app/Models/Permission.php',

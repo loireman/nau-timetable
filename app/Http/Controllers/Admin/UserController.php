@@ -50,6 +50,8 @@ class UserController extends Controller
             $users->latest();
         }
 
+        $users->with('roles');
+
         $users = $users->paginate(5)->onEachSide(2)->appends(request()->query());
 
         return Inertia::render('Admin/User/Index', [
@@ -59,7 +61,8 @@ class UserController extends Controller
                 'create' => Auth::user()->can('user create'),
                 'edit' => Auth::user()->can('user edit'),
                 'delete' => Auth::user()->can('user delete'),
-            ]
+            ],
+            'message' => session('message'),
         ]);
     }
 
@@ -90,24 +93,6 @@ class UserController extends Controller
 
         return redirect()->route('user.index')
                         ->with('message', __('User created successfully.'));
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function show(User $user)
-    {
-        $roles = Role::all()->pluck("name","id");
-        $userHasRoles = array_column(json_decode($user->roles, true), 'name');
-
-        return Inertia::render('Admin/User/Show', [
-            'user' => $user,
-            'roles' => $roles,
-            'userHasRoles' => $userHasRoles,
-        ]);
     }
 
     /**

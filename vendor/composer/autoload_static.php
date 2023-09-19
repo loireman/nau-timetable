@@ -532,8 +532,13 @@ class ComposerStaticInit957eb6482e712acffe056d7498951d6f
     );
 
     public static $classMap = array (
+        'App\\Actions\\Admin\\User\\CreateUser' => __DIR__ . '/../..' . '/app/Actions/Admin/User/CreateUser.php',
+        'App\\Actions\\Admin\\User\\UpdateUser' => __DIR__ . '/../..' . '/app/Actions/Admin/User/UpdateUser.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
+        'App\\Http\\Controllers\\Admin\\PermissionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/PermissionController.php',
+        'App\\Http\\Controllers\\Admin\\RoleController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/RoleController.php',
+        'App\\Http\\Controllers\\Admin\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/UserController.php',
         'App\\Http\\Controllers\\Auth\\AuthenticatedSessionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/AuthenticatedSessionController.php',
         'App\\Http\\Controllers\\Auth\\ConfirmablePasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ConfirmablePasswordController.php',
         'App\\Http\\Controllers\\Auth\\EmailVerificationNotificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/EmailVerificationNotificationController.php',
@@ -556,6 +561,12 @@ class ComposerStaticInit957eb6482e712acffe056d7498951d6f
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\ValidateSignature' => __DIR__ . '/../..' . '/app/Http/Middleware/ValidateSignature.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
+        'App\\Http\\Requests\\Admin\\StorePermissionRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Admin/StorePermissionRequest.php',
+        'App\\Http\\Requests\\Admin\\StoreRoleRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Admin/StoreRoleRequest.php',
+        'App\\Http\\Requests\\Admin\\StoreUserRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Admin/StoreUserRequest.php',
+        'App\\Http\\Requests\\Admin\\UpdatePermissionRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Admin/UpdatePermissionRequest.php',
+        'App\\Http\\Requests\\Admin\\UpdateRoleRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Admin/UpdateRoleRequest.php',
+        'App\\Http\\Requests\\Admin\\UpdateUserRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Admin/UpdateUserRequest.php',
         'App\\Http\\Requests\\Auth\\LoginRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Auth/LoginRequest.php',
         'App\\Http\\Requests\\ProfileUpdateRequest' => __DIR__ . '/../..' . '/app/Http/Requests/ProfileUpdateRequest.php',
         'App\\Models\\Permission' => __DIR__ . '/../..' . '/app/Models/Permission.php',

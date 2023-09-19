@@ -11,8 +11,8 @@ export default function Pagination({
                 {Object.entries(pageContent.links).map(([key, element]) => (
                     <a
                         className={`${element.active ? "active" : ""} ${
-                            (element.label === "&laquo; Previous") ||
-                            (element.label === "Next &raquo;")
+                            element.label === "&laquo; Previous" ||
+                            element.label === "Next &raquo;"
                                 ? "first-page"
                                 : ""
                         }`}
@@ -20,16 +20,10 @@ export default function Pagination({
                         key={key}
                     >
                         {(element.label == "&laquo; Previous" && (
-                            <div>
-                                <Icon icon="mdi:chevron-left" />
-                                Previous
-                            </div>
+                            <Icon icon="mdi:chevron-left" />
                         )) ||
                             (element.label == "Next &raquo;" && (
-                                <div>
-                                    Next
-                                    <Icon icon="mdi:chevron-right" />
-                                </div>
+                                <Icon icon="mdi:chevron-right" />
                             )) ||
                             element.label}
                     </a>

@@ -42,64 +42,52 @@ export default function Edit({ auth, role, permissions, roleHasPermissions }) {
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    Редагування ролі доступу
+                    Role edit
                 </h2>
             }
         >
-            <Head title="Редагування ролі доступу" />
+            <Head title="Role edit" />
 
-            <div className="py-12">
+            <div className="pb-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-4 text-gray-800 dark:text-gray-300">
-                        <span className="text-xl font-semibold">
-                        Редагувати роль доступу
-                        </span>
-                        <form className="px-4 py-8" onSubmit={submit}>
-                            <InputLabel htmlFor="name" value="Назва" />
-                            <TextInput
-                                id="name"
-                                name="name"
-                                value={data.name}
-                                className="mt-1 block w-full"
-                                autoComplete="name"
-                                isFocused={true}
-                                onChange={(e) =>
-                                    setData("name", e.target.value)
-                                }
-                                required
-                            />
-                            <InputError
-                                message={errors.name}
-                                className="mt-2"
-                            />
-                            <div className="block mt-4">
-                                {Object.entries(permissions).map(
-                                    ([key, value]) => (
-                                        <label className="flex items-center">
-                                            <Checkbox
-                                                name={key}
-                                                value={key}
-                                                checked={data.permissions.includes(
-                                                    parseInt(key)
-                                                )}
-                                                onChange={handleCheckers}
-                                            />
-                                            <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
-                                                {value}
-                                            </span>
-                                        </label>
-                                    )
-                                )}
-                            </div>
+                    <form className="px-4 py-8" onSubmit={submit}>
+                        <InputLabel htmlFor="name" value="Назва" />
+                        <TextInput
+                            id="name"
+                            name="name"
+                            value={data.name}
+                            className="mt-1 block w-full"
+                            autoComplete="name"
+                            isFocused={true}
+                            onChange={(e) => setData("name", e.target.value)}
+                            required
+                        />
+                        <InputError message={errors.name} className="mt-2" />
+                        <div className="block mt-4">
+                            {Object.entries(permissions).map(([key, value]) => (
+                                <label className="flex items-center">
+                                    <Checkbox
+                                        name={key}
+                                        value={key}
+                                        checked={data.permissions.includes(
+                                            parseInt(key)
+                                        )}
+                                        onChange={handleCheckers}
+                                    />
+                                    <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
+                                        {value}
+                                    </span>
+                                </label>
+                            ))}
+                        </div>
 
-                            <PrimaryButton
-                                className="mt-16 w-full grid"
-                                disabled={processing}
-                            >
-                                <span className="text-[1rem]">Оновити</span>
-                            </PrimaryButton>
-                        </form>
-                    </div>
+                        <PrimaryButton
+                            className="mt-16 w-full grid"
+                            disabled={processing}
+                        >
+                            <span>Update</span>
+                        </PrimaryButton>
+                    </form>
                 </div>
             </div>
         </AuthenticatedLayout>

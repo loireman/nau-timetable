@@ -15,10 +15,10 @@ class RoleController extends Controller
 {
     function __construct()
     {
-         $this->middleware('can:role list', ['only' => ['index','show']]);
-         $this->middleware('can:role create', ['only' => ['create','store']]);
-         $this->middleware('can:role edit', ['only' => ['edit','update']]);
-         $this->middleware('can:role delete', ['only' => ['destroy']]);
+        $this->middleware('can:role list', ['only' => ['index', 'show']]);
+        $this->middleware('can:role create', ['only' => ['create', 'store']]);
+        $this->middleware('can:role edit', ['only' => ['edit', 'update']]);
+        $this->middleware('can:role delete', ['only' => ['destroy']]);
     }
     /**
      * Display a listing of the resource.
@@ -29,7 +29,7 @@ class RoleController extends Controller
     {
         $roles = (new Role)->newQuery();
         if (request()->has('search')) {
-            $roles->where('name', 'Like', '%'.request()->input('search').'%');
+            $roles->where('name', 'Like', '%' . request()->input('search') . '%');
         }
 
         if (request()->query('sort')) {
@@ -42,7 +42,12 @@ class RoleController extends Controller
             $roles->orderBy($attribute, $sort_order);
         } else {
             $roles->latest();
-        }    $roles = $roles->paginate(10)->onEachSide(2)->appends(request()->query());
+        }
+
+        // Eager load permissions for each role
+        $roles->with('permissions');
+
+        $roles = $roles->paginate(10)->onEachSide(2)->appends(request()->query());
 
         return Inertia::render('Admin/Role/Index', [
             'roles' => $roles,
@@ -51,7 +56,8 @@ class RoleController extends Controller
                 'create' => Auth::user()->can('permission create'),
                 'edit' => Auth::user()->can('permission edit'),
                 'delete' => Auth::user()->can('permission delete'),
-            ]
+            ],
+            'message' => session('message'),
         ]);
     }
 
@@ -62,7 +68,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $permissions = Permission::all()->pluck("name","id");
+        $permissions = Permission::all()->pluck("name", "id");
 
         return Inertia::render('Admin/Role/Create', [
             'permissions' => $permissions,
@@ -79,30 +85,12 @@ class RoleController extends Controller
     {
         $role = Role::create($request->all());
 
-        if (! empty($request->permissions)) {
+        if (!empty($request->permissions)) {
             $role->givePermissionTo($request->permissions);
         }
 
         return redirect()->route('role.index')
-                        ->with('message', 'Role created successfully.');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Role  $role
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Role $role)
-    {
-        $permissions = Permission::all()->pluck("name","id");
-        $roleHasPermissions = array_column(json_decode($role->permissions, true), 'name');
-
-        return Inertia::render('Admin/Role/Show', [
-            'role' => $role,
-            'permissions' => $permissions,
-            'roleHasPermissions' => $roleHasPermissions,
-        ]);
+            ->with('message', 'Role created successfully.');
     }
 
     /**
@@ -113,7 +101,7 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        $permissions = Permission::all()->pluck("name","id");
+        $permissions = Permission::all()->pluck("name", "id");
         $roleHasPermissions = array_column(json_decode($role->permissions, true), 'id');
 
         return Inertia::render('Admin/Role/Edit', [
@@ -137,7 +125,7 @@ class RoleController extends Controller
         $role->syncPermissions($permissions);
 
         return redirect()->route('role.index')
-                        ->with('message', 'Role updated successfully.');
+            ->with('message', 'Role updated successfully.');
     }
 
     /**
@@ -151,6 +139,6 @@ class RoleController extends Controller
         $role->delete();
 
         return redirect()->route('role.index')
-                        ->with('message', __('Role deleted successfully'));
+            ->with('message', __('Role deleted successfully'));
     }
 }

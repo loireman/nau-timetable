@@ -11,6 +11,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import Checkbox from "@/Components/Checkbox";
 import Radio from "@/Components/Radio";
 import Select from "@/Components/Select";
+import { toast } from "react-toastify";
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
     const [value, setValue] = useState("");
@@ -33,6 +34,10 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
     const [selectedOption, setSelectedOption] = useState("");
     const handleSelectChange = (newValue) => {
         setSelectedOption(newValue);
+    };
+
+    const showToast = () => {
+        toast.success("This is a success toast"); // Display a success toast
     };
 
     return (
@@ -108,6 +113,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                     disabled
                 />
             </div>
+            <PrimaryButton onClick={showToast}>Show Toast</PrimaryButton>
         </>
     );
 }

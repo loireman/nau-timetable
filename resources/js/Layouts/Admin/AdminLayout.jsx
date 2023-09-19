@@ -1,239 +1,131 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import VerticalNavLink from "@/Components/VerticalNavLink";
 import { Icon } from "@iconify/react";
+import Dropdown from "@/Components/Dropdown";
+import SearchInput from "@/Components/SearchInput";
 
-export default function Authenticated({ user, header, children }) {
-    const [navigationFull, setNavigationFull] = useState(false);
+export default function Authenticated({
+    header,
+    searchField = false,
+    addElement = false,
+    sortOptions = [],
+    children,
+}) {
+    const [search, setSearch] = useState("");
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        const url = new URL(window.location);
+        url.searchParams.set("search", search);
+        window.location = url;
+    };
+
+    const handleSort = (sort) => {
+        const url = new URL(window.location);
+        url.searchParams.set("sort", sort);
+        window.location = url;
+    };
 
     return (
         <div className="flex min-h-screen">
-            {navigationFull ? (
-                <div class="sidebar open">
-                    <button onClick={() => setNavigationFull(false)} className="mt-3">
-                        <ApplicationLogo text></ApplicationLogo>
-                    </button>
-                    <div class="w-full px-2">
-                        <div class="flex flex-col gap-2 items-center w-full mt-3">
-                            <span className="p-4 w-full text-start">
-                                Main elements
-                            </span>
-                            <VerticalNavLink
-                                href={route("admin")}
-                                active={route().current("admin")}
-                            >
-                                <svg
-                                    class="w-6 h-6 stroke-current"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                                    />
-                                </svg>
-                                <span class="ml-2 text-sm font-medium">
-                                    Dashboard
-                                </span>
-                            </VerticalNavLink>
-                        </div>
-                        <div class="flex flex-col items-center w-full mt-2">
-                        <span className="p-4 w-full text-start">
-                                User edit
-                            </span>
-                            <VerticalNavLink
-                                href={route("user.index")}
-                                active={route().current("user.index")}
-                            >
-                                <svg
-                                    class="w-6 h-6 stroke-current"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"
-                                    />
-                                </svg>
-                                <span class="ml-2 text-sm font-medium">
-                                    Users
-                                </span>
-                            </VerticalNavLink>
-                            <VerticalNavLink
-                                href={route("role.index")}
-                                active={route().current("role.index")}
-                            >
-                                <svg
-                                    class="w-6 h-6 stroke-current"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"
-                                    />
-                                </svg>
-                                <span class="ml-2 text-sm font-medium">
-                                    Permissions
-                                </span>
-                            </VerticalNavLink>
-                            <VerticalNavLink
-                                href={route("permission.index")}
-                                active={route().current("permission.index")}
-                            >
-                                <svg
-                                    class="w-6 h-6 stroke-current"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"
-                                    />
-                                </svg>
-                                <span class="ml-2 text-sm font-medium">
-                                    Roles
-                                </span>
-                            </VerticalNavLink>
-                        </div>
-                    </div>
-                    <a
-                        class="flex items-center justify-center w-full h-16 mt-auto bg-gray-800 hover:bg-gray-700 hover:text-gray-300"
-                        href="/dashboard"
-                    >
-                        <Icon
-                            icon="material-symbols:exit-to-app-rounded"
-                            fill="none"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        />
-                        <span class="ml-2 text-sm font-medium">На головну</span>
-                    </a>
-                </div>
-            ) : (
-                <div class="sidebar">
-                    <button onClick={() => setNavigationFull(true)} className="mt-3">
-                        <ApplicationLogo></ApplicationLogo>
-                    </button>
-                    <div class="flex flex-col gap-2 items-center mt-3">
+            <div className="sidebar">
+                <a className="grid justify-center w-full p-4 lg:p-6" href={route("admin")}>
+                    <ApplicationLogo text></ApplicationLogo>
+                </a>
+
+                <div className="w-full py-2 px-1 lg:px-4 overflow-y-scroll">
+                    <div className="flex flex-col gap-2 items-center w-full">
+                        <span className="py-4 px-1 text-sm lg:text-2xl w-full text-start">
+                            Main
+                        </span>
                         <VerticalNavLink
                             href={route("admin")}
                             active={route().current("admin")}
-                        >
-                            <svg
-                                class="w-6 h-6 stroke-current"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                                />
-                            </svg>
-                        </VerticalNavLink>
+                            icon="mdi:home-analytics"
+                            title="Dashboard"
+                        />
                     </div>
-                    <div class="flex flex-col gap-2 items-center mt-2">
+                    <div className="flex flex-col gap-2 items-center w-full">
+                        <span className="py-4 px-1 text-sm lg:text-2xl w-full text-start">
+                            User edit
+                        </span>
                         <VerticalNavLink
                             href={route("user.index")}
                             active={route().current("user.index")}
-                        >
-                            <svg
-                                class="w-6 h-6 stroke-current"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"
-                                />
-                            </svg>
-                        </VerticalNavLink>
+                            icon="mdi:account-multiple"
+                            title="Users"
+                        />
                         <VerticalNavLink
                             href={route("role.index")}
                             active={route().current("role.index")}
-                        >
-                            <svg
-                                class="w-6 h-6 stroke-current"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"
-                                />
-                            </svg>
-                        </VerticalNavLink>
+                            icon="mdi:account-cog"
+                            title="Roles"
+                        ></VerticalNavLink>
                         <VerticalNavLink
                             href={route("permission.index")}
                             active={route().current("permission.index")}
-                        >
-                            <svg
-                                class="w-6 h-6 stroke-current"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"
-                                />
-                            </svg>
-                        </VerticalNavLink>
+                            icon="mdi:lock"
+                            title="Permissions"
+                        ></VerticalNavLink>
                     </div>
-                    <a
-                        class="flex items-center justify-center w-16 h-16 mt-auto bg-gray-800 hover:bg-gray-700 hover:text-gray-300"
-                        href="/dashboard"
-                    >
-                        <Icon
-                            icon="material-symbols:exit-to-app-rounded"
-                            width="24"
-                            height="24"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        />
-                    </a>
                 </div>
-            )}
-            <div className={navigationFull ? "w-full pl-64" : "w-full pl-16"}>
-                {header && (
-                    <header className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                            {header}
-                    </header>
-                )}
+                <VerticalNavLink
+                className="mt-4"
+                    href={route("dashboard")}
+                    icon="mdi:exit-to-app"
+                    title="To the main"
+                />
+            </div>
+            <div className="w-full pl-20 lg:pl-[10rem]">
+                <div className="admin-header max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    {header && <header>{header}</header>}
+                    {searchField && (
+                        <form onSubmit={handleSearch}>
+                            <SearchInput
+                                className="w-full"
+                                value={search}
+                                onChange={(event) =>
+                                    setSearch(event.target.value)
+                                }
+                            />
+                        </form>
+                    )}
+                    <div className="flex justify-between">
+                        {sortOptions.length != 0 && (
+                            <Dropdown className="w-fit">
+                                <Dropdown.Trigger>
+                                    <span className="flex w-fit gap-2 items-center lg:text-2xl">
+                                        Sort
+                                        <Icon icon="mdi:sort" className="md:w-6 md:h-6"/>
+                                    </span>
+                                </Dropdown.Trigger>
+
+                                <Dropdown.Content align="left">
+                                    {sortOptions.map((option) => (
+                                        <Dropdown.Link
+                                            key={option.key}
+                                            onClick={() =>
+                                                handleSort(option.key)
+                                            }
+                                        >
+                                            {option.label}
+                                        </Dropdown.Link>
+                                    ))}
+                                </Dropdown.Content>
+                            </Dropdown>
+                        )}
+                        {addElement && (
+                            <a
+                                href={route(route().current()) + "/create"}
+                                className="admin-create"
+                            >
+                                <Icon icon="mdi:plus" className="md:w-6 md:h-6" />
+                                <span className="font-medium md:text-2xl">Create</span>
+                            </a>
+                        )}
+                    </div>
+                </div>
                 <main>{children}</main>
             </div>
         </div>
