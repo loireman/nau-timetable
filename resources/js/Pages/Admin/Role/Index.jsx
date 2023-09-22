@@ -7,7 +7,7 @@ import DateFormatted from "@/Components/DateFormatted";
 import Modal from "@/Components/Modal";
 import { toast } from "react-toastify";
 
-export default function Index({ auth, roles, can, message }) {
+export default function Index({ auth, roles, can, message, error }) {
     function destroy(id) {
         if (confirm("Are you sure you want to delete?")) {
             const csrfToken = document.querySelector(
@@ -41,12 +41,19 @@ export default function Index({ auth, roles, can, message }) {
         if (message) {
             toast.success(message);
         }
-    }, [message]);
+        if (error) {
+            toast.error(error);
+        }
+    }, [message, error]);
 
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-medium text-lg lg:text-2xl">Ролі користувачів</h2>}
+            header={
+                <h2 className="font-medium text-lg lg:text-2xl">
+                    Ролі користувачів
+                </h2>
+            }
             addElement={can.create}
             searchField
             sortOptions={[
@@ -63,17 +70,38 @@ export default function Index({ auth, roles, can, message }) {
                     <div className="admin-list">
                         {roles.data.map((element, index) => (
                             <div
-                                className="card-default"
+                                className="card-default flex"
                                 onClick={() => openOptionsModal(index)}
                                 key={index}
                             >
-                                <h5 className="form-text">{element.name}</h5>
-                                <span>
-                                    Updated at{" "}
-                                    <DateFormatted
-                                        inputDate={element.updated_at}
-                                    />
-                                </span>
+                                <div>
+                                    <h5 className="form-text">
+                                        {element.name}
+                                    </h5>
+                                    <span>
+                                        Updated at{" "}
+                                        <DateFormatted
+                                            inputDate={element.updated_at}
+                                        />
+                                    </span>
+                                </div>
+                                <div className="hidden lg:block flex-1">
+                                    {element.permissions.length == 0 ? (
+                                        <div className="options-block">
+                                            <div className="chip">No data</div>
+                                        </div>
+                                    ) : (
+                                        <div className="options-block">
+                                            {element.permissions.map(
+                                                (element) => (
+                                                    <div className="chip">
+                                                        {element.name}
+                                                    </div>
+                                                )
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -88,7 +116,9 @@ export default function Index({ auth, roles, can, message }) {
                                 </button>
                                 <div>
                                     <span className="form-label">Name</span>
-                                    <h5 className="form-text">{roles.data[elementId]?.name}</h5>
+                                    <h5 className="form-text">
+                                        {roles.data[elementId]?.name}
+                                    </h5>
                                 </div>
                                 <div>
                                     <span className="form-label">
@@ -105,7 +135,9 @@ export default function Index({ auth, roles, can, message }) {
                                             {roles.data[
                                                 elementId
                                             ]?.permissions.map((element) => (
-                                                <div className="chip">{element.name}</div>
+                                                <div className="chip">
+                                                    {element.name}
+                                                </div>
                                             ))}
                                         </div>
                                     )}

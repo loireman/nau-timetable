@@ -13,10 +13,10 @@ import Radio from "@/Components/Radio";
 import Select from "@/Components/Select";
 import { toast } from "react-toastify";
 
-export default function Welcome({ auth, laravelVersion, phpVersion }) {
+export default function Welcome({ auth, laravelVersion, phpVersion, globalAlert }) {
     const [value, setValue] = useState("");
 
-    const [isEnabled, setIsEnabled] = useState(false);
+    const [isEnabled, setIsEnabled] = useState(true);
     const handleSwitchChange = (newValue) => {
         setIsEnabled(newValue);
     };
@@ -37,7 +37,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
     };
 
     const showToast = () => {
-        toast.success("This is a success toast"); // Display a success toast
+        toast.info(globalAlert); // Display a success toast
     };
 
     return (

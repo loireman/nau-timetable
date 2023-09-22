@@ -58,6 +58,7 @@ class RoleController extends Controller
                 'delete' => Auth::user()->can('permission delete'),
             ],
             'message' => session('message'),
+            'error' => session('error'),
         ]);
     }
 
@@ -136,7 +137,12 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        $role->delete();
+        try {
+            $role->delete();
+        } catch (\Throwable $th) {
+            return redirect()->route('permission.index')
+                ->with('error', __($th));
+        }
 
         return redirect()->route('role.index')
             ->with('message', __('Role deleted successfully'));

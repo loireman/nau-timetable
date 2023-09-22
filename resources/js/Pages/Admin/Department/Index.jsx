@@ -7,14 +7,14 @@ import DateFormatted from "@/Components/DateFormatted";
 import Modal from "@/Components/Modal";
 import { toast } from "react-toastify";
 
-export default function Index({ auth, permissions, can, message, error }) {
+export default function Index({ auth, departments, can, message, error }) {
     function destroy(id) {
         if (confirm("Are you sure you want to delete?")) {
             const csrfToken = document.querySelector(
                 'meta[name="csrf-token"]'
             ).content;
 
-            fetch(route("permission.destroy", id), {
+            fetch(route("department.destroy", id), {
                 method: "DELETE",
                 headers: {
                     "X-CSRF-TOKEN": csrfToken,
@@ -49,7 +49,7 @@ export default function Index({ auth, permissions, can, message, error }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-medium text-lg lg:text-2xl">Permissions</h2>}
+            header={<h2 className="font-medium text-lg lg:text-2xl">Departments</h2>}
             addElement={can.create}
             searchField
             sortOptions={[
@@ -59,12 +59,12 @@ export default function Index({ auth, permissions, can, message, error }) {
                 { key: "-name", label: "Name (Z to A)" },
             ]}
         >
-            <Head title="Permissions" />
+            <Head title="Departments" />
 
             <div className="pb-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="admin-list">
-                        {permissions.data.map((element, index) => (
+                        {departments.data.map((element, index) => (
                             <div
                                 className="card-default"
                                 onClick={() => openOptionsModal(index)}
@@ -81,21 +81,29 @@ export default function Index({ auth, permissions, can, message, error }) {
                         ))}
                     </div>
                     <Modal show={openOptions} onClose={closeModal}>
-                        {permissions.data[elementId] && (
+                        {departments.data[elementId] && (
                             <div className="card-modal">
                                 <button className="fixed right-4" onClick={closeModal}>
                                     <Icon icon="mdi:close" />
                                 </button>
                                 <div>
+                                    <span className="form-label">Short</span>
+                                    <h5 className="form-text">{departments.data[elementId]?.short}</h5>
+                                </div>
+                                <div>
                                     <span className="form-label">Name</span>
-                                    <h5 className="form-text">{permissions.data[elementId]?.name}</h5>
+                                    <h5 className="form-text">{departments.data[elementId]?.name}</h5>
+                                </div>
+                                <div>
+                                    <span className="form-label">Chief</span>
+                                    <h5 className="form-text">{departments.data[elementId]?.chief}</h5>
                                 </div>
                                 <div className="grid gap-1 m-auto">
                                     <span>
                                         Created at{" "}
                                         <DateFormatted
                                             inputDate={
-                                                permissions.data[elementId]
+                                                departments.data[elementId]
                                                     ?.created_at
                                             }
                                         />
@@ -104,7 +112,7 @@ export default function Index({ auth, permissions, can, message, error }) {
                                         Updated at{" "}
                                         <DateFormatted
                                             inputDate={
-                                                permissions.data[elementId]
+                                                departments.data[elementId]
                                                     ?.updated_at
                                             }
                                         />
@@ -114,8 +122,8 @@ export default function Index({ auth, permissions, can, message, error }) {
                                     <a
                                         className="admin-edit"
                                         href={route(
-                                            "permission.edit",
-                                            permissions.data[elementId].id
+                                            "department.edit",
+                                            departments.data[elementId].id
                                         )}
                                     >
                                         Edit <Icon icon="mdi:pencil" />
@@ -124,7 +132,7 @@ export default function Index({ auth, permissions, can, message, error }) {
                                 {can.delete && (
                                     <button
                                         className="admin-delete"
-                                        onClick={() => destroy(permissions.data[elementId].id)}
+                                        onClick={() => destroy(departments.data[elementId].id)}
                                     >
                                         Delete
                                         <Icon
@@ -135,7 +143,7 @@ export default function Index({ auth, permissions, can, message, error }) {
                             </div>
                         )}
                     </Modal>
-                    <Pagination pageContent={permissions}></Pagination>
+                    <Pagination pageContent={departments}></Pagination>
                 </div>
             </div>
         </AuthenticatedLayout>

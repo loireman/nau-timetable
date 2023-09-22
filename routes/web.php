@@ -16,8 +16,26 @@ use Inertia\Inertia;
 |
 */
 
+Route::group([
+    'namespace'  => 'App\Http\Controllers\Admin',
+    'prefix'     => 'admin',
+    'middleware' => ['auth', 'can:admin page'],
+], function () {
+    Route::get('/', function () {
+        return Inertia::render('Admin/Dashboard');
+    })->name('admin');
+    Route::resource('permission', 'PermissionController');
+    Route::resource('role', 'RoleController');
+    Route::resource('user', 'UserController');
+    Route::resource('config', 'ConfigController');
+    Route::resource('department', 'DepartmentController');
+    Route::resource('stream', 'StreamController');
+    Route::resource('group', 'GroupController');
+    Route::resource('timetable', 'TimetableController');
+});
+
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    return Inertia::render('Welcome1', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
@@ -25,18 +43,11 @@ Route::get('/', function () {
     ]);
 });
 
-Route::group([
-    'namespace'  => 'App\Http\Controllers\Admin',
-    'prefix'     => 'admin',
-    'middleware' => ['auth', 'can:admin page'],
-], function () {
-    Route::get('/', function() {
-        return Inertia::render('Admin/Dashboard');
-    })->name('admin');
-    Route::resource('permission', 'PermissionController');
-    Route::resource('role', 'RoleController');
-    Route::resource('user', 'UserController');
-});
+Route::get('/test', function () {
+    $globalAlert = config('global.global_alert');
+
+    return Inertia::render('Welcome', ['globalAlert' => $globalAlert]);
+})->name('test1');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -48,4 +59,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

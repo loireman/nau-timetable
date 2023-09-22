@@ -7,14 +7,14 @@ import DateFormatted from "@/Components/DateFormatted";
 import Modal from "@/Components/Modal";
 import { toast } from "react-toastify";
 
-export default function Index({ auth, permissions, can, message, error }) {
+export default function Index({ auth, streams, can, message, error }) {
     function destroy(id) {
         if (confirm("Are you sure you want to delete?")) {
             const csrfToken = document.querySelector(
                 'meta[name="csrf-token"]'
             ).content;
 
-            fetch(route("permission.destroy", id), {
+            fetch(route("stream.destroy", id), {
                 method: "DELETE",
                 headers: {
                     "X-CSRF-TOKEN": csrfToken,
@@ -49,7 +49,9 @@ export default function Index({ auth, permissions, can, message, error }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-medium text-lg lg:text-2xl">Permissions</h2>}
+            header={
+                <h2 className="font-medium text-lg lg:text-2xl">streams</h2>
+            }
             addElement={can.create}
             searchField
             sortOptions={[
@@ -59,18 +61,23 @@ export default function Index({ auth, permissions, can, message, error }) {
                 { key: "-name", label: "Name (Z to A)" },
             ]}
         >
-            <Head title="Permissions" />
+            <Head title="streams" />
 
             <div className="pb-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="admin-list">
-                        {permissions.data.map((element, index) => (
+                        {streams.data.map((element, index) => (
                             <div
                                 className="card-default"
                                 onClick={() => openOptionsModal(index)}
                                 key={index}
                             >
-                                <h5 className="form-text">{element.name}</h5>
+                                <h5 className="form-text">
+                                    {element.name}
+                                    <small>
+                                        ({element.course}к)
+                                    </small>
+                                </h5>
                                 <span>
                                     Updated at{" "}
                                     <DateFormatted
@@ -81,21 +88,38 @@ export default function Index({ auth, permissions, can, message, error }) {
                         ))}
                     </div>
                     <Modal show={openOptions} onClose={closeModal}>
-                        {permissions.data[elementId] && (
+                        {streams.data[elementId] && (
                             <div className="card-modal">
-                                <button className="fixed right-4" onClick={closeModal}>
+                                <button
+                                    className="fixed right-4"
+                                    onClick={closeModal}
+                                >
                                     <Icon icon="mdi:close" />
                                 </button>
                                 <div>
                                     <span className="form-label">Name</span>
-                                    <h5 className="form-text">{permissions.data[elementId]?.name}</h5>
+                                    <h5 className="form-text">
+                                        {streams.data[elementId]?.name}
+                                    </h5>
+                                </div>
+                                <div>
+                                    <span className="form-label">Course</span>
+                                    <h5 className="form-text">
+                                        {streams.data[elementId]?.course}
+                                    </h5>
+                                </div>
+                                <div>
+                                    <span className="form-label">Department</span>
+                                    <h5 className="form-text">
+                                        {streams.data[elementId]?.department.short}
+                                    </h5>
                                 </div>
                                 <div className="grid gap-1 m-auto">
                                     <span>
                                         Created at{" "}
                                         <DateFormatted
                                             inputDate={
-                                                permissions.data[elementId]
+                                                streams.data[elementId]
                                                     ?.created_at
                                             }
                                         />
@@ -104,7 +128,7 @@ export default function Index({ auth, permissions, can, message, error }) {
                                         Updated at{" "}
                                         <DateFormatted
                                             inputDate={
-                                                permissions.data[elementId]
+                                                streams.data[elementId]
                                                     ?.updated_at
                                             }
                                         />
@@ -114,8 +138,8 @@ export default function Index({ auth, permissions, can, message, error }) {
                                     <a
                                         className="admin-edit"
                                         href={route(
-                                            "permission.edit",
-                                            permissions.data[elementId].id
+                                            "stream.edit",
+                                            streams.data[elementId].id
                                         )}
                                     >
                                         Edit <Icon icon="mdi:pencil" />
@@ -124,18 +148,18 @@ export default function Index({ auth, permissions, can, message, error }) {
                                 {can.delete && (
                                     <button
                                         className="admin-delete"
-                                        onClick={() => destroy(permissions.data[elementId].id)}
+                                        onClick={() =>
+                                            destroy(streams.data[elementId].id)
+                                        }
                                     >
                                         Delete
-                                        <Icon
-                                            icon="mdi:trash"
-                                        />
+                                        <Icon icon="mdi:trash" />
                                     </button>
                                 )}
                             </div>
                         )}
                     </Modal>
-                    <Pagination pageContent={permissions}></Pagination>
+                    <Pagination pageContent={streams}></Pagination>
                 </div>
             </div>
         </AuthenticatedLayout>

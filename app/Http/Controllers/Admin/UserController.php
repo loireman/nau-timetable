@@ -63,6 +63,7 @@ class UserController extends Controller
                 'delete' => Auth::user()->can('user delete'),
             ],
             'message' => session('message'),
+            'error' => session('error'),
         ]);
     }
 
@@ -137,7 +138,12 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        $user->delete();
+        try {
+            $user->delete();
+        } catch (\Throwable $th) {
+            return redirect()->route('permission.index')
+                ->with('error', __($th));
+        }
 
         return redirect()->route('user.index')
                         ->with('message', __('User deleted successfully'));

@@ -7,14 +7,14 @@ import DateFormatted from "@/Components/DateFormatted";
 import Modal from "@/Components/Modal";
 import { toast } from "react-toastify";
 
-export default function Index({ auth, permissions, can, message, error }) {
+export default function Index({ auth, groups, can, message, error }) {
     function destroy(id) {
         if (confirm("Are you sure you want to delete?")) {
             const csrfToken = document.querySelector(
                 'meta[name="csrf-token"]'
             ).content;
 
-            fetch(route("permission.destroy", id), {
+            fetch(route("group.destroy", id), {
                 method: "DELETE",
                 headers: {
                     "X-CSRF-TOKEN": csrfToken,
@@ -49,7 +49,7 @@ export default function Index({ auth, permissions, can, message, error }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-medium text-lg lg:text-2xl">Permissions</h2>}
+            header={<h2 className="font-medium text-lg lg:text-2xl">Groups</h2>}
             addElement={can.create}
             searchField
             sortOptions={[
@@ -58,13 +58,17 @@ export default function Index({ auth, permissions, can, message, error }) {
                 { key: "name", label: "Name (A to Z)" },
                 { key: "-name", label: "Name (Z to A)" },
             ]}
+            filterOptions = {[
+                { key: 'group', value: null },
+                { key: 'substream', value: null },
+            ]}
         >
-            <Head title="Permissions" />
+            <Head title="Groups" />
 
             <div className="pb-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="admin-list">
-                        {permissions.data.map((element, index) => (
+                        {groups.data.map((element, index) => (
                             <div
                                 className="card-default"
                                 onClick={() => openOptionsModal(index)}
@@ -81,21 +85,61 @@ export default function Index({ auth, permissions, can, message, error }) {
                         ))}
                     </div>
                     <Modal show={openOptions} onClose={closeModal}>
-                        {permissions.data[elementId] && (
+                        {groups.data[elementId] && (
                             <div className="card-modal">
-                                <button className="fixed right-4" onClick={closeModal}>
+                                <button
+                                    className="fixed right-4"
+                                    onClick={closeModal}
+                                >
                                     <Icon icon="mdi:close" />
                                 </button>
                                 <div>
                                     <span className="form-label">Name</span>
-                                    <h5 className="form-text">{permissions.data[elementId]?.name}</h5>
+                                    <h5 className="form-text">
+                                        {groups.data[elementId]?.name}
+                                    </h5>
                                 </div>
+                                {groups.data[elementId]?.stream ? (
+                                    <>
+                                        <span className="form-label">
+                                            Stream
+                                        </span>
+                                        <h5 className="form-text">
+                                            {
+                                                groups.data[elementId]?.stream
+                                                    .name
+                                            }
+                                            <small>
+                                                (
+                                                {
+                                                    groups.data[elementId]
+                                                        ?.stream.course
+                                                }
+                                                к)
+                                            </small>
+                                        </h5>
+                                    </>
+                                ) : null}
+
+                                {groups.data[elementId]?.substream ? (
+                                    <>
+                                        <span className="form-label">
+                                            Sub stream
+                                        </span>
+                                        <h5 className="form-text">
+                                            {
+                                                groups.data[elementId]
+                                                    ?.substream.name
+                                            }
+                                        </h5>
+                                    </>
+                                ) : null}
                                 <div className="grid gap-1 m-auto">
                                     <span>
                                         Created at{" "}
                                         <DateFormatted
                                             inputDate={
-                                                permissions.data[elementId]
+                                                groups.data[elementId]
                                                     ?.created_at
                                             }
                                         />
@@ -104,7 +148,7 @@ export default function Index({ auth, permissions, can, message, error }) {
                                         Updated at{" "}
                                         <DateFormatted
                                             inputDate={
-                                                permissions.data[elementId]
+                                                groups.data[elementId]
                                                     ?.updated_at
                                             }
                                         />
@@ -114,8 +158,8 @@ export default function Index({ auth, permissions, can, message, error }) {
                                     <a
                                         className="admin-edit"
                                         href={route(
-                                            "permission.edit",
-                                            permissions.data[elementId].id
+                                            "group.edit",
+                                            groups.data[elementId].id
                                         )}
                                     >
                                         Edit <Icon icon="mdi:pencil" />
@@ -124,18 +168,18 @@ export default function Index({ auth, permissions, can, message, error }) {
                                 {can.delete && (
                                     <button
                                         className="admin-delete"
-                                        onClick={() => destroy(permissions.data[elementId].id)}
+                                        onClick={() =>
+                                            destroy(groups.data[elementId].id)
+                                        }
                                     >
                                         Delete
-                                        <Icon
-                                            icon="mdi:trash"
-                                        />
+                                        <Icon icon="mdi:trash" />
                                     </button>
                                 )}
                             </div>
                         )}
                     </Modal>
-                    <Pagination pageContent={permissions}></Pagination>
+                    <Pagination pageContent={groups}></Pagination>
                 </div>
             </div>
         </AuthenticatedLayout>

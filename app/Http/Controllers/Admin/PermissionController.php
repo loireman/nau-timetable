@@ -47,6 +47,7 @@ class PermissionController extends Controller
                 'delete' => Auth::user()->can('permission delete'),
             ],
             'message' => session('message'),
+            'error' => session('error'),
         ]);
     }
 
@@ -85,7 +86,12 @@ class PermissionController extends Controller
      */
     public function destroy(Permission $permission)
     {
-        $permission->delete();
+        try {
+            $permission->delete();
+        } catch (\Throwable $th) {
+            return redirect()->route('permission.index')
+                ->with('error', __($th));
+        }
         return redirect()->route('permission.index')
             ->with('message', __('Permission deleted successfully'));
     }

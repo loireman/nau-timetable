@@ -130,6 +130,7 @@ body
 .form
     &-text
         font-size: 16px
+        color: $color-text
         @media screen and (min-width: $size-lg)
             font-size: 24px
 
@@ -340,11 +341,35 @@ body
                     background-color: #f4f4f4
 
 .text-editor
-    .ql-picker-label, .ql-picker-item, .ql-container, .ql-editor
-        border-color: transparent !important
+    .ql-picker-label, .ql-picker-item, .ql-container
         font-family: Montserrat
+
+    .ql-toolbar
+        border-radius: 10px 10px 0px 0px
+        border-color: $color-text-light
+    .ql-editor
         &:focus-visible
             outline: none
+        @media screen and (min-width: $size-lg)
+            >h6
+                font-size: 18px
+            >h5
+                font-size: 20px
+            >h4
+                font-size: 22px
+            >h3
+                font-size: 24px
+            >h2
+                font-size: 32px
+            >h1
+                font-size: 36px
+
+    .ql-container
+        border-radius: 0px 0px 10px 10px
+        border-color: $color-text-light
+        @media screen and (min-width: $size-lg)
+            font-size: 20px
+
 
 .file-input-dropdown
     position: relative
@@ -378,9 +403,9 @@ body
             height: 14px
 
 .button-primary
+    color: $color-bg
     background-color: $color-blue
     text-align: center
-    color: $color-bg
     padding: 12px 24px
     border-radius: 8px
     &:hover
@@ -428,13 +453,12 @@ body
         border-radius: 10px
 
         background-color: $color-light
+        color: $color-text-light
+        font-size: 10px
 
         span
-            font-size: 10px
-            color: $color-text-light
         @media screen and (min-width: $size-lg)
-            span
-                font-size: 16px
+            font-size: 16px
 
     &-default
         box-shadow: 0px 2px 8px -1px rgba(30, 41, 59, 0.12), 0px 2px 2px 1px rgba(30, 41, 59, 0.04)
@@ -459,6 +483,17 @@ body
         border-radius: 4px
         padding: 8px
         background-color: $color-active
+
+    .chip.filter
+        padding: 6px 16px
+        display: flex
+        align-items: center
+        gap: 4px
+
+
+    .chip.active
+        color: $color-light
+        background-color: $color-text
 
     @media screen and (min-width: $size-lg)
         gap: 16px
