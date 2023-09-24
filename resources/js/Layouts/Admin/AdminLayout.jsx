@@ -19,18 +19,25 @@ export default function Authenticated({
     const [selectedFilterState, setSelectedFilterState] = useState([]);
     const [formFilterState, setFormFilterState] = useState([]);
 
-    // Get the values of filters from the query string and initialize selectedFilters
     useEffect(() => {
-        const url = new URL(window.location);
-        const searchParams = url.searchParams;
+        // Define a function to update state and URL
+        const updateFilters = () => {
+            const url = new URL(window.location);
+            const searchParams = url.searchParams;
 
-        const activeFilters = filterOptions
-            .filter((filter) => searchParams.get(filter.key) === "on")
-            .map((filter) => filter.key);
+            const activeFilters = filterOptions
+                .filter((filter) => searchParams.get(filter.key) === "on")
+                .map((filter) => filter.key);
 
-        setSelectedFilterState(activeFilters);
-        setFormFilterState(activeFilters);
-    }, [filterOptions]);
+            setSelectedFilterState(activeFilters);
+            setFormFilterState(activeFilters);
+        };
+
+        // Check if the filterOptions have changed before calling updateFilters
+        if (filterOptions.length > 0) {
+            updateFilters();
+        }
+    }, [filterOptions]); // Specify [filterOptions] as a dependency
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -93,7 +100,6 @@ export default function Authenticated({
 
         window.location = url;
     };
-
 
     return (
         <div className="flex min-h-screen">

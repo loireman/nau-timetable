@@ -2,17 +2,19 @@ import Checkbox from "@/Components/Checkbox";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
+import Select from "@/Components/Select";
 import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/Admin/AdminLayout";
 import { Head, useForm } from "@inertiajs/react";
 import { useState } from "react";
 
-export default function Create({ auth, roles }) {
+export default function Create({ auth, roles, groups }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
         password: "",
         password_confirmation: "",
+        group_id: 1,
         roles: [],
     });
 
@@ -29,6 +31,10 @@ export default function Create({ auth, roles }) {
                 roles: prevItems.roles.filter((item) => item !== value),
             }));
         }
+    };
+
+    const handleSelectChange = (newValue) => {
+        setData("group_id", newValue);
     };
 
     const submit = (e) => {
@@ -113,6 +119,14 @@ export default function Create({ auth, roles }) {
                         <InputError
                             message={errors.password}
                             className="mt-2"
+                        />
+                        <InputLabel htmlFor="name" value="Group" />
+                        <Select
+                            options={groups}
+                            defaultValue="Виберіть групу"
+                            defaultSelectable={false}
+                            value={data.group_id}
+                            onChange={handleSelectChange}
                         />
                         <div className="block mt-4">
                             {Object.entries(roles).map(([key, value]) => (

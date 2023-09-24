@@ -7,6 +7,7 @@ use App\Actions\Admin\User\UpdateUser;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
+use App\Models\Groups;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -75,9 +76,11 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::all()->pluck("name","id");
+        $groups = Groups::whereNotNull('substream_id')->pluck('name', 'id')->all();
 
         return Inertia::render('Admin/User/Create', [
             'roles' => $roles,
+            'groups' => $groups,
         ]);
     }
 
@@ -105,11 +108,13 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $roles = Role::all()->pluck("name","id");
+        $groups = Groups::whereNotNull('substream_id')->pluck('name', 'id')->all();
         $userHasRoles = array_column(json_decode($user->roles, true), 'id');
 
         return Inertia::render('Admin/User/Edit', [
             'user' => $user,
             'roles' => $roles,
+            'groups' => $groups,
             'userHasRoles' => $userHasRoles,
         ]);
     }

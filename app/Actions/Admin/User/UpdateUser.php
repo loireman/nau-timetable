@@ -13,6 +13,7 @@ class UpdateUser
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
+            'group_id' => $request->group_id
         ]);
 
         if ($request->password) {

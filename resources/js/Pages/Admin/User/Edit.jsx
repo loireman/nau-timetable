@@ -7,12 +7,14 @@ import AuthenticatedLayout from "@/Layouts/Admin/AdminLayout";
 import { Head, useForm } from "@inertiajs/react";
 import { useState } from "react";
 import { Inertia } from "@inertiajs/inertia";
+import Select from "@/Components/Select";
 
-export default function Edit({ auth, user, roles }) {
+export default function Edit({ auth, user, roles, groups }) {
     const { data, setData, put, processing, errors, reset } = useForm({
         name: user.name,
         email: user.email,
         roles: user.roles.map((role) => role.id),
+        group_id: user.group_id,
         password: "",
         password_confirmation: "",
     });
@@ -30,6 +32,10 @@ export default function Edit({ auth, user, roles }) {
                 roles: prevItems.roles.filter((item) => item !== value),
             }));
         }
+    };
+
+    const handleSelectChange = (newValue) => {
+        setData("group_id", newValue);
     };
 
     const submit = (e) => {
@@ -110,6 +116,14 @@ export default function Edit({ auth, user, roles }) {
                         <InputError
                             message={errors.password_confirmation}
                             className="mt-2"
+                        />
+                        <InputLabel htmlFor="name" value="Group" />
+                        <Select
+                            options={groups}
+                            defaultValue="Виберіть групу"
+                            defaultSelectable={false}
+                            value={data.group_id}
+                            onChange={handleSelectChange}
                         />
                         <div className="block mt-4">
                             {Object.entries(roles).map(([key, value]) => (

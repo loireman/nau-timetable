@@ -13,6 +13,7 @@ class CreateUser
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'group_id' => $request->group_id,
             'password' => Hash::make($request->password),
         ]);
 

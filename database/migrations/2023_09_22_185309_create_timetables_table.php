@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('timetables', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('teacher');
+            $table->string('teacher')->nullable();
             $table->integer('type');
             $table->integer('week');
             $table->integer('day');

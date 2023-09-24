@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Setting;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Schema; // Import Schema facade
 use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,19 +22,22 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if ($this->app->environment('production')) {
-            URL::forceScheme('https');
-        }
+        // Check if the "settings" table exists
+        if (Schema::hasTable('settings')) {
+            if ($this->app->environment('production')) {
+                URL::forceScheme('https');
+            }
 
-        config([
-            'global' => Setting::all([
-                'name', 'value'
-            ])
-                ->keyBy('name') // key every setting by its name
-                ->transform(function ($setting) {
-                    return $setting->value; // return only the value
-                })
-                ->toArray() // make it an array
-        ]);
+            config([
+                'config' => Setting::all([
+                    'name', 'value'
+                ])
+                    ->keyBy('name') // key every setting by its name
+                    ->transform(function ($setting) {
+                        return $setting->value; // return only the value
+                    })
+                    ->toArray() // make it an array
+            ]);
+        }
     }
 }
