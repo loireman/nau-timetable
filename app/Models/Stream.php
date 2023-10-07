@@ -21,4 +21,9 @@ class Stream extends Model
     {
         return $this->belongsTo(Departments::class, 'department_id', 'id');
     }
+
+    public function groups()
+    {
+        return $this->hasMany(Groups::class, 'stream_id', 'id');
+    }
 }

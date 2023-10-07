@@ -221,7 +221,6 @@ body
     &-switch
         display: flex
         align-items: center
-        margin-bottom: 10px
 
         span
             margin-left: 10px
@@ -262,6 +261,21 @@ body
 
             &.on .switch
                 transform: translateX(20px)
+
+            @media screen and (min-width: $size-lg)
+                width: 60px
+                height: 30px
+                border-radius: 20px
+                .hidden-checkbox
+                    width: 60px
+                    height: 30px
+                .switch
+                    width: 24px
+                    height: 24px
+                    top: 3px
+                    left: 3px
+                &.on .switch
+                    transform: translateX(30px)
 
     &-checkbox
         border-radius: 10px
@@ -526,7 +540,7 @@ body
 
     .cell-label
         display: block
-        width:100%
+        width: 100%
         height: 40px
         text-align: center
         background-color: #fff
@@ -543,3 +557,88 @@ body
         background-color: #3498db
         color: #fff
         font-weight: bold
+
+.welcome-layout
+    margin-top: 5rem
+    width: 100%
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: space-between
+
+    .welcome-container
+        flex-grow: 1
+        padding: 20px
+        display: grid
+        gap: 16px
+        max-width: 600px
+        margin: auto
+
+        >div
+            display: flex
+            justify-content: space-between
+            flex-grow: 1
+            gap: 36px
+            a, button
+                width: 100%
+                text-transform: uppercase
+                font-weight: 500
+
+    h1
+        font-size: 24px
+        font-weight: 700
+
+    img
+        width: 100%
+        aspect-ratio: 3/2
+        max-width: 100%
+        object-fit: cover
+
+    @media screen and (min-width: 1200px)
+        button
+            margin-top: 12px
+            padding: 20px 12px
+        br
+            display: none
+
+    @media screen and (min-width: $size-lg)
+        margin-top: 0
+        flex-direction: row
+        img
+            width: 50%
+            flex-shrink: 0
+            height: 100vh
+            max-width: 100%
+
+.timetable
+    border-collapse: collapse
+    width: 100%
+    margin-bottom: 20px
+
+    td
+        width: 16.66%
+        height: 120px
+        padding: 10px
+        vertical-align: top
+
+    .time
+        padding: 4px 8px
+        color: $color-bg
+        background-color: $color-text
+        width: fit-content
+        border-radius: 20px
+        margin-bottom: 10px
+
+    .lesson-type
+        position: absolute
+        top: 0
+        left: 0
+        padding: 10px
+        border-end-end-radius: 20px
+        &.type-0
+            background-color: $color-danger
+        &.type-1
+            background-color: $color-blue
+        &.type-2
+            background-color: $color-green
+

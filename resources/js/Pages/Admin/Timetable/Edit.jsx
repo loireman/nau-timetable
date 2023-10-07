@@ -195,7 +195,7 @@ export default function Edit({ auth, timetable, groups }) {
                                     className="w-full grid mt-6"
                                     disabled={processing}
                                 >
-                                    <span className="text-[1rem]">Create</span>
+                                    <span className="text-[1rem]">Update</span>
                                 </PrimaryButton>
                             </>
                         ) : null}

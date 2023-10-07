@@ -25,4 +25,8 @@ class Groups extends Model
     {
         return $this->belongsTo(Groups::class, 'substream_id', 'id');
     }
+    public function timetables()
+    {
+        return $this->hasMany(Timetable::class, 'group_id', 'id');
+    }
 }
