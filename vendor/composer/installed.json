@@ -3105,6 +3105,94 @@
             "install-path": "../nutgram/hydrator"
         },
         {
+            "name": "nutgram/laravel",
+            "version": "1.2.0",
+            "version_normalized": "1.2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nutgram/laravel.git",
+                "reference": "36f763e87f68430c10632ebb77cb7ff9a42097c6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nutgram/laravel/zipball/36f763e87f68430c10632ebb77cb7ff9a42097c6",
+                "reference": "36f763e87f68430c10632ebb77cb7ff9a42097c6",
+                "shasum": ""
+            },
+            "require": {
+                "nunomaduro/termwind": "^1.15",
+                "nutgram/nutgram": "^4.6.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "illuminate/testing": "^9.0|^10.0",
+                "orchestra/testbench": "^7.0|^8.0",
+                "pestphp/pest": "^1.1",
+                "pestphp/pest-plugin-mock": "^1.0",
+                "roave/security-advisories": "dev-latest",
+                "vimeo/psalm": "^4.30"
+            },
+            "time": "2023-09-23T20:56:53+00:00",
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Nutgram\\Laravel\\NutgramServiceProvider"
+                    ]
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "files": [
+                    "src/Support/Helpers.php"
+                ],
+                "psr-4": {
+                    "Nutgram\\Laravel\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Luca Patera",
+                    "email": "lucapatera@outlook.it",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Sergio Brighenti",
+                    "email": "sergio@brighenti.me",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Laravel package for Nutgram",
+            "homepage": "https://github.com/nutgram/nutgram-laravel",
+            "keywords": [
+                "api",
+                "bot",
+                "framework",
+                "laravel",
+                "library",
+                "nutgram",
+                "telegram"
+            ],
+            "support": {
+                "source": "https://github.com/nutgram/laravel/tree/1.2.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/Lukasss93",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/SergiX44",
+                    "type": "github"
+                }
+            ],
+            "install-path": "../nutgram/laravel"
+        },
+        {
             "name": "nutgram/nutgram",
             "version": "4.10.0",
             "version_normalized": "4.10.0.0",

@@ -90,6 +90,10 @@ export default function Index({ auth, configs, can, message, error }) {
                                     <span className="form-label">Name</span>
                                     <h5 className="form-text">{configs.data[elementId]?.name}</h5>
                                 </div>
+                                <div>
+                                    <span className="form-label">Value</span>
+                                    <h5 className="form-text">{configs.data[elementId]?.value}</h5>
+                                </div>
                                 <div className="grid gap-1 m-auto">
                                     <span>
                                         Created at{" "}
