@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'b82b0991306a1bf3bcca0f8924090986b7dac156',
+        'reference' => '9672d78920af2ee3ff7ecadae50af110fa707184',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -391,7 +391,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'b82b0991306a1bf3bcca0f8924090986b7dac156',
+            'reference' => '9672d78920af2ee3ff7ecadae50af110fa707184',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -574,6 +574,24 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'nutgram/hydrator' => array(
+            'pretty_version' => '5.0.0',
+            'version' => '5.0.0.0',
+            'reference' => '98e7a41b86d28cc583593f5188040263333273ac',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../nutgram/hydrator',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'nutgram/nutgram' => array(
+            'pretty_version' => '4.10.0',
+            'version' => '4.10.0.0',
+            'reference' => '69a41695c20acaf5f4004c31f383f3b291c1c69f',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../nutgram/nutgram',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'phar-io/manifest' => array(
             'pretty_version' => '2.0.3',
             'version' => '2.0.3.0',
@@ -668,6 +686,7 @@
             'dev_requirement' => false,
             'provided' => array(
                 0 => '1.1|2.0',
+                1 => '^1.1|^2.0',
             ),
         ),
         'psr/event-dispatcher' => array(
@@ -937,6 +956,15 @@
             'install_path' => __DIR__ . '/../sebastian/version',
             'aliases' => array(),
             'dev_requirement' => true,
+        ),
+        'sergix44/container' => array(
+            'pretty_version' => '2.1.0',
+            'version' => '2.1.0.0',
+            'reference' => '54513797b8dba8d9b5d4db62b9d3c862d56f696c',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../sergix44/container',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'spatie/backtrace' => array(
             'pretty_version' => '1.4.0',
