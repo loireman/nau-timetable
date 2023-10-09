@@ -22,12 +22,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
         // Check if the "settings" table exists
         if (Schema::hasTable('settings')) {
-            if ($this->app->environment('production')) {
-                URL::forceScheme('https');
-            }
-
             config([
                 'config' => Setting::all([
                     'name', 'value'
