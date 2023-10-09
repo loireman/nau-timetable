@@ -15,11 +15,7 @@ return [
     |
     */
 
-    'paths' => ['*', 'sanctum/csrf-cookie'],
-
-    'Access-Control-Allow-Origin'=> '*',
-
-    'Access-Control-Allow-Headers'=> 'Origin, Content-Type',
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 
