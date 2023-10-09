@@ -120,7 +120,7 @@ export default function Timetable({ auth, department, stream, group, pgroup }) {
     const lessonStart = (value) => {
         var currentOffset = new Date().getTimezoneOffset();
 
-        var convertedMinutes = 540 + (value - 1) * 110 + currentOffset;
+        var convertedMinutes = 300 + (value - 1) * 110 - currentOffset;
 
         var hours = Math.floor(convertedMinutes / 60);
         var minutes = convertedMinutes % 60;
