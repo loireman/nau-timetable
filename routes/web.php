@@ -44,7 +44,7 @@ Route::get('/', function () {
 });
 
 Route::get('/test', function () {
-    $globalAlert = config('global.global_alert');
+    $globalAlert = config('config.global_alert');
 
     return Inertia::render('Welcome', ['globalAlert' => $globalAlert]);
 })->name('test1');

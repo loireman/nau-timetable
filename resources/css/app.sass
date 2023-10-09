@@ -613,11 +613,18 @@ body
 .timetable
     border-collapse: collapse
     width: 100%
-    margin-bottom: 20px
+
+    .day-active
+        background-color: $color-active
+
+    th
+        border-top-left-radius: 10px
+        border-top-right-radius: 10px
+        padding: 10px
 
     td
         width: 16.66%
-        height: 120px
+        height: 180px
         padding: 10px
         vertical-align: top
 
@@ -633,8 +640,10 @@ body
         position: absolute
         top: 0
         left: 0
-        padding: 10px
+        padding: 8px
         border-end-end-radius: 20px
+        &.active
+            padding-right: 50px
         &.type-0
             background-color: $color-danger
         &.type-1
