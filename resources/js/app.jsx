@@ -10,13 +10,16 @@ import { createInertiaApp } from "@inertiajs/inertia-react";
 const appName =
     window.document.getElementsByTagName("title")[0]?.innerText || "Laravel";
 
+const pageContext = require.context("./Pages", true, /\.jsx$/);
+
+const resolvePageComponent = (name) => {
+    const pageModule = pageContext(`./${name}.jsx`);
+    return pageModule.default || pageModule;
+};
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
-    resolve: (name) => {
-        const pages = import.meta.glob("./Pages/**/*.jsx");
-        const pageComponent = resolvePageComponent(name, pages);
-        return pageComponent.default || pageComponent;
-    },
+    resolve: (name) => resolvePageComponent(name),
     setup({ el, App, props }) {
         const root = createRoot(el);
 
