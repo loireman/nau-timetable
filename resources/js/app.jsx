@@ -1,25 +1,22 @@
 import "./bootstrap";
 import "../css/app.css";
-import "react-toastify/dist/ReactToastify.css";
+import 'react-toastify/dist/ReactToastify.css'
 
-import { ToastContainer } from "react-toastify";
+import { ToastContainer } from 'react-toastify';
 import { createRoot } from "react-dom/client";
-import { InertiaApp } from "@inertiajs/inertia-react";
-import { createInertiaApp } from "@inertiajs/inertia-react";
+import { createInertiaApp } from "@inertiajs/react";
+import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 
 const appName =
     window.document.getElementsByTagName("title")[0]?.innerText || "Laravel";
 
-const pageContext = require.context("./Pages", true, /\.jsx$/);
-
-const resolvePageComponent = (name) => {
-    const pageModule = pageContext(`./${name}.jsx`);
-    return pageModule.default || pageModule;
-};
-
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
-    resolve: (name) => resolvePageComponent(name),
+    resolve: (name) =>
+        resolvePageComponent(
+            `./Pages/${name}.jsx`,
+            import.meta.glob("./Pages/**/*.jsx")
+        ),
     setup({ el, App, props }) {
         const root = createRoot(el);
 

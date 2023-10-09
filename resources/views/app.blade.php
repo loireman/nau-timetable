@@ -18,10 +18,9 @@
 
     <!-- Scripts -->
     @routes
-    <script src="{{ mix('js/app.js') }}" defer></script>
+    @viteReactRefresh
+    @vite(['resources/css/app.sass', 'resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx"])
     @inertiaHead
-
-    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
 </head>
 
 <body class="antialiased">

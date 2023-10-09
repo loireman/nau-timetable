@@ -1,1 +1,0 @@
-import{j as n,a as m}from"./app-9c633b3e.js";function c({value:a,className:s="",required:e=!1,children:r,...l}){return n("label",{...l,className:"form-label "+s,children:[e&&m("span",{className:"form-required",children:"* "}),a||r]})}export{c as I};
