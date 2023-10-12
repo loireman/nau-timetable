@@ -51,12 +51,12 @@ export default function Login({ status, canResetPassword }) {
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+                    <InputLabel htmlFor="password" value="Пароль" />
 
                     <TextInput
                         id="password"
                         type="password"
-                        name="password"
+                        name="Пароль"
                         value={data.password}
                         className="mt-1 block w-full"
                         autoComplete="current-password"
@@ -73,7 +73,7 @@ export default function Login({ status, canResetPassword }) {
                             checked={data.remember}
                             onChange={(e) => setData('remember', e.target.checked)}
                         />
-                        <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">Remember me</span>
+                        <span className="ml-2 text-sm text-gray-600">Запам'ятати мене</span>
                     </label>
                 </div>
 
@@ -81,15 +81,21 @@ export default function Login({ status, canResetPassword }) {
                     {canResetPassword && (
                         <Link
                             href={route('password.request')}
-                            className="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                            className="underline text-sm text-gray-600 hover:text-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                         >
-                            Forgot your password?
+                            Забули пароль?
                         </Link>
                     )}
 
                     <PrimaryButton className="ml-4" disabled={processing}>
-                        Log in
+                        Увійти
                     </PrimaryButton>
+                </div>
+                <div className='flex gap-3 mt-3'>
+                    <span>
+                    Не маєте аккаунту?
+                    </span>
+                    <a className='font-semibold hover:text-blue-700' href={route('register')}>Зареєструватись</a>
                 </div>
             </form>
         </GuestLayout>

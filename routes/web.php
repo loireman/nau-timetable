@@ -51,7 +51,7 @@ Route::get('/test', function () {
 
 Route::get('/timetable/{department?}/{stream?}/{group?}/{pgroup?}', function ($department = 0, $stream = 0, $group = 0, $pgroup = 0) {
     return Inertia::render('Timetable', compact('department', 'stream', 'group', 'pgroup'));
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->name('dashboard');
 
 
 Route::middleware('auth')->group(function () {
