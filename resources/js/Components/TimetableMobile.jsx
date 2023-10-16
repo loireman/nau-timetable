@@ -124,7 +124,7 @@ const TimetableMobile = ({
                                 {timetable.map((entry, index) => (
                                     <div key={index}>
                                         {(entry.pgroup === 0 ||
-                                            entry.pgroup === selectedPGroup) &&
+                                            entry.pgroup == selectedPGroup) &&
                                         entry.week === week + 1 &&
                                         entry.day === selectedDay &&
                                         entry.lesson === lesson ? (
