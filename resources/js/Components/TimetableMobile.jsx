@@ -66,7 +66,7 @@ const TimetableMobile = ({
     const lessonStart = (value) => {
         const currentOffset = new Date().getTimezoneOffset();
         const startMinutes = 300 + (value - 1) * 110 - currentOffset;
-        const endMinutes = startMinutes + 155; // 155 minutes for 2 hours and 35 minutes
+        const endMinutes = startMinutes + 95;
 
         const formatTime = (minutes) => {
             var hours = Math.floor(minutes / 60);
