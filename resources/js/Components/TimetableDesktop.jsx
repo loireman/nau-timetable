@@ -24,7 +24,7 @@ const TimetableDesktop = ({
         const formatTime = (minutes) => {
             var hours = Math.floor(minutes / 60);
             var minutes = minutes % 60;
-            return hours + ":" + (minutes < 10 ? minutes + "0" : minutes);
+            return hours + ":" + (minutes < 10 ? "0" + minutes : minutes);
         };
 
         return `${formatTime(startMinutes)} - ${formatTime(endMinutes)}`;

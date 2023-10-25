@@ -29,5 +29,14 @@ Route::group([
         Route::get('departments', [App\Http\Controllers\Api\DepartmentController::class, 'getDepartments']);
         Route::get('streams/{department}', [App\Http\Controllers\Api\DepartmentController::class, 'getStreams']);
         Route::get('groups/{department}/{group?}', [App\Http\Controllers\Api\DepartmentController::class, 'getGroups']);
+
+        Route::group([
+            'prefix' => 'search',
+            'middleware' => ['api'],
+        ], function()
+        {
+            // Search routes here
+            Route::get('group/{name?}', [App\Http\Controllers\Api\SearchController::class, 'getGroupByName']);
+        });
     }
 );
