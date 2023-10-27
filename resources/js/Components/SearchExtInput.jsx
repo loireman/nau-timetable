@@ -9,14 +9,26 @@ export default forwardRef(function SearchExtInput(
         isFocused = false,
         suggestionsEndpoint,
         onSearch,
+        defaultValue = "",
         ...props
     },
     ref
 ) {
     const inputRef = ref || useRef();
-    const [query, setQuery] = useState("");
+    const [query, setQuery] = useState(defaultValue);
     const [suggestions, setSuggestions] = useState([]);
     const [isInputFocused, setIsInputFocused] = useState(false);
+
+    useEffect(() => {
+        axios
+            .get(`${suggestionsEndpoint}`)
+            .then((response) => {
+                setSuggestions(response.data);
+            })
+            .catch((error) => {
+                console.error("Error fetching suggestions:", error);
+            });
+    }, []);
 
     useEffect(() => {
         if (isFocused) {
@@ -26,7 +38,6 @@ export default forwardRef(function SearchExtInput(
     }, [isFocused]);
 
     const handleInputBlur = () => {
-        // Delay blur to allow for click event handling
         setTimeout(() => {
             setIsInputFocused(false);
         }, 90);
@@ -37,15 +48,14 @@ export default forwardRef(function SearchExtInput(
     };
 
     const handleBlockClick = () => {
-        // If the block is clicked, set focus to input
         inputRef.current.focus();
+        setIsInputFocused(true);
     };
 
     const handleInputChange = (e) => {
         const inputValue = e.target.value;
         setQuery(inputValue);
 
-        // Fetch suggestions based on the input value
         if (suggestionsEndpoint) {
             axios
                 .get(`${suggestionsEndpoint}/${inputValue}`)
@@ -59,9 +69,10 @@ export default forwardRef(function SearchExtInput(
     };
 
     const handleSuggestionClick = (suggestion) => {
-        // Check if suggestion is defined and has a name property
         if (suggestion) {
+            setQuery(suggestion);
             onSearch(suggestion);
+            inputRef.current.blur();
         }
     };
 
@@ -85,19 +96,17 @@ export default forwardRef(function SearchExtInput(
                     onFocus={handleInputFocus}
                 />
                 {isInputFocused && suggestions.length !== 0 && (
-                    <ul className="options">
-                        {Object.keys(suggestions).map((value) => (
-                            <li
-                                className="option"
-                                key={value}
-                                onClick={() =>
-                                    handleSuggestionClick(suggestions[value])
-                                }
-                            >
-                                {suggestions[value]}
-                            </li>
-                        ))}
-                    </ul>
+                    <ul className="options" style={{ maxHeight: suggestions.length > 10 ? "200px" : "auto", overflowY: "auto" }}>
+                    {Object.keys(suggestions).map((value) => (
+                      <li
+                        className="option"
+                        key={value}
+                        onClick={() => handleSuggestionClick(suggestions[value])}
+                      >
+                        {suggestions[value]}
+                      </li>
+                    ))}
+                  </ul>
                 )}
             </div>
         </>

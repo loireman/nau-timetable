@@ -6,42 +6,25 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import Select from "@/Components/Select";
 import TimetableDesktop from "@/Components/TimetableDesktop";
 import TimetableMobile from "@/Components/TimetableMobile";
+import SearchExtInput from "@/Components/SearchExtInput";
+import InputSwitch from "@/Components/InputSwitch";
 
-export default function Timetable({ auth, department, stream, group, pgroup }) {
+export default function Timetable({ auth, group }) {
     const [timetable, setTimetable] = useState([]);
 
-    const [departments, setDepartments] = useState([]);
-    const [selectedDepartment, setSelectedDepartment] = useState(department);
-    const [streams, setStreams] = useState([]);
-    const [selectedStream, setSelectedStream] = useState(stream);
-    const [groups, setGroups] = useState([]);
-    const [selectedGroup, setSelectedGroup] = useState(group);
-    const [selectedPGroup, setSelectedPGroup] = useState(pgroup);
+    const [_group, setGroup] = useState(group);
+    const [selectedPGroup, setSelectedPGroup] = useState(0);
     const [week, setWeek] = useState(0);
     const [currentWeek, setCurrentWeek] = useState(0);
     const [currentDay, setCurrentDay] = useState(0);
     const [currentLesson, setCurrentLesson] = useState(0);
 
-    async function fetchDepartments() {
-        const response = await axios.get("/api/v1/departments");
-        setDepartments(response.data.data);
-    }
-
-    async function fetchStreams(departmentId) {
-        const response = await axios.get(`/api/v1/streams/${departmentId}`);
-        setStreams(response.data.data);
-    }
-
-    async function fetchGroups(streamId, groupId = null) {
-        const response = await axios.get(
-            `/api/v1/groups/${streamId}` +
-                (groupId != null ? `/${groupId}` : ``)
-        );
-        if (response.data.data.groups) {
-            setGroups(response.data.data.groups);
-        }
-        if (response.data.data.timetables) {
-            setTimetable(response.data.data.timetables);
+    async function fetchGroups(group) {
+        if (group != "") {
+            const response = await axios.get(`/api/v1/group/${group}`);
+            if (response.data.data.timetables) {
+                setTimetable(response.data.data.timetables);
+            }
         }
     }
 
@@ -84,91 +67,55 @@ export default function Timetable({ auth, department, stream, group, pgroup }) {
     };
 
     useEffect(() => {
-        fetchDepartments();
-        fetchStreams(stream);
-        fetchGroups(stream);
-        fetchGroups(stream, group);
-        updateCurrentTime(); // Call the function to update current time when component mounts
-    }, [stream, group]);
+        fetchGroups(_group);
+        updateCurrentTime();
+    }, [_group]);
 
-    const handleDepartmentChange = (value) => {
-        setSelectedDepartment(value);
-        fetchStreams(value);
-        setSelectedStream(0);
-        setSelectedGroup(0);
-        setSelectedPGroup(0);
-    };
+    const handleSearch = (paramValue) => {
+        const url = new URL(window.location);
+        const paramName = "group";
 
-    const handleStreamChange = (value) => {
-        setSelectedStream(value);
-        fetchGroups(value);
-        setSelectedGroup(0);
-        setSelectedPGroup(0);
-    };
+        setGroup(paramValue);
 
-    const handleGroupChange = (value) => {
-        setSelectedGroup(value);
-        fetchGroups(selectedStream, value);
-        setSelectedPGroup(0);
+        if (url.searchParams.has(paramName)) {
+            url.searchParams.set(paramName, paramValue);
+        } else {
+            url.searchParams.append(paramName, paramValue);
+        }
+
+        window.history.pushState({}, "", url);
+
+        const urlChangeEvent = new Event("urlchange");
+        window.dispatchEvent(urlChangeEvent);
     };
 
     const handlePGroupChange = (value) => {
         setSelectedPGroup(value);
     };
 
-
-
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Timetable" />
 
             <div className="bg-white">
-                <div className="flex flex-wrap gap-2 lg:gap-6 p-6 text-gray-900 w-full">
-                    <div className="min-w-[190px] grid lg:gap-3">
-                        <span className="font-bold lg:text-xl">Факультет</span>
-                        <Select
-                            options={departments}
-                            defaultValue="Виберіть факультет"
-                            defaultSelectable={false}
-                            value={selectedDepartment}
-                            onChange={handleDepartmentChange}
+                <div className="flex justify-center items-center gap-2 lg:gap-6 p-6 text-gray-900 w-full">
+                    <div className="max-w-[260px] grid lg:gap-3">
+                        <SearchExtInput
+                            suggestionsEndpoint="/api/v1/search/group"
+                            onSearch={handleSearch}
+                            defaultValue={_group}
+                            isFocused={false}
                         />
                     </div>
-                    <div className="min-w-[190px] grid lg:gap-3">
-                        <span className="font-bold lg:text-xl">Поток</span>
-                        {selectedDepartment != 0 ? (
-                            <Select
-                                options={streams}
-                                defaultValue="Виберіть поток"
-                                defaultSelectable={false}
-                                value={selectedStream}
-                                onChange={handleStreamChange}
-                            />
-                        ) : null}
-                    </div>
-                    <div className="min-w-[190px] grid lg:gap-3">
-                        <span className="font-bold lg:text-xl">Група</span>
-                        {selectedStream != 0 ? (
-                            <Select
-                                options={groups}
-                                defaultValue="Виберіть групу"
-                                defaultSelectable={false}
-                                value={selectedGroup}
-                                onChange={handleGroupChange}
-                            />
-                        ) : null}
-                    </div>
-                    <div className="min-w-[190px] grid lg:gap-3">
-                        <span className="font-bold lg:text-xl">Підгрупа</span>
-                        {selectedGroup != 0 ? (
-                            <Select
-                                options={["Без підгруп", "Перша", "Друга"]}
-                                defaultValue="Без підгруп"
-                                defaultSelectable={false}
-                                value={selectedPGroup}
+                    <div className="max-w-[260px] content-center grid lg:gap-3">
+                        <div className="flex content-center items-center gap-4 justify-center">
+                            <span className="font-semibold text-xl">1</span>
+                            <InputSwitch
+                                initialValue={selectedPGroup}
                                 onChange={handlePGroupChange}
                             />
-                        ) : null}
+                            <span className="font-semibold text-xl">2</span>
+                        </div>
                     </div>
                 </div>
                 <div className="grid px-6 text-gray-900 w-full gap-12 max-xl:hidden">
@@ -176,7 +123,7 @@ export default function Timetable({ auth, department, stream, group, pgroup }) {
                         currentLesson={currentLesson}
                         currentDay={currentDay}
                         currentWeek={currentWeek}
-                        selectedPGroup={selectedPGroup}
+                        selectedPGroup={selectedPGroup + 1}
                         timetable={timetable}
                         weekDefault={week}
                     />
@@ -186,7 +133,7 @@ export default function Timetable({ auth, department, stream, group, pgroup }) {
                         currentLesson={currentLesson}
                         currentDay={currentDay}
                         currentWeek={currentWeek}
-                        selectedPGroup={selectedPGroup}
+                        selectedPGroup={selectedPGroup + 1}
                         timetable={timetable}
                         weekDefault={week}
                     />

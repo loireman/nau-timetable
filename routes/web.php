@@ -49,8 +49,12 @@ Route::get('/test', function () {
     return Inertia::render('Welcome', ['globalAlert' => $globalAlert]);
 })->name('test1');
 
-Route::get('/timetable/{department?}/{stream?}/{group?}/{pgroup?}', function ($department = 0, $stream = 0, $group = 0, $pgroup = 0) {
-    return Inertia::render('Timetable', compact('department', 'stream', 'group', 'pgroup'));
+Route::get('/timetable', function () {
+    $group = "";
+    if (request()->has('group')) {
+        $group = request()->input('group');
+    }
+    return Inertia::render('Timetable', compact('group'));
 })->name('dashboard');
 
 

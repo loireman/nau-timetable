@@ -26,9 +26,7 @@ Route::group([
         Route::get('teachers', [App\Http\Controllers\Api\DepartmentController::class, 'getTeachers']);
         Route::get('teachers/{teacher}', [App\Http\Controllers\Api\DepartmentController::class, 'getTeachersSchedule']);
 
-        Route::get('departments', [App\Http\Controllers\Api\DepartmentController::class, 'getDepartments']);
-        Route::get('streams/{department}', [App\Http\Controllers\Api\DepartmentController::class, 'getStreams']);
-        Route::get('groups/{department}/{group?}', [App\Http\Controllers\Api\DepartmentController::class, 'getGroups']);
+        Route::get('group/{group}', [App\Http\Controllers\Api\DepartmentController::class, 'getGroup']);
 
         Route::group([
             'prefix' => 'search',

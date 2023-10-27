@@ -3,9 +3,9 @@ import ApplicationLogo from "@/Components/ApplicationLogo";
 import VerticalNavLink from "@/Components/VerticalNavLink";
 import { Icon } from "@iconify/react";
 import Dropdown from "@/Components/Dropdown";
+import SearchInput from "@/Components/SearchInput";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
-import SearchExtInput from "@/Components/SearchExtInput";
 
 export default function Authenticated({
     header,
@@ -15,6 +15,7 @@ export default function Authenticated({
     children,
     filterOptions = [],
 }) {
+    const [search, setSearch] = useState("");
     const [selectedFilterState, setSelectedFilterState] = useState([]);
     const [formFilterState, setFormFilterState] = useState([]);
 
@@ -38,9 +39,10 @@ export default function Authenticated({
         }
     }, [filterOptions]); // Specify [filterOptions] as a dependency
 
-    const handleSearch = (value) => {
+    const handleSearch = (e) => {
+        e.preventDefault();
         const url = new URL(window.location);
-        url.searchParams.set("search", value);
+        url.searchParams.set("search", search);
         window.location = url;
     };
 
@@ -208,11 +210,15 @@ export default function Authenticated({
                 <div className="admin-header max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     {header && <header>{header}</header>}
                     {searchField && (
-                        <SearchExtInput
-                            suggestionsEndpoint="/api/v1/search/group"
-                            onSearch={handleSearch}
-                            isFocused={false}
-                        />
+                        <form onSubmit={handleSearch}>
+                            <SearchInput
+                                className="w-full"
+                                value={search}
+                                onChange={(event) =>
+                                    setSearch(event.target.value)
+                                }
+                            />
+                        </form>
                     )}
                     {filterOptions.length !== 0 && (
                         <>
