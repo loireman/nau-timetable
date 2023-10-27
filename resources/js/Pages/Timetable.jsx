@@ -98,8 +98,8 @@ export default function Timetable({ auth, group }) {
             <Head title="Timetable" />
 
             <div className="bg-white">
-                <div className="flex justify-center items-center gap-2 lg:gap-6 p-6 text-gray-900 w-full">
-                    <div className="max-w-[260px] grid lg:gap-3">
+                <div className="flex flex-wrap justify-center items-center gap-2 lg:gap-6 p-6 text-gray-900 w-full">
+                    <div className="min-w-[190px] max-w-[260px] grid lg:gap-3">
                         <SearchExtInput
                             suggestionsEndpoint="/api/v1/search/group"
                             onSearch={handleSearch}
@@ -107,7 +107,7 @@ export default function Timetable({ auth, group }) {
                             isFocused={false}
                         />
                     </div>
-                    <div className="max-w-[260px] content-center grid lg:gap-3">
+                    <div className="min-w-[190px] max-w-[260px] content-center grid lg:gap-3">
                         <div className="flex content-center items-center gap-4 justify-center">
                             <span className="font-semibold text-xl">1</span>
                             <InputSwitch

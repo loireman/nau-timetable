@@ -82,10 +82,6 @@ export default forwardRef(function SearchExtInput(
                 className={`form-search ${className}`}
                 onClick={handleBlockClick}
             >
-                <button disabled>
-                    <Icon icon="mdi:search" />
-                </button>
-                <div className="vr"></div>
                 <input
                     {...props}
                     type={type}
