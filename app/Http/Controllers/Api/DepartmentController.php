@@ -52,22 +52,27 @@ class DepartmentController extends Controller
 
     public function getTeachersSchedule($teacher)
     {
-        $data = Timetable::where('teacher', $teacher)->get([
-            'name',
-            'teacher',
-            'type',
-            'week',
-            'day',
-            'lesson',
-            'auditory',
-            'pgroup',
-        ]);
+        $timetables = Timetable::where('teacher', $teacher)->with('group')->get();
 
-        if (!$data->isEmpty()) {
+        $timetables = $timetables->map(function ($timetable) {
+            return [
+                'name' => $timetable['name'],
+                'teacher' => $timetable['teacher'],
+                'type' => $timetable['type'],
+                'week' => $timetable['week'],
+                'day' => $timetable['day'],
+                'lesson' => $timetable['lesson'],
+                'auditory' => $timetable['auditory'],
+                'group' => $timetable['group']['name'],
+                'pgroup' => $timetable['pgroup'],
+            ];
+        });
+
+        if (!$timetables->isEmpty()) {
             return ([
                 'status' => 200,
                 'data' => [
-                    'timetables' => $data,
+                    'timetables' => $timetables,
                 ],
             ]);
         }

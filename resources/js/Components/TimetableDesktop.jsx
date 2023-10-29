@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import InputSwitch from "@/Components/InputSwitch";
+import Modal from "./Modal";
+import { Icon } from "@iconify/react";
 
 const TimetableDesktop = ({
     currentLesson = 1,
@@ -11,9 +13,13 @@ const TimetableDesktop = ({
     isTeacher = false,
 }) => {
     const [week, setWeek] = useState(0);
+    const [openLesson, setOpenLesson] = useState(false);
+    const [elementId, setElementId] = useState(null);
+
     useEffect(() => {
         setWeek(weekDefault);
     }, [weekDefault]);
+
     const handleWeekChange = (value) => {
         setWeek(value);
     };
@@ -29,6 +35,14 @@ const TimetableDesktop = ({
         };
 
         return `${formatTime(startMinutes)} - ${formatTime(endMinutes)}`;
+    };
+    const openLessonModal = (id) => {
+        setOpenLesson(true);
+        setElementId(id);
+    };
+
+    const closeModal = () => {
+        setOpenLesson(false);
     };
     return (
         <div>
@@ -76,19 +90,24 @@ const TimetableDesktop = ({
                                             {lessonStart(lesson)}
                                         </div>
                                     ) : (
-                                        <div className="time inactive">
-                                        </div>
+                                        <div className="time inactive"></div>
                                     )}
 
                                     {timetable.map((entry, index) => (
                                         <div key={index}>
-                                            {(isTeacher || (entry.pgroup === 0 ||
+                                            {(isTeacher ||
+                                                entry.pgroup === 0 ||
                                                 entry.pgroup ==
-                                                    selectedPGroup)) &&
+                                                    selectedPGroup) &&
                                             entry.week === week + 1 &&
                                             entry.day === day &&
                                             entry.lesson === lesson ? (
-                                                <div className="card-default relative overflow-hidden lesson">
+                                                <div
+                                                    className="card-default relative overflow-hidden lesson"
+                                                    onClick={() =>
+                                                        openLessonModal(index)
+                                                    }
+                                                >
                                                     <div
                                                         className={`lesson-type type-${
                                                             entry.type
@@ -116,6 +135,71 @@ const TimetableDesktop = ({
                     ))}
                 </tbody>
             </table>
+            <Modal show={openLesson} onClose={closeModal}>
+                {timetable[elementId] && (
+                    <div className="card-modal">
+                        <button className="fixed right-4" onClick={closeModal}>
+                            <Icon icon="mdi:close" />
+                        </button>
+                        <div>
+                            <h5 className="form-text font-semibold">
+                                {timetable[elementId]?.name}
+                            </h5>
+                        </div>
+                        <div>
+                            <span className="form-label">Тип</span>
+                            <h5 className="form-text">
+                                {["Лекція", "Практична", "Лабораторна"].map(
+                                    (value, key) => (
+                                        <div key={key}>
+                                            {key == timetable[elementId]?.type
+                                                ? value
+                                                : null}
+                                        </div>
+                                    )
+                                )}
+                            </h5>
+                        </div>
+                        {isTeacher == true ? (
+                            <>
+                                <div>
+                                    <span className="form-label">Група</span>
+                                    <h5 className="form-text">
+                                        {timetable[elementId]?.group}
+                                    </h5>
+                                </div>
+                                {timetable[elementId]?.type == 2 ? (
+                                    <div>
+                                        <span className="form-label">
+                                            Підрупа
+                                        </span>
+                                        <h5 className="form-text">
+                                            {timetable[elementId]?.pgroup}
+                                        </h5>
+                                    </div>
+                                ) : null}
+                            </>
+                        ) : (
+                            <div>
+                                <span className="form-label">Викладач</span>
+                                <h5 className="form-text">
+                                    {timetable[elementId]?.teacher ?? (
+                                        <small>Не визначений/а</small>
+                                    )}
+                                </h5>
+                            </div>
+                        )}
+                        <div>
+                            <span className="form-label">Аудиторія</span>
+                            <h5 className="form-text">
+                                {timetable[elementId]?.auditory ?? (
+                                    <small>Не визначена</small>
+                                )}
+                            </h5>
+                        </div>
+                    </div>
+                )}
+            </Modal>
         </div>
     );
 };

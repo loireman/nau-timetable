@@ -60,7 +60,7 @@ export default function Group({ auth, group }) {
 
         setWeek(week - 1);
         setCurrentWeek(week);
-        setCurrentDay(rawDay);
+        setCurrentDay(rawDay == 0 ? rawDay + 1 : rawDay);
         setCurrentLesson(value);
     };
 
