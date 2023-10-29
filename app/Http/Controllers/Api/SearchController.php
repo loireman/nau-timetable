@@ -12,8 +12,14 @@ class SearchController extends Controller
 {
     public function getGroupByName($name = null)
     {
-        $groups = Groups::whereNull('stream_id')->where('name', 'like', '%' . $name . '%')->take(10)->pluck('name', 'id');
+        $groups = Groups::whereNull('stream_id')->where('name', 'like', '%' . $name . '%')->pluck('name', 'id');
 
         return response()->json($groups);
+    }
+    public function getTeacherByName($name = null)
+    {
+        $teachers = Timetable::whereNotNull('teacher')->where('teacher', 'like', '%' . $name . '%')->groupBy('teacher')->orderBy('teacher')->pluck('teacher');
+
+        return response()->json($teachers);
     }
 }

@@ -23,9 +23,7 @@ Route::group([
     'prefix'     => 'v1',
 ], function()
     {
-        Route::get('teachers', [App\Http\Controllers\Api\DepartmentController::class, 'getTeachers']);
-        Route::get('teachers/{teacher}', [App\Http\Controllers\Api\DepartmentController::class, 'getTeachersSchedule']);
-
+        Route::get('teacher/{teacher}', [App\Http\Controllers\Api\DepartmentController::class, 'getTeachersSchedule']);
         Route::get('group/{group}', [App\Http\Controllers\Api\DepartmentController::class, 'getGroup']);
 
         Route::group([
@@ -34,6 +32,7 @@ Route::group([
         ], function()
         {
             // Search routes here
+            Route::get('teacher/{name?}', [App\Http\Controllers\Api\SearchController::class, 'getTeacherByName']);
             Route::get('group/{name?}', [App\Http\Controllers\Api\SearchController::class, 'getGroupByName']);
         });
     }

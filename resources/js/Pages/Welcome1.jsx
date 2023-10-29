@@ -54,7 +54,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                     студента
                                 </PrimaryButton>
                             </a>
-                            <a href={route("dashboard")}>
+                            <a href={route("teacher")}>
                                 <PrimaryButton className="bg-red-600 hover:bg-red-800">
                                     Розклад <br />
                                     викладача

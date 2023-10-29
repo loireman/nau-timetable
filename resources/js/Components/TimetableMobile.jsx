@@ -50,6 +50,7 @@ const TimetableMobile = ({
     selectedPGroup,
     timetable,
     weekDefault,
+    isTeacher = false,
 }) => {
     const [week, setWeek] = useState(weekDefault);
     const [selectedDay, setSelectedDay] = useState(currentDay);
@@ -123,8 +124,8 @@ const TimetableMobile = ({
                                 </div>
                                 {timetable.map((entry, index) => (
                                     <div key={index}>
-                                        {(entry.pgroup === 0 ||
-                                            entry.pgroup == selectedPGroup) &&
+                                        {(isTeacher || (entry.pgroup === 0 ||
+                                            entry.pgroup == selectedPGroup)) &&
                                         entry.week === week + 1 &&
                                         entry.day === selectedDay &&
                                         entry.lesson === lesson ? (

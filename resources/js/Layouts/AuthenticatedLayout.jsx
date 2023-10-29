@@ -26,14 +26,22 @@ export default function Authenticated({ user, header, children }) {
                                     href={route("dashboard")}
                                     active={route().current("dashboard")}
                                 >
-                                    Головна
+                                    Розклад студента
+                                </NavLink>
+                            </div>
+                            <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                                <NavLink
+                                    href={route("teacher")}
+                                    active={route().current("teacher")}
+                                >
+                                    Розклад викладача
                                 </NavLink>
                             </div>
                         </div>
-                        {user ? (
-                            <>
-                                <div className="hidden sm:flex sm:items-center sm:ml-6">
-                                    <div className="ml-3 relative">
+                        <div>
+                            <div className="hidden sm:flex sm:items-center sm:ml-6">
+                                {user ? (
+                                    <div className="ml-3 p-4 relative">
                                         <Dropdown>
                                             <Dropdown.Trigger>
                                                 <span className="inline-flex rounded-md">
@@ -42,7 +50,6 @@ export default function Authenticated({ user, header, children }) {
                                                         className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
                                                     >
                                                         {user.name}
-
                                                         <svg
                                                             className="ml-2 -mr-0.5 h-4 w-4"
                                                             xmlns="http://www.w3.org/2000/svg"
@@ -63,62 +70,76 @@ export default function Authenticated({ user, header, children }) {
                                                 <Dropdown.Link
                                                     href={route("profile.edit")}
                                                 >
-                                                    Profile
+                                                    Профіль
                                                 </Dropdown.Link>
                                                 <Dropdown.Link
                                                     href={route("logout")}
                                                     method="post"
                                                     as="button"
                                                 >
-                                                    Log Out
+                                                    Вийти
                                                 </Dropdown.Link>
                                             </Dropdown.Content>
                                         </Dropdown>
                                     </div>
-                                </div>
-                                <div className="-mr-2 flex items-center sm:hidden">
-                                    <button
-                                        onClick={() =>
-                                            setShowingNavigationDropdown(
-                                                (previousState) =>
-                                                    !previousState
-                                            )
-                                        }
-                                        className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
-                                    >
-                                        <svg
-                                            className="h-6 w-6"
-                                            stroke="currentColor"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
+                                ) : (
+                                    <div className="p-5 flex gap-5">
+                                        <Link
+                                            href={route("login")}
+                                            className="font-bold text-black hover:text-red-500"
                                         >
-                                            <path
-                                                className={
-                                                    !showingNavigationDropdown
-                                                        ? "inline-flex"
-                                                        : "hidden"
-                                                }
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="M4 6h16M4 12h16M4 18h16"
-                                            />
-                                            <path
-                                                className={
-                                                    showingNavigationDropdown
-                                                        ? "inline-flex"
-                                                        : "hidden"
-                                                }
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="M6 18L18 6M6 6l12 12"
-                                            />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </>
-                        ) : null}
+                                            Логін
+                                        </Link>
+                                        <Link
+                                            href={route("register")}
+                                            className="font-bold text-black hover:text-red-500"
+                                        >
+                                            Реєстрація
+                                        </Link>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="-mr-2 flex items-center sm:hidden">
+                                <button
+                                    onClick={() =>
+                                        setShowingNavigationDropdown(
+                                            (previousState) => !previousState
+                                        )
+                                    }
+                                    className="inline-flex items-center justify-center p-2 m-3 rounded-md text-gray-400 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
+                                >
+                                    <svg
+                                        className="h-6 w-6"
+                                        stroke="currentColor"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            className={
+                                                !showingNavigationDropdown
+                                                    ? "inline-flex"
+                                                    : "hidden"
+                                            }
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M4 6h16M4 12h16M4 18h16"
+                                        />
+                                        <path
+                                            className={
+                                                showingNavigationDropdown
+                                                    ? "inline-flex"
+                                                    : "hidden"
+                                            }
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M6 18L18 6M6 6l12 12"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -133,7 +154,15 @@ export default function Authenticated({ user, header, children }) {
                             href={route("dashboard")}
                             active={route().current("dashboard")}
                         >
-                            Головна
+                            Розклад студента
+                        </ResponsiveNavLink>
+                    </div>
+                    <div className="pt-2 pb-3 space-y-1">
+                        <ResponsiveNavLink
+                            href={route("teacher")}
+                            active={route().current("teacher")}
+                        >
+                            Розклад викладача
                         </ResponsiveNavLink>
                     </div>
 
@@ -150,18 +179,33 @@ export default function Authenticated({ user, header, children }) {
 
                             <div className="mt-3 space-y-1">
                                 <ResponsiveNavLink href={route("profile.edit")}>
-                                    Profile
+                                    Профіль
                                 </ResponsiveNavLink>
                                 <ResponsiveNavLink
                                     method="post"
                                     href={route("logout")}
                                     as="button"
                                 >
-                                    Log Out
+                                    Вийти
                                 </ResponsiveNavLink>
                             </div>
                         </div>
-                    ) : null}
+                    ) : (
+                        <div className="p-5 flex flex-col gap-5">
+                            <Link
+                                href={route("login")}
+                                className="font-bold text-black hover:text-red-500"
+                            >
+                                Логін
+                            </Link>
+                            <Link
+                                href={route("register")}
+                                className="font-bold text-black hover:text-red-500"
+                            >
+                                Реєстрація
+                            </Link>
+                        </div>
+                    )}
                 </div>
             </nav>
 

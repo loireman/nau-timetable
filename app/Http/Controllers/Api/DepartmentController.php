@@ -50,16 +50,6 @@ class DepartmentController extends Controller
         ]);
     }
 
-    public function getTeachers()
-    {
-        $teachers = Timetable::whereNotNull('teacher')->groupBy('teacher')->pluck('teacher');
-
-        return ([
-            'status' => 200,
-            'data' => $teachers,
-        ]);
-    }
-
     public function getTeachersSchedule($teacher)
     {
         $data = Timetable::where('teacher', $teacher)->get([
@@ -76,7 +66,9 @@ class DepartmentController extends Controller
         if (!$data->isEmpty()) {
             return ([
                 'status' => 200,
-                'data' => $data,
+                'data' => [
+                    'timetables' => $data,
+                ],
             ]);
         }
         return ([

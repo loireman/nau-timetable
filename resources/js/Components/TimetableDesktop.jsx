@@ -8,6 +8,7 @@ const TimetableDesktop = ({
     selectedPGroup,
     timetable,
     weekDefault,
+    isTeacher = false,
 }) => {
     const [week, setWeek] = useState(0);
     useEffect(() => {
@@ -32,9 +33,9 @@ const TimetableDesktop = ({
     return (
         <div>
             <div className="flex content-center items-center gap-4 justify-center mb-4">
-                <span className="font-semibold text-xl">Week 1</span>
+                <span className="font-medium text-xl">Week 1</span>
                 <InputSwitch initialValue={week} onChange={handleWeekChange} />
-                <span className="font-semibold text-xl">Week 2</span>
+                <span className="font-medium text-xl">Week 2</span>
             </div>
 
             <table className="timetable">
@@ -81,9 +82,9 @@ const TimetableDesktop = ({
 
                                     {timetable.map((entry, index) => (
                                         <div key={index}>
-                                            {(entry.pgroup === 0 ||
+                                            {(isTeacher || (entry.pgroup === 0 ||
                                                 entry.pgroup ==
-                                                    selectedPGroup) &&
+                                                    selectedPGroup)) &&
                                             entry.week === week + 1 &&
                                             entry.day === day &&
                                             entry.lesson === lesson ? (

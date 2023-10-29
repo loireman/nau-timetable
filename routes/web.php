@@ -49,14 +49,25 @@ Route::get('/test', function () {
     return Inertia::render('Welcome', ['globalAlert' => $globalAlert]);
 })->name('test1');
 
-Route::get('/timetable', function () {
-    $group = "";
-    if (request()->has('group')) {
-        $group = request()->input('group');
-    }
-    return Inertia::render('Timetable', compact('group'));
-})->name('dashboard');
+Route::group([
+    'prefix'     => 'timetable',
+], function () {
+    Route::get('/', function () {
+        $group = "";
+        if (request()->has('group')) {
+            $group = request()->input('group');
+        }
+        return Inertia::render('Timetable/Group', compact('group'));
+    })->name('dashboard');
 
+    Route::get('teacher', function () {
+        $teacher = "";
+        if (request()->has('teacher')) {
+            $teacher = request()->input('teacher');
+        }
+        return Inertia::render('Timetable/Teacher', compact('teacher'));
+    })->name('teacher');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
