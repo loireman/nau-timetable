@@ -69,14 +69,20 @@ const TimetableMobile = ({
     };
 
     const lessonStart = (value) => {
+        // Set time to 8:00 AM in Kyiv timezone
+        const utcDateString = new Date().toLocaleString('en-US', { timeZone: 'Europe/London' });
+        const utcDate = new Date(utcDateString);
+        utcDate.setHours(6);
+        utcDate.setMinutes(0);
+        utcDate.setSeconds(0);
         const currentOffset = new Date().getTimezoneOffset();
-        const startMinutes = 300 + (value - 1) * 110 - currentOffset;
+        const startMinutes = utcDate.getHours() * 60 - currentOffset + (value - 1) * 110;
         const endMinutes = startMinutes + 95;
 
         const formatTime = (minutes) => {
-            var hours = Math.floor(minutes / 60);
-            var minutes = minutes % 60;
-            return hours + ":" + (minutes < 10 ? "0" + minutes : minutes);
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            return hours + ":" + (mins < 10 ? "0" + mins : mins);
         };
 
         return `${formatTime(startMinutes)} - ${formatTime(endMinutes)}`;
