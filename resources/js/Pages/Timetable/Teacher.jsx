@@ -5,7 +5,6 @@ import axios from "axios";
 import TimetableDesktop from "@/Components/TimetableDesktop";
 import TimetableMobile from "@/Components/TimetableMobile";
 import SearchExtInput from "@/Components/SearchExtInput";
-import InputSwitch from "@/Components/InputSwitch";
 
 export default function Teacher({ auth, teacher }) {
     const [timetable, setTimetable] = useState([]);

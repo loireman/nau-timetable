@@ -35,6 +35,7 @@
         "laravel-vite-plugin": "^0.8.1",
         "react-paginate": "^8.2.0",
         "react-quill": "^2.0.0",
-        "react-router-dom": "^6.11.1"
+        "react-router-dom": "^6.11.1",
+        "react-select": "^5.7.7"
     }
 }
