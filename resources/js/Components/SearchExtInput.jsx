@@ -40,7 +40,7 @@ export default forwardRef(function SearchExtInput(
     const handleInputBlur = () => {
         setTimeout(() => {
             setIsInputFocused(false);
-        }, 90);
+        }, 100);
     };
 
     const handleInputFocus = () => {
