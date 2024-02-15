@@ -47,6 +47,21 @@ abstract class ResolveHandlers extends CollectHandlers
     abstract public function getConfig(): Configuration;
 
     /**
+     * @param int|null $userId
+     * @param int|null $chatId
+     * @return callable|Conversation|\Closure|null
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function currentConversation(?int $userId, ?int $chatId): callable|Conversation|\Closure|null
+    {
+        if ($chatId === null || $userId === null) {
+            return null;
+        }
+
+        return $this->conversationCache->get($userId, $chatId);
+    }
+
+    /**
      * @return array
      */
     protected function resolveHandlers(): array
@@ -54,23 +69,23 @@ abstract class ResolveHandlers extends CollectHandlers
         $resolvedHandlers = [];
         $updateType = $this->update?->getType();
 
-        if ($updateType === UpdateType::MESSAGE) {
-            $messageType = $this->update->message->getType();
+        if ($updateType?->isMessageType()) {
+            $messageType = $this->update->getMessage()?->getType();
 
             if ($messageType === MessageType::TEXT) {
                 $username = $this->getConfig()->botName;
-                $text = $this->update?->message?->getParsedCommand($username) ?? $this->update->message?->text;
+                $text = $this->update?->getMessage()?->getParsedCommand($username) ?? $this->update->getMessage()?->text;
 
                 if ($text !== null) {
                     $this->addHandlersBy($resolvedHandlers, $updateType->value, $messageType->value, $text);
                 }
             } elseif ($messageType === MessageType::SUCCESSFUL_PAYMENT) {
-                $data = $this->update->message->successful_payment?->invoice_payload;
+                $data = $this->update->getMessage()->successful_payment?->invoice_payload;
                 $this->addHandlersBy($resolvedHandlers, $updateType->value, $messageType->value, $data);
             }
 
             if (count($resolvedHandlers) === 0) {
-                $this->addHandlersBy($resolvedHandlers, $updateType->value, $messageType->value);
+                $this->addHandlersBy($resolvedHandlers, $updateType->value, $messageType?->value);
             }
         } elseif ($updateType === UpdateType::CALLBACK_QUERY) {
             $data = $this->update->callback_query?->data;
@@ -132,21 +147,6 @@ abstract class ResolveHandlers extends CollectHandlers
                 $handlers[] = $handler;
             }
         }
-    }
-
-    /**
-     * @param int|null $userId
-     * @param int|null $chatId
-     * @return callable|Conversation|\Closure|null
-     * @throws \Psr\SimpleCache\InvalidArgumentException
-     */
-    public function currentConversation(?int $userId, ?int $chatId): callable|Conversation|\Closure|null
-    {
-        if ($chatId === null || $userId === null) {
-            return null;
-        }
-
-        return $this->conversationCache->get($userId, $chatId);
     }
 
     /**
@@ -261,28 +261,34 @@ abstract class ResolveHandlers extends CollectHandlers
         array $groups,
         array $currentMiddlewares = [],
         array $currentScopes = [],
-        array $currentTags = []
+        array $currentTags = [],
+        array $currentConstraints = [],
     ) {
         foreach ($groups as $group) {
             $middlewares = [...$group->getMiddlewares(), ...$currentMiddlewares,];
             $scopes = [...$currentScopes, ...$group->getScopes()];
             $tags = [...$currentTags, ...$group->getTags()];
+            $constraints = [...$currentConstraints, ...$group->getConstraints()];
             $this->groupHandlers = [];
             ($group->groupCallable)($this);
 
             // apply the middleware stack to the current registered group handlers
-            array_walk_recursive($this->groupHandlers, function ($leaf) use ($tags, $middlewares, $scopes, $group) {
-                if ($leaf instanceof Handler) {
-                    foreach ($middlewares as $middleware) {
-                        $leaf->middleware($middleware);
+            array_walk_recursive(
+                $this->groupHandlers,
+                function ($leaf) use ($constraints, $tags, $middlewares, $scopes, $group) {
+                    if ($leaf instanceof Handler) {
+                        foreach ($middlewares as $middleware) {
+                            $leaf->middleware($middleware);
+                        }
+                        if ($leaf instanceof Command && !empty($scopes)) {
+                            $leaf->scope($scopes);
+                        }
+                        $leaf->tags([...$leaf->getTags(), ...$tags]);
+                        $leaf->unless($group->isDisabled());
+                        $leaf->where($constraints);
                     }
-                    if ($leaf instanceof Command && !empty($scopes)) {
-                        $leaf->scope($scopes);
-                    }
-                    $leaf->tags([...$leaf->getTags(), ...$tags]);
-                    $leaf->unless($group->isDisabled());
                 }
-            });
+            );
 
             $this->handlers = array_merge_recursive($this->handlers, $this->groupHandlers);
 

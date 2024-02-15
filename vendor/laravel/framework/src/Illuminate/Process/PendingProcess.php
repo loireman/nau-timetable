@@ -168,7 +168,7 @@ class PendingProcess
     }
 
     /**
-     * Set the additional environent variables for the process.
+     * Set the additional environment variables for the process.
      *
      * @param  array  $environment
      * @return $this
@@ -237,6 +237,9 @@ class PendingProcess
      * @param  array<array-key, string>|string|null  $command
      * @param  callable|null  $output
      * @return \Illuminate\Contracts\Process\ProcessResult
+     *
+     * @throws \Illuminate\Process\Exceptions\ProcessTimedOutException
+     * @throws \RuntimeException
      */
     public function run(array|string $command = null, callable $output = null)
     {
@@ -361,17 +364,15 @@ class PendingProcess
 
         if (is_string($result) || is_array($result)) {
             return (new FakeProcessResult(output: $result))->withCommand($command);
-        } elseif ($result instanceof ProcessResult) {
-            return $result;
-        } elseif ($result instanceof FakeProcessResult) {
-            return $result->withCommand($command);
-        } elseif ($result instanceof FakeProcessDescription) {
-            return $result->toProcessResult($command);
-        } elseif ($result instanceof FakeProcessSequence) {
-            return $this->resolveSynchronousFake($command, fn () => $result());
         }
 
-        throw new LogicException('Unsupported synchronous process fake result provided.');
+        return match (true) {
+            $result instanceof ProcessResult => $result,
+            $result instanceof FakeProcessResult => $result->withCommand($command),
+            $result instanceof FakeProcessDescription => $result->toProcessResult($command),
+            $result instanceof FakeProcessSequence => $this->resolveSynchronousFake($command, fn () => $result()),
+            default => throw new LogicException('Unsupported synchronous process fake result provided.'),
+        };
     }
 
     /**

@@ -33,14 +33,6 @@ class UpdateTimetableRequest extends FormRequest
                 'required',
                 'integer',
                 'max:6',
-                Rule::unique('timetables', 'lesson')
-                    ->ignore($currentId, 'id')
-                    ->where(function ($query) {
-                        $query->where('week', request('week'))
-                              ->where('day', request('day'))
-                              ->where('pgroup', request('pgroup'))
-                              ->where('group_id', request('group_id'));
-                    }),
             ],
             'teacher' => 'nullable|string|max:255',
             'type' => 'required|integer',

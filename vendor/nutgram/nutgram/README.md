@@ -10,7 +10,7 @@
 ![PHP](https://img.shields.io/packagist/dependency-v/nutgram/nutgram/php?logo=php)
 [![Total Downloads](http://poser.pugx.org/nutgram/nutgram/downloads)](https://packagist.org/packages/nutgram/nutgram)
 ![GitHub](https://img.shields.io/github/license/nutgram/nutgram)
-[![API](https://img.shields.io/badge/Telegram%20Bot%20API-6.9%09--%20September%2022,%202023-blue.svg?logo=telegram)](https://core.telegram.org/bots/api)
+[![API](https://img.shields.io/badge/Telegram%20Bot%20API-7.0%09--%20December%2029,%202023-blue.svg?logo=telegram)](https://core.telegram.org/bots/api)
 
 [![Test Suite](https://github.com/nutgram/nutgram/actions/workflows/php.yml/badge.svg)](https://github.com/nutgram/nutgram/actions/workflows/php.yml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/86c4ca3dae8f64db80f7/maintainability)](https://codeclimate.com/github/nutgram/nutgram/maintainability)
@@ -83,6 +83,7 @@ Official Documentation on [https://nutgram.dev/](https://nutgram.dev)
 - Chunked message sending
 - Using enums where possible
 - Customizable error handling
+- Web Validation
 - Testing system
 - Nutgram Generator to quickly update the framework to the latest Telegram Bot API version (WIP)
 
@@ -90,8 +91,8 @@ Official Documentation on [https://nutgram.dev/](https://nutgram.dev)
 
 | Nutgram | PHP  | Support Until |
 |---------|------|---------------|
-| ^3.0    | ^8.0 | 2023-11-26    |
-| ^4.0    | ^8.2 | -             |
+| ^3.0    | ^8.0 | EOL           |
+| ^4.0    | ^8.2 | On going      |
 
 ## ✨ Projects with this library
 
@@ -100,10 +101,11 @@ Official Documentation on [https://nutgram.dev/](https://nutgram.dev)
 - AnonyMeet ([@AnonyMeetBot](https://t.me/AnonyMeetBot)) - Anonymous chat bot
 - File Converter ([@newfileconverterbot](https://t.me/newfileconverterbot)) - Convert files to other formats
 - [Sticker Optimizer](https://github.com/Lukasss93/telegram-stickeroptimizer) ([@NewStickerOptimizerBot](https://t.me/NewStickerOptimizerBot)) - Optimize images for the @stickers bot
-- Chat Merger ([@ChatMergerBot](https://t.me/ChatMergerBot)) - Merge multiple messages into one
+- Stickerizer ([@StickerizerBot](https://t.me/StickerizerBot)) - Create stickers on the fly, via Telegram Mini App.
 - [Mermaid Generator](https://github.com/Lukasss93/telegram-mermaid) ([@newmermaidbot](https://t.me/newmermaidbot)) - Generate mermaid diagrams from text
 - Voice Transcriber ([@voicetranscriberobot](https://t.me/voicetranscriberobot)) - Transcribe audio messages to text
 - Effin Birds ([@effinbirdsbot](https://t.me/effinbirdsbot)) - Search and send in inline mode images made by https://twitter.com/EffinBirds
+- Resizer Image ([@ResizerTool_bot](https://t.me/ResizerTool_bot))] - Resize an image easily
 
 ## ⚗️ Testing
 

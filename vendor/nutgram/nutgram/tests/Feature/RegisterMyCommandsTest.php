@@ -9,6 +9,7 @@ use SergiX44\Nutgram\Telegram\Types\Command\BotCommandScopeChat;
 use SergiX44\Nutgram\Telegram\Types\Command\BotCommandScopeChatAdministrators;
 use SergiX44\Nutgram\Telegram\Types\Command\BotCommandScopeChatMember;
 use SergiX44\Nutgram\Telegram\Types\Command\BotCommandScopeDefault;
+use SergiX44\Nutgram\Tests\Fixtures\CommandWithMultipleDescription;
 
 test('onCommand without description', function () {
     $bot = Nutgram::fake();
@@ -443,3 +444,167 @@ test('grouped scopes with nesting level 1', function ($update) {
             ->commands->toBe('[{"command":"start","description":"Start command"},{"command":"admin","description":"Admin command"}]'),
     );
 })->with('message');
+
+test('onCommand with optional parameter + description', function () {
+    $bot = Nutgram::fake();
+
+    $bot->onCommand('start', function (Nutgram $bot) {
+        $bot->sendMessage('Hello!');
+    })->description('Start command');
+
+    $bot->onCommand('start {value}', function (Nutgram $bot, string $value) {
+        $bot->sendMessage("Hello $value!");
+    })->description('Start command');
+
+    $bot->onCommand('foo', function (Nutgram $bot) {
+        $bot->sendMessage('foo');
+    })->description('foo command');
+
+    $bot->beforeApiRequest(function (Nutgram $bot, array $request) {
+        expect($request['json'])
+            ->scope->toBe('{"type":"default"}')
+            ->commands->toBe('[{"command":"start","description":"Start command"},{"command":"foo","description":"foo command"}]');
+
+        return $request;
+    });
+
+    $bot->registerMyCommands();
+});
+
+test('register commands with multiple scopes + languages', function () {
+    $bot = Nutgram::fake();
+
+    $history = [];
+
+    $bot->onCommand('start', function (Nutgram $bot) {
+        $bot->sendMessage('Start command!');
+    })
+        ->description([
+            'en' => 'Start command',
+            'it' => 'Comando start'
+        ])
+        ->scope(new BotCommandScopeAllPrivateChats)
+        ->scope(new BotCommandScopeAllGroupChats);
+
+    $bot->onCommand('help', function (Nutgram $bot) {
+        $bot->sendMessage('Help command!');
+    })
+        ->description([
+            'it' => 'Comando help',
+            '*' => 'Help command'
+        ])
+        ->scope(new BotCommandScopeAllPrivateChats);
+
+    $bot->onCommand('about', function (Nutgram $bot) {
+        $bot->sendMessage('About command!');
+    })
+        ->description('About command')
+        ->scope(new BotCommandScopeAllGroupChats)
+        ->scope(new BotCommandScopeAllChatAdministrators);
+
+    $bot->beforeApiRequest(function (Nutgram $bot, array $request) use (&$history) {
+        $history[] = $request['json'];
+
+        return $request;
+    });
+
+    $bot->registerMyCommands();
+
+    expect($history)->sequence(
+        fn ($x) => $x
+            ->commands->toBe('[{"command":"start","description":"Start command"}]')
+            ->scope->toBe('{"type":"all_private_chats"}')
+            ->language_code->toBe('en'),
+        fn ($x) => $x
+            ->commands->toBe('[{"command":"start","description":"Comando start"},{"command":"help","description":"Comando help"}]')
+            ->scope->toBe('{"type":"all_private_chats"}')
+            ->language_code->toBe('it'),
+        fn ($x) => $x
+            ->commands->toBe('[{"command":"help","description":"Help command"}]')
+            ->scope->toBe('{"type":"all_private_chats"}'),
+        fn ($x) => $x
+            ->commands->toBe('[{"command":"start","description":"Start command"}]')
+            ->scope->toBe('{"type":"all_group_chats"}')
+            ->language_code->toBe('en'),
+        fn ($x) => $x
+            ->commands->toBe('[{"command":"start","description":"Comando start"}]')
+            ->scope->toBe('{"type":"all_group_chats"}')
+            ->language_code->toBe('it'),
+        fn ($x) => $x
+            ->commands->toBe('[{"command":"about","description":"About command"}]')
+            ->scope->toBe('{"type":"all_group_chats"}'),
+        fn ($x) => $x
+            ->commands->toBe('[{"command":"about","description":"About command"}]')
+            ->scope->toBe('{"type":"all_chat_administrators"}'),
+    );
+});
+
+test('register commands with languages', function () {
+    $bot = Nutgram::fake();
+
+    $history = [];
+
+    $bot->onCommand('start', function (Nutgram $bot) {
+        $bot->sendMessage('Start command!');
+    })
+        ->description([
+            'en' => 'Start command',
+            'it' => 'Comando start'
+        ]);
+
+    $bot->onCommand('help', function (Nutgram $bot) {
+        $bot->sendMessage('Help command!');
+    })
+        ->description([
+            'it' => 'Comando help',
+            '*' => 'Help command'
+        ]);
+
+    $bot->beforeApiRequest(function (Nutgram $bot, array $request) use (&$history) {
+        $history[] = $request['json'];
+
+        return $request;
+    });
+
+    $bot->registerMyCommands();
+
+    expect($history)->sequence(
+        fn ($x) => $x
+            ->commands->toBe('[{"command":"start","description":"Start command"}]')
+            ->scope->toBe('{"type":"default"}')
+            ->language_code->toBe('en'),
+        fn ($x) => $x
+            ->commands->toBe('[{"command":"start","description":"Comando start"},{"command":"help","description":"Comando help"}]')
+            ->scope->toBe('{"type":"default"}')
+            ->language_code->toBe('it'),
+        fn ($x) => $x
+            ->commands->toBe('[{"command":"help","description":"Help command"}]')
+            ->scope->toBe('{"type":"default"}'),
+    );
+});
+
+test('register command with languages', function () {
+    $bot = Nutgram::fake();
+
+    $history = [];
+
+    $bot->registerCommand(CommandWithMultipleDescription::class);
+
+    $bot->beforeApiRequest(function (Nutgram $bot, array $request) use (&$history) {
+        $history[] = $request['json'];
+
+        return $request;
+    });
+
+    $bot->registerMyCommands();
+
+    expect($history)->sequence(
+        fn ($x) => $x
+            ->commands->toBe('[{"command":"start","description":"Start the bot"}]')
+            ->scope->toBe('{"type":"default"}'),
+        fn ($x) => $x
+            ->commands->toBe('[{"command":"start","description":"Avvia il bot"}]')
+            ->scope->toBe('{"type":"default"}')
+            ->language_code->toBe('it'),
+    );
+});

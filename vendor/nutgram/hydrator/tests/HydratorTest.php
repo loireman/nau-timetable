@@ -15,6 +15,7 @@ use SergiX44\Hydrator\Tests\Fixtures\DI\Sun;
 use SergiX44\Hydrator\Tests\Fixtures\DI\Tree;
 use SergiX44\Hydrator\Tests\Fixtures\DI\Wood;
 use SergiX44\Hydrator\Tests\Fixtures\ObjectWithAbstract;
+use SergiX44\Hydrator\Tests\Fixtures\ObjectWithArrayOfAbstracts;
 use SergiX44\Hydrator\Tests\Fixtures\ObjectWithInvalidAbstract;
 use SergiX44\Hydrator\Tests\Fixtures\Resolver\AppleResolver;
 use SergiX44\Hydrator\Tests\Fixtures\Store\Apple;
@@ -487,6 +488,65 @@ class HydratorTest extends TestCase
         (new Hydrator())->hydrate(Fixtures\ObjectWithDateInterval::class, ['value' => 'foo']);
     }
 
+    public function testHydrateArrayOfStringableEnumProperty(): void
+    {
+        $object = (new Hydrator())->hydrate(Fixtures\ObjectWithArrayOfStringableEnum::class, ['value' => [
+            'c1200a7e-136e-4a11-9bc3-cc937046e90f',
+            'a2b29b37-1c5a-4b36-9981-097ddd25c740',
+            'c1ea3762-9827-4c0c-808b-53be3febae6d',
+        ]]);
+
+        $this->assertSame([
+            Fixtures\StringableEnum::foo,
+            Fixtures\StringableEnum::bar,
+            Fixtures\StringableEnum::baz,
+        ], $object->value);
+    }
+
+    public function testHydrateArrayOfStringableEnumPropertyWithoutMatchingEnum(): void
+    {
+        $object = (new Hydrator())->hydrate(Fixtures\ObjectWithArrayOfStringableEnum::class, ['value' => [
+            'c1200a7e-136e-4a11-9bc3-cc937046e90f',
+            'a2b29b37-1c5a-4b36-9981-097ddd25c740',
+            'c1ea3762-9827-4c0c-808b-53be3febae6d',
+            'bbb',
+        ]]);
+
+        $this->assertSame([
+            Fixtures\StringableEnum::foo,
+            Fixtures\StringableEnum::bar,
+            Fixtures\StringableEnum::baz,
+            'bbb',
+        ], $object->value);
+    }
+
+    public function testHydrateStringableEnumUnionPropertyString(): void
+    {
+        $object = (new Hydrator())->hydrate(Fixtures\ObjectWithStringableEnumUnion::class, ['value' => 'bbb']);
+
+        $this->assertSame('bbb', $object->value);
+    }
+
+    public function testHydrateStringableEnumUnionPropertyInt(): void
+    {
+        $object = (new Hydrator())->hydrate(Fixtures\ObjectWithStringableEnumUnion::class, ['value' => 123]);
+
+        $this->assertSame(123, $object->value);
+    }
+
+    public function testHydrateStringableEnumUnionPropertyFloat(): void
+    {
+        $object = (new Hydrator())->hydrate(Fixtures\ObjectWithStringableEnumUnion::class, ['value' => .23]);
+
+        $this->assertSame(.23, $object->value);
+    }
+
+    public function testHydrateStringableEnumUnionPropertyBool(): void
+    {
+        $this->expectException(Exception\UnsupportedPropertyTypeException::class);
+        (new Hydrator())->hydrate(Fixtures\ObjectWithStringableEnumUnion::class, ['value' => false]);
+    }
+
     /**
      * @dataProvider stringableEnumValueProvider
      */
@@ -751,6 +811,46 @@ class HydratorTest extends TestCase
         $this->assertSame('brandy', $o->value->category);
     }
 
+    public function testHydrateArrayAbstractProperty(): void
+    {
+        $o = (new Hydrator())->hydrate(new ObjectWithArrayOfAbstracts(), [
+            'value' => [[
+                'type'      => 'jack',
+                'sweetness' => null,
+                'category'  => 'brandy',
+            ]],
+        ]);
+
+        $this->assertInstanceOf(ObjectWithArrayOfAbstracts::class, $o);
+        $this->assertIsArray($o->value);
+
+        $value = $o->value[0];
+
+        $this->assertInstanceOf(AppleJack::class, $value);
+        $this->assertSame('jack', $value->type);
+        $this->assertSame('brandy', $value->category);
+    }
+
+    public function testHydrateArrayAbstractPropertyWithObject(): void
+    {
+        $o = (new Hydrator())->hydrate(new ObjectWithArrayOfAbstracts(), [
+            'value' => [(object) [
+                'type'      => 'jack',
+                'sweetness' => null,
+                'category'  => 'brandy',
+            ]],
+        ]);
+
+        $this->assertInstanceOf(ObjectWithArrayOfAbstracts::class, $o);
+        $this->assertIsArray($o->value);
+
+        $value = $o->value[0];
+
+        $this->assertInstanceOf(AppleJack::class, $value);
+        $this->assertSame('jack', $value->type);
+        $this->assertSame('brandy', $value->category);
+    }
+
     public function testHydrateInvalidAbstractObject(): void
     {
         $this->expectException(InvalidObjectException::class);
@@ -874,5 +974,32 @@ class HydratorTest extends TestCase
 
         $this->assertSame(Fixtures\StringableEnum::foo, $object->stringableEnum);
         $this->assertSame(Fixtures\NumerableEnum::foo, $object->numerableEnums[0]);
+    }
+
+    public function testMutateProperty(): void
+    {
+        $object = (new Hydrator())->hydrate(Fixtures\ObjectWithArrayToDeserialize::class, [
+            'name'  => 'foo',
+            'value' => json_encode(['foo' => 'bar'], JSON_THROW_ON_ERROR),
+        ]);
+
+        $this->assertSame('foo', $object->name);
+        $this->assertIsArray($object->value);
+        $this->assertSame(['foo' => 'bar'], $object->value);
+    }
+
+    public function testHydrateAdditionalWithMagicMethod()
+    {
+        $object = (new Hydrator())->hydrate(Fixtures\ObjectWithMagicSet::class, [
+            'name'   => 'foo',
+            'value'  => 'bar',
+            'type'   => false,
+            'number' => 42,
+        ]);
+
+        $this->assertSame('foo', $object->name);
+        $this->assertSame('bar', $object->value);
+        $this->assertFalse($object->type);
+        $this->assertSame(42, $object->number);
     }
 }
