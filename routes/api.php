@@ -54,7 +54,7 @@ Route::group(
 
         Route::middleware('auth')->get('/user', function (Request $request) {
             return response()->json([
-                'user' => $request->user(),
+                'status' => 200,
                 'name' => $request->user()->name,
             ]);
         });        
