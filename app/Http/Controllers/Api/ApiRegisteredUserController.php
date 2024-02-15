@@ -36,6 +36,6 @@ class ApiRegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return response()->noContent();
+        return response(200)->noContent();
     }
 }

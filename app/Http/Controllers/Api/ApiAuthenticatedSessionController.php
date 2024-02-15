@@ -19,7 +19,7 @@ class ApiAuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return response()->noContent();
+        return response(200)->noContent();
     }
 
     /**
@@ -33,6 +33,6 @@ class ApiAuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return response()->noContent();
+        return response(200)->noContent();
     }
 }
