@@ -45,22 +45,23 @@ Route::group(
     ],
     function () {
         Route::post('/register', [App\Http\Controllers\Api\ApiRegisteredUserController::class, 'store'])
-        ->middleware('guest')
-        ->name('register');
-        
-        Route::post('/login', [App\Http\Controllers\Api\ApiAuthenticatedSessionController::class, 'store'])
-        ->middleware('guest')
-        ->name('login');
+            ->middleware('guest')
+            ->name('register');
 
-        Route::middleware('auth')->get('/user', function (Request $request) {
-            return response()->json([
+        Route::post('/login', [App\Http\Controllers\Api\ApiAuthenticatedSessionController::class, 'store'])
+            ->name('login');
+
+        Route::get('/check-login', [App\Http\Controllers\Api\ApiAuthenticatedSessionController::class, 'checkLogin']);
+
+        Route::middleware('check.api')->get('/user', function (Request $request) {
+            return response([
                 'status' => 200,
-                'name' => $request->user()->name,
+                'name' => $request->user->name,
             ]);
-        });        
-        
+        });
+
         Route::post('/logout', [App\Http\Controllers\Api\ApiAuthenticatedSessionController::class, 'destroy'])
-        ->middleware('auth')
-        ->name('logout');
+            ->middleware('auth:sanctum')
+            ->name('logout');
     }
 );

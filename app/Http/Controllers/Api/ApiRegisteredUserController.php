@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -18,11 +19,11 @@ class ApiRegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): Response
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -34,8 +35,11 @@ class ApiRegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
-
-        return response(200)->noContent();
+        // Modify the response to return JSON data
+        return response()->json([
+            'user' => new UserResource($user),
+            'token' => $user->createToken('loiriTimetableToken')->plainTextToken,
+            'message' => 'Registration successful',
+        ], 201);
     }
 }
