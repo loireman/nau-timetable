@@ -37,8 +37,6 @@ class ApiRegisteredUserController extends Controller
 
         // Modify the response to return JSON data
         return response()->json([
-            'user' => new UserResource($user),
-            'token' => $user->createToken('loiriTimetableToken')->plainTextToken,
             'message' => 'Registration successful',
         ], 201);
     }

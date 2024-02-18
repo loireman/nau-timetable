@@ -31,7 +31,21 @@ class ApiAuthenticatedSessionController extends Controller
 
         if ($user) {
             if (Hash::check($request->password, $user->password)) {
-                $token = $user->createToken('loiriTimetableToken')->plainTextToken;
+                $token = $user->createToken('loiriTimetableToken', ['server_token'])->plainTextToken;
+
+                if ($request->remember) {
+                    // Get the token instance
+                    $accessToken = $user->tokens->last();
+
+                    // Set the expiration time to 3 hours
+                    $expirationTime = now()->addHours(3);
+
+                    // Update the token's expiration time
+                    $accessToken->forceFill([
+                        'expires_at' => $expirationTime,
+                    ])->save();
+                }
+
                 $response = ['token' => $token];
                 return response($response, 200);
             } else {
@@ -53,11 +67,11 @@ class ApiAuthenticatedSessionController extends Controller
         if ($token) {
             // Retrieve the personal access token
             $personalAccessToken = PersonalAccessToken::findToken($token);
-    
+
             if ($personalAccessToken) {
                 // Retrieve user based on the token
                 $user = $personalAccessToken->tokenable;
-    
+
                 if ($user && $user instanceof User) {
                     // User is authenticated
                     return response(['status' => 'authenticated'], 200);
