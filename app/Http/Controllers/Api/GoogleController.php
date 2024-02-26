@@ -8,7 +8,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Redirect;
 
 use function Laravel\Prompts\warning;
 
@@ -122,9 +121,6 @@ class GoogleController extends Controller
          */
         $token = $user->createToken("Google")->plainTextToken;
 
-        // Redirect back to the app with the token as a query parameter
-        $redirectUrl = 'https://www.loiri.com.ua/oauth.html?token=' . $token;
-
-        return Redirect::away($redirectUrl);
+        return response()->json($token, 201);
     }
 }
