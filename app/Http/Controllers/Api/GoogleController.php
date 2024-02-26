@@ -121,6 +121,9 @@ class GoogleController extends Controller
          */
         $token = $user->createToken("Google")->plainTextToken;
 
-        return response()->json($token, 201);
+        return response()->json([
+            'token' => $token,
+            'script' => 'window.postMessage({ type: "CLOSE_BROWSER", token: "' . $token . '" }, "*");',
+        ], 201);    
     }
 }

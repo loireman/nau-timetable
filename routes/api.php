@@ -53,7 +53,7 @@ Route::group(
 
         Route::get('/check-login', [App\Http\Controllers\Api\ApiAuthenticatedSessionController::class, 'checkLogin']);
 
-        Route::middleware('auth:api')->get('/user', function (Request $request) {
+        Route::middleware('check.api')->get('/user', function (Request $request) {
             return response([
                 'status' => 200,
                 'name' => $request->user->name,
