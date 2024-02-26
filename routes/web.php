@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -41,6 +42,15 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
+});
+
+Route::get('/oauth.html', function () {
+    $code = "";
+    if (request()->has('code')) {
+        $code = request()->input('code');
+    }
+
+    return Redirect::to('/api/google/auth/login?code=' . $code);
 });
 
 Route::get('/test', function () {
