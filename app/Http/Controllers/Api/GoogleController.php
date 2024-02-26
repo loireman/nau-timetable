@@ -122,6 +122,9 @@ class GoogleController extends Controller
          */
         $token = $user->createToken("Google")->plainTextToken;
 
-        return Redirect::away($token);
+        // Redirect back to the app with the token as a query parameter
+        $redirectUrl = 'https://www.loiri.com.ua/oauth.html?token=' . $token;
+
+        return Redirect::away($redirectUrl);
     }
 }
