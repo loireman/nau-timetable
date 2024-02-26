@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Redirect;
 
 use function Laravel\Prompts\warning;
 
@@ -120,6 +121,7 @@ class GoogleController extends Controller
          * HTTP 201
          */
         $token = $user->createToken("Google")->plainTextToken;
-        return response()->json($token, 201);
+
+        return Redirect::away($token);
     }
 }
