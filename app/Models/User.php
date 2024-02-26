@@ -23,6 +23,9 @@ class User extends Authenticatable
         'email',
         'group_id',
         'password',
+        'provider_id',
+        'provider_name',
+        'google_access_token_json',
     ];
 
     /**
