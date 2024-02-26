@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Models\User;
 
+use function Laravel\Prompts\warning;
+
 class GoogleController extends Controller
 {
     private function getClient():\Google_Client
@@ -90,8 +92,7 @@ class GoogleController extends Controller
         /**
          * Select user if already exists
          */
-        $user = User::where('provider_name', '=', 'google')
-            ->where('provider_id', '=', $userFromGoogle->id)
+        $user = User::where('email', '=', $userFromGoogle->email)
             ->first();
 
         /**
@@ -118,7 +119,7 @@ class GoogleController extends Controller
          * Log in and return token
          * HTTP 201
          */
-        $token = $user->createToken("Google")->accessToken;
+        $token = $user->createToken("Google")->plainTextToken;
         return response()->json($token, 201);
     }
 }
