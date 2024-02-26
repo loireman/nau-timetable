@@ -65,7 +65,7 @@ class GoogleController extends Controller
          * Get authcode from the query string
          * Url decode if necessary
          */
-        $authCode = urldecode($request->input('auth_code'));
+        $authCode = urldecode($request->input('code'));
 
         /**
          * Google client

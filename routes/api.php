@@ -67,4 +67,4 @@ Route::group(
 );
 
 Route::get('google/login/url', [App\Http\Controllers\Api\GoogleController::class, 'getAuthUrl']);
-Route::post('google/auth/login', [App\Http\Controllers\Api\GoogleController::class, 'postLogin']);
+Route::get('google/auth/login', [App\Http\Controllers\Api\GoogleController::class, 'postLogin']);
