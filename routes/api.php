@@ -53,7 +53,7 @@ Route::group(
 
         Route::get('/check-login', [App\Http\Controllers\Api\ApiAuthenticatedSessionController::class, 'checkLogin']);
 
-        Route::middleware('check.api')->get('/user', function (Request $request) {
+        Route::middleware('auth:api')->get('/user', function (Request $request) {
             return response([
                 'status' => 200,
                 'name' => $request->user->name,
@@ -65,3 +65,6 @@ Route::group(
             ->name('logout');
     }
 );
+
+Route::get('google/login/url', [App\Http\Controllers\Api\GoogleController::class, 'getAuthUrl']);
+
