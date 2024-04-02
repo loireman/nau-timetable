@@ -70,22 +70,17 @@ const TimetableMobile = ({
     };
 
     const lessonStart = (value) => {
-        const currentMoment = moment.tz("Europe/Rome");
-        const isDST = currentMoment.isDST();
-
+        const currentMoment = moment.tz();
+    
         // Set time to 8:00 AM in Kyiv timezone
-        const kyivMoment = currentMoment
-            .clone()
-            .tz("Europe/Kiev")
-            .set({ hour: 8, minute: 0, second: 0 });
+        const kyivMoment = currentMoment.clone().tz('Europe/Kiev').set({ hour: 8, minute: 0, second: 0 });
 
-        let currentOffset = currentMoment.utcOffset();
-        if (isDST) {
-            currentOffset -= 60; // Adjust for DST
-        }
+        // Convert start time to user's timezone
+        const userTimezone = moment.tz.guess();
+        const userMoment = kyivMoment.clone().tz(userTimezone);
 
         const startMinutes =
-            kyivMoment.hours() * 60 - currentOffset + (value - 1) * 110;
+            userMoment.hours() * 60 + (value - 1) * 110;
         const endMinutes = startMinutes + 95;
 
         const formatTime = (minutes) => {
