@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Modal from "./Modal";
 import { Icon } from "@iconify/react";
+import * as moment from "moment-timezone";
 
 const DaySelector = ({ selectedDay, onSelectDay }) => {
     const days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
@@ -69,14 +70,22 @@ const TimetableMobile = ({
     };
 
     const lessonStart = (value) => {
+        const currentMoment = moment.tz("Europe/Rome");
+        const isDST = currentMoment.isDST();
+
         // Set time to 8:00 AM in Kyiv timezone
-        const utcDateString = new Date().toLocaleString('en-US', { timeZone: 'Europe/London' });
-        const utcDate = new Date(utcDateString);
-        utcDate.setHours(6);
-        utcDate.setMinutes(0);
-        utcDate.setSeconds(0);
-        const currentOffset = new Date().getTimezoneOffset();
-        const startMinutes = utcDate.getHours() * 60 - currentOffset + (value - 1) * 110;
+        const kyivMoment = currentMoment
+            .clone()
+            .tz("Europe/Kiev")
+            .set({ hour: 8, minute: 0, second: 0 });
+
+        let currentOffset = currentMoment.utcOffset();
+        if (isDST) {
+            currentOffset -= 60; // Adjust for DST
+        }
+
+        const startMinutes =
+            kyivMoment.hours() * 60 - currentOffset + (value - 1) * 110;
         const endMinutes = startMinutes + 95;
 
         const formatTime = (minutes) => {
