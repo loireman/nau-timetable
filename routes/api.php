@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,5 +67,12 @@ Route::group(
     }
 );
 
-Route::get('google/login/url', [App\Http\Controllers\Api\GoogleController::class, 'getAuthUrl']);
-Route::get('google/auth/login', [App\Http\Controllers\Api\GoogleController::class, 'postLogin']);
+Route::middleware('web')->get('google/auth/redirect', function () {
+    return Socialite::driver('google')->redirect();
+});
+Route::get('google/auth/callback', function () {
+    $user = Socialite::driver('google')->user();
+
+    return $user;
+    // $user->token
+});

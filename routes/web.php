@@ -44,15 +44,6 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/oauth.html', function () {
-    $code = "";
-    if (request()->has('code')) {
-        $code = request()->input('code');
-    }
-
-    return Redirect::to('/api/google/auth/login?code=' . $code);
-});
-
 Route::get('/test', function () {
     $globalAlert = config('config.global_alert');
 
