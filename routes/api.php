@@ -70,7 +70,7 @@ Route::group(
 Route::middleware('web')->get('google/auth/redirect', function () {
     return Socialite::driver('google')->redirect();
 });
-Route::get('google/auth/callback', function () {
+Route::middleware('web')->get('google/auth/callback', function () {
     $user = Socialite::driver('google')->user();
 
     return $user;
