@@ -53,11 +53,24 @@ export default function Create({ auth, streams, substreams }) {
             <div className="pb-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <form className="px-4 py-8" onSubmit={submit}>
-                        <InputLabel htmlFor="name" value="Is group" />
-                        <InputSwitch
-                            initialValue={isEnabled}
-                            onChange={changeGroupType}
-                        />
+                        <div className="mt-3 flex justify-around overflow-clip rounded-lg border bg-gray-100 border-gray-500">
+                            <div
+                                className={`${
+                                    !isEnabled ? "bg-blue-600 text-white" : ""
+                                } w-1/2 p-3 text-center font-semibold rounded-md max-md:truncate overflow-hidden`}
+                                onClick={() => changeGroupType(false)}
+                            >
+                                Поток
+                            </div>
+                            <div
+                                className={`${
+                                    isEnabled ? "bg-blue-600 text-white" : ""
+                                } w-1/2 p-3 text-center font-semibold rounded-md max-md:truncate overflow-hidden`}
+                                onClick={() => changeGroupType(true)}
+                            >
+                                Група
+                            </div>
+                        </div>
 
                         <InputLabel htmlFor="name" value="Group name" />
                         <TextInput
@@ -107,8 +120,14 @@ export default function Create({ auth, streams, substreams }) {
                                 />
                             </>
                         )}
-                        <InputError message={errors.stream_id} className="mt-2" />
-                        <InputError message={errors.substream_id} className="mt-2" />
+                        <InputError
+                            message={errors.stream_id}
+                            className="mt-2"
+                        />
+                        <InputError
+                            message={errors.substream_id}
+                            className="mt-2"
+                        />
 
                         <PrimaryButton
                             className="mt-16 w-full grid"

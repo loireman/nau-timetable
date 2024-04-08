@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Redirect;
+use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -42,6 +43,17 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
+});
+
+
+Route::middleware('web')->get('google/auth/redirect', function () {
+    return Socialite::driver('google')->redirect();
+})->name('google.redirect');
+Route::middleware('web')->get('google/auth/callback', function () {
+    $user = Socialite::driver('google')->user();
+
+    return Redirect('/timetable');
+    // $user->token
 });
 
 Route::get('/test', function () {

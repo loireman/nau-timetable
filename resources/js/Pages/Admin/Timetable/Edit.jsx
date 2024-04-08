@@ -11,7 +11,7 @@ import Select from "@/Components/Select";
 import Radio from "@/Components/Radio";
 import TimetableSelect from "@/Components/TimetableSelect";
 
-export default function Edit({ auth, timetable, groups }) {
+export default function Edit({ auth, timetable, groups, streams }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: timetable.name,
         teacher: timetable.teacher,
@@ -21,16 +21,18 @@ export default function Edit({ auth, timetable, groups }) {
         lesson: timetable.lesson,
         auditory: timetable.auditory,
         pgroup: timetable.pgroup,
-        group_id: timetable.group_id,
+        group_id: timetable.type != 0 ? timetable.group_id : null,
+        stream_id: timetable.type == 0 ? timetable.group_id : null,
     });
 
     const submit = (e) => {
         e.preventDefault();
 
-        Inertia.put(
-            route("timetable.update", { timetable: timetable }),
-            data
-        );
+        Inertia.put(route("timetable.update", { timetable: timetable }), data);
+    };
+
+    const handleStreamSelectChange = (newValue) => {
+        setData("stream_id", newValue);
     };
 
     const handleSelectChange = (newValue) => {
@@ -62,18 +64,93 @@ export default function Edit({ auth, timetable, groups }) {
 
             <div className="pb-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <form className="px-4 py-8" onSubmit={submit}>
-                        <InputLabel htmlFor="name" value="Group" />
-                        <Select
-                            options={groups}
-                            defaultValue="Виберіть групу"
-                            defaultSelectable={false}
-                            value={data.group_id}
-                            onChange={handleSelectChange}
-                        />
-
-                        {data.group_id != null ? (
+                    <form className="px-4 py-8" onSubmit={submit}>
+                        <div className="mt-3 flex justify-around overflow-clip rounded-lg border bg-gray-100 border-gray-500">
+                            <div
+                                className={`${
+                                    data.type == 0
+                                        ? "bg-blue-600 text-white"
+                                        : ""
+                                } w-1/3 p-3 text-center font-semibold rounded-md max-md:truncate overflow-hidden`}
+                                onClick={() => handleTypeChange("0")}
+                            >
+                                Лекція
+                            </div>
+                            <div
+                                className={`${
+                                    data.type == 1
+                                        ? "bg-blue-600 text-white"
+                                        : ""
+                                } w-1/3 p-3 text-center font-semibold rounded-md max-md:truncate overflow-hidden`}
+                                onClick={() => handleTypeChange("1")}
+                            >
+                                Практична
+                            </div>
+                            <div
+                                className={`${
+                                    data.type == 2
+                                        ? "bg-blue-600 text-white"
+                                        : ""
+                                } w-1/3 p-3 text-center font-semibold rounded-md max-md:truncate overflow-hidden`}
+                                onClick={() => handleTypeChange("2")}
+                            >
+                                Лабораторна
+                            </div>
+                        </div>
+                        {data.type == 0 ? (
                             <>
+                                <InputLabel htmlFor="name" value="Stream" />
+                                <Select
+                                    options={streams}
+                                    defaultValue="Виберіть поток"
+                                    defaultSelectable={false}
+                                    value={data.stream_id}
+                                    onChange={handleStreamSelectChange}
+                                />
+                            </>
+                        ) : (
+                            <>
+                                <InputLabel htmlFor="name" value="Group" />
+                                <Select
+                                    options={groups}
+                                    defaultValue="Виберіть групу"
+                                    defaultSelectable={false}
+                                    value={data.group_id}
+                                    onChange={handleSelectChange}
+                                />
+                            </>
+                        )}
+
+                        {(data.type == 0 && data.stream_id != null) ||
+                        (data.type != 0 && data.group_id != null) ? (
+                            <>
+                                {data.type == 2 ? (
+                                    <>
+                                        <InputLabel
+                                            className="mt-3"
+                                            htmlFor="pgroup"
+                                            value="Підгрупа"
+                                        />
+                                        <TextInput
+                                            id="pgroup"
+                                            name="pgroup"
+                                            type="number"
+                                            min="1"
+                                            max="4"
+                                            value={data.pgroup}
+                                            className="mt-1 block w-full"
+                                            autoComplete="pgroup"
+                                            isFocused={true}
+                                            onChange={(e) =>
+                                                setData(
+                                                    "pgroup",
+                                                    e.target.value
+                                                )
+                                            }
+                                            required
+                                        />
+                                    </>
+                                ) : null}
                                 <InputLabel
                                     htmlFor="name"
                                     value="Lesson name"
@@ -135,52 +212,6 @@ export default function Edit({ auth, timetable, groups }) {
                                     message={errors.auditory}
                                     className="mt-2"
                                 />
-
-                                <div className="mt-3">
-                                    <Radio
-                                        label="Лекція"
-                                        checked={data.type == 0}
-                                        onChange={() => handleTypeChange("0")}
-                                    />
-                                    <Radio
-                                        label="Практична"
-                                        checked={data.type == 1}
-                                        onChange={() => handleTypeChange("1")}
-                                    />
-                                    <Radio
-                                        label="Лабораторна"
-                                        checked={data.type == 2}
-                                        onChange={() => handleTypeChange("2")}
-                                    />
-                                </div>
-
-                                {data.type == 2 ? (
-                                    <>
-                                        <InputLabel
-                                            className="mt-3"
-                                            htmlFor="pgroup"
-                                            value="Підгрупа"
-                                        />
-                                        <TextInput
-                                            id="pgroup"
-                                            name="pgroup"
-                                            type="number"
-                                            min="1"
-                                            max="4"
-                                            value={data.pgroup}
-                                            className="mt-1 block w-full"
-                                            autoComplete="pgroup"
-                                            isFocused={true}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "pgroup",
-                                                    e.target.value
-                                                )
-                                            }
-                                            required
-                                        />
-                                    </>
-                                ) : null}
 
                                 <TimetableSelect
                                     data={data}

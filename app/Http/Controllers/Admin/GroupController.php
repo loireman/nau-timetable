@@ -79,7 +79,7 @@ class GroupController extends Controller
     public function edit(Groups $group)
     {
         $streams = Stream::selectRaw('id, CONCAT(name, " (", course, " курс)") as name')->pluck('name', 'id')->all();
-        $substreams = Groups::whereNull('substream_id')->whereNotNull('stream_id')->pluck('name', 'id')->all();
+        $substreams = Groups::whereNull('substream_id')->whereNotNull('stream_id')->where('id', '!=', $group->id)->pluck('name', 'id')->all();
 
         return Inertia::render('Admin/Group/Edit', [
             'streams' => $streams,

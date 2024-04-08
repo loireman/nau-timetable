@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Laravel\Socialite\Facades\Socialite;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,13 +65,3 @@ Route::group(
             ->name('logout');
     }
 );
-
-Route::middleware('web')->get('google/auth/redirect', function () {
-    return Socialite::driver('google')->redirect();
-});
-Route::middleware('web')->get('google/auth/callback', function () {
-    $user = Socialite::driver('google')->user();
-
-    return $user;
-    // $user->token
-});

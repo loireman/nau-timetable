@@ -66,13 +66,16 @@ class TimetableController extends Controller
         if(Auth::user()->can('timetable allgroups'))
         {
             $groups = Groups::whereNotNull('substream_id')->pluck('name', 'id')->all();
+            $streams = Groups::whereNull('substream_id')->pluck('name', 'id')->all();
         } else {
-            $groups = Groups::where('id', Auth::user()->group_id)->pluck('name', 'id')->all();
+            $groups = Groups::where('id', Auth::user()->group_id)->stream()->pluck('name', 'id')->all();
+            $streams = Groups::where('id', Auth::user()->group_id)->pluck('name', 'id')->all();
         }
 
         return Inertia::render('Admin/Timetable/Create', [
             'groups' => $groups,
-        ]);
+            'streams' => $streams,
+        ]); 
     }
 
     public function edit(Timetable $timetable)
@@ -80,12 +83,15 @@ class TimetableController extends Controller
         if(Auth::user()->can('timetable allgroups'))
         {
             $groups = Groups::whereNotNull('substream_id')->pluck('name', 'id')->all();
+            $streams = Groups::whereNull('substream_id')->pluck('name', 'id')->all();
         } else {
-            $groups = Groups::where('id', Auth::user()->group_id)->pluck('name', 'id')->all();
+            $groups = Groups::where('id', Auth::user()->group_id)->stream()->pluck('name', 'id')->all();
+            $streams = Groups::where('id', Auth::user()->group_id)->pluck('name', 'id')->all();
         }
 
         return Inertia::render('Admin/Timetable/Edit', [
             'groups' => $groups,
+            'streams' => $streams,
             'timetable' => $timetable
         ]);
     }
@@ -95,7 +101,7 @@ class TimetableController extends Controller
         $data = $request->all();
 
         if($data['type'] == 0) {
-            $data['group_id'] = Groups::where('id', $data['group_id'])->pluck('substream_id')->first();
+            $data['group_id'] = $data['stream_id'];
         }
 
         Timetable::create($data);
@@ -108,7 +114,7 @@ class TimetableController extends Controller
         $data = $request->all();
 
         if($data['type'] == 0) {
-            $data['group_id'] = Groups::where('id', $data['group_id'])->pluck('substream_id')->first();
+            $data['group_id'] = $data['stream_id'];
         }
 
         $timetable->update($data);

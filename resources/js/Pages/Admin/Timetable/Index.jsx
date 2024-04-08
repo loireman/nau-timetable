@@ -72,12 +72,41 @@ export default function Index({ auth, timetables, can, message, error }) {
                                 onClick={() => openOptionsModal(index)}
                                 key={index}
                             >
-                                <h5 className="form-text">
-                                    {element.name}
-                                    <small>
-                                        ({element.week}|{element.day}|{element.lesson})
-                                    </small>
-                                </h5>
+                                <div className="flex gap-6 items-center">
+                                    <h5 className="form-text">
+                                        {element.name}
+                                    </h5>
+                                    {element.group && (
+                                        <>
+                                            <div className="chip">
+                                                {
+                                                    [
+                                                        "Лекція",
+                                                        "Практична",
+                                                        "Лабораторна",
+                                                    ][element.type]
+                                                }
+                                            </div>
+                                            <div className="chip">
+                                                {element.group.name}
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                                <span>
+                                    {element.week} тиждень,{" "}
+                                    {
+                                        [
+                                            "Понеділок",
+                                            "Вівторок",
+                                            "Середа",
+                                            "Четвер",
+                                            "П'ятниця",
+                                            "Субота",
+                                        ][element.day]
+                                    },{" "}
+                                    {element.lesson} пара
+                                </span>
                                 <span>
                                     Updated at{" "}
                                     <DateFormatted
@@ -100,12 +129,6 @@ export default function Index({ auth, timetables, can, message, error }) {
                                     <span className="form-label">Name</span>
                                     <h5 className="form-text">
                                         {timetables.data[elementId]?.name}
-                                    </h5>
-                                </div>
-                                <div>
-                                    <span className="form-label">Course</span>
-                                    <h5 className="form-text">
-                                        {timetables.data[elementId]?.course}
                                     </h5>
                                 </div>
                                 <div>
@@ -149,7 +172,9 @@ export default function Index({ auth, timetables, can, message, error }) {
                                     <button
                                         className="admin-delete"
                                         onClick={() =>
-                                            destroy(timetables.data[elementId].id)
+                                            destroy(
+                                                timetables.data[elementId].id
+                                            )
                                         }
                                     >
                                         Delete

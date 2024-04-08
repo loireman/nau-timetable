@@ -58,9 +58,9 @@ export default function Index({ auth, groups, can, message, error }) {
                 { key: "name", label: "Name (A to Z)" },
                 { key: "-name", label: "Name (Z to A)" },
             ]}
-            filterOptions = {[
-                { key: 'group', value: null },
-                { key: 'substream', value: null },
+            filterOptions={[
+                { key: "group", value: null },
+                { key: "substream", value: null },
             ]}
         >
             <Head title="Groups" />
@@ -74,7 +74,21 @@ export default function Index({ auth, groups, can, message, error }) {
                                 onClick={() => openOptionsModal(index)}
                                 key={index}
                             >
-                                <h5 className="form-text">{element.name}</h5>
+                                <div className="flex items-center gap-6">
+                                    <h5 className="form-text">
+                                        {element.name}
+                                    </h5>
+                                    {element.stream && (
+                                        <div className="chip">
+                                            Спец. {element.stream.name}
+                                        </div>
+                                    )}
+                                    {element.substream && (
+                                        <div className="chip">
+                                            Поток {element.substream.name}
+                                        </div>
+                                    )}
+                                </div>
                                 <span>
                                     Updated at{" "}
                                     <DateFormatted
