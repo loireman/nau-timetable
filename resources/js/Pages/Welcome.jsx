@@ -4,7 +4,6 @@ import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import InputError from "@/Components/InputError";
 import { useState } from "react";
-import QuillInput from "@/Components/QuillInput";
 import InputSwitch from "@/Components/InputSwitch";
 import FileInputDropdown from "@/Components/FileInputDropdown";
 import PrimaryButton from "@/Components/PrimaryButton";
@@ -53,7 +52,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion, globalAlert 
             <TextInput type="Password" placeholder="Password" />
             <InputError message="error with code" />
             <TextInput type="time" />
-            <QuillInput value={value} onChange={setValue} />
+            {/* <QuillInput value={value} onChange={setValue} /> */}
             <InputSwitch
                 label="Active"
                 initialValue={isEnabled}

@@ -24,16 +24,16 @@ Route::group(
         'prefix'     => 'v1',
     ],
     function () {
-        Route::get('teacher/{teacher}', [App\Http\Controllers\Api\DepartmentController::class, 'getTeachersSchedule']);
-        Route::get('group/{group}', [App\Http\Controllers\Api\DepartmentController::class, 'getGroup']);
+        Route::get('teacher/{teacher}', [App\Http\Controllers\Api\DepartmentController::class, 'getTeachersSchedule'])->name('api.teacher.get');
+        Route::get('group/{group}', [App\Http\Controllers\Api\DepartmentController::class, 'getGroup'])->name('api.group.get');
 
         Route::group([
             'prefix' => 'search',
             'middleware' => ['api'],
         ], function () {
             // Search routes here
-            Route::get('teacher/{name?}', [App\Http\Controllers\Api\SearchController::class, 'getTeacherByName']);
-            Route::get('group/{name?}', [App\Http\Controllers\Api\SearchController::class, 'getGroupByName']);
+            Route::get('teacher/{name?}', [App\Http\Controllers\Api\SearchController::class, 'getTeacherByName'])->name('api.teacher.find');
+            Route::get('group/{name?}', [App\Http\Controllers\Api\SearchController::class, 'getGroupByName'])->name('api.group.find');
         });
     }
 );

@@ -46,6 +46,7 @@ Route::get('/', function () {
 });
 
 
+
 Route::middleware('web')->get('google/auth/redirect', function () {
     return Socialite::driver('google')->redirect();
 })->name('google.redirect');
@@ -55,6 +56,10 @@ Route::middleware('web')->get('google/auth/callback', function () {
     return Redirect('/timetable');
     // $user->token
 });
+
+Route::get('/api', function () {
+    return Inertia::render('Api');
+})->name('test1');
 
 Route::get('/test', function () {
     $globalAlert = config('config.global_alert');
