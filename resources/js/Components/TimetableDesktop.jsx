@@ -27,16 +27,18 @@ const TimetableDesktop = ({
 
     const lessonStart = (value) => {
         const currentMoment = moment.tz();
-    
+
         // Set time to 8:00 AM in Kyiv timezone
-        const kyivMoment = currentMoment.clone().tz('Europe/Kiev').set({ hour: 8, minute: 0, second: 0 });
+        const kyivMoment = currentMoment
+            .clone()
+            .tz("Europe/Kiev")
+            .set({ hour: 8, minute: 0, second: 0 });
 
         // Convert start time to user's timezone
         const userTimezone = moment.tz.guess();
         const userMoment = kyivMoment.clone().tz(userTimezone);
 
-        const startMinutes =
-            userMoment.hours() * 60 + (value - 1) * 110;
+        const startMinutes = userMoment.hours() * 60 + (value - 1) * 110;
         const endMinutes = startMinutes + 95;
 
         const formatTime = (minutes) => {
@@ -48,14 +50,6 @@ const TimetableDesktop = ({
         return `${formatTime(startMinutes)} - ${formatTime(endMinutes)}`;
     };
 
-    const openLessonModal = (id) => {
-        setOpenLesson(true);
-        setElementId(id);
-    };
-
-    const closeModal = () => {
-        setOpenLesson(false);
-    };
     return (
         <div>
             <div className="flex content-center items-center gap-4 justify-center mb-4">
@@ -114,29 +108,53 @@ const TimetableDesktop = ({
                                             entry.week === week + 1 &&
                                             entry.day === day &&
                                             entry.lesson === lesson ? (
-                                                <div
-                                                    className="card-default relative overflow-hidden lesson"
-                                                    onClick={() =>
-                                                        openLessonModal(index)
-                                                    }
-                                                >
-                                                    <div
-                                                        className={`lesson-type type-${
-                                                            entry.type
-                                                        } ${
-                                                            entry.week ===
-                                                                currentWeek &&
-                                                            entry.day ===
-                                                                currentDay &&
-                                                            entry.lesson ===
-                                                                currentLesson
-                                                                ? "active"
-                                                                : ""
-                                                        }`}
-                                                    ></div>
+                                                <div className="card-default relative overflow-hidden lesson">
+                                                    <div className="flex flex-wrap gap-2 justify-between">
+                                                        <div
+                                                            className={`lesson-type type-${entry.type}`}
+                                                        >
+                                                            {
+                                                                [
+                                                                    "Лекція",
+                                                                    "Практична",
+                                                                    "Лабораторна",
+                                                                ][entry.type]
+                                                            }
+                                                        </div>
+
+                                                        {entry.auditory_link && (
+                                                            <a
+                                                                className="lesson-meet"
+                                                                href={
+                                                                    entry.auditory_link
+                                                                        ? entry.auditory_link
+                                                                        : null
+                                                                }
+                                                                target="_blank"
+                                                            >
+                                                                <Icon
+                                                                    className="w-4 h-4"
+                                                                    icon="logos:google-meet"
+                                                                />
+                                                            </a>
+                                                        )}
+                                                    </div>
+
                                                     <span className="text-xl font-semibold">
                                                         {entry.name}
                                                     </span>
+                                                    {isTeacher == true ? (
+                                                        <span className="font-medium text-gray-400">
+                                                            {entry.group}
+                                                            {entry.type == 2
+                                                                ? ` / ${entry.pgroup}`
+                                                                : null}
+                                                        </span>
+                                                    ) : (
+                                                        <span className="font-medium text-gray-400">
+                                                            {entry.teacher}
+                                                        </span>
+                                                    )}
                                                 </div>
                                             ) : null}
                                         </div>
@@ -147,71 +165,6 @@ const TimetableDesktop = ({
                     ))}
                 </tbody>
             </table>
-            <Modal show={openLesson} onClose={closeModal}>
-                {timetable[elementId] && (
-                    <div className="card-modal">
-                        <button className="fixed right-4" onClick={closeModal}>
-                            <Icon icon="mdi:close" />
-                        </button>
-                        <div>
-                            <h5 className="form-text font-semibold">
-                                {timetable[elementId]?.name}
-                            </h5>
-                        </div>
-                        <div>
-                            <span className="form-label">Тип</span>
-                            <h5 className="form-text">
-                                {["Лекція", "Практична", "Лабораторна"].map(
-                                    (value, key) => (
-                                        <div key={key}>
-                                            {key == timetable[elementId]?.type
-                                                ? value
-                                                : null}
-                                        </div>
-                                    )
-                                )}
-                            </h5>
-                        </div>
-                        {isTeacher == true ? (
-                            <>
-                                <div>
-                                    <span className="form-label">Група</span>
-                                    <h5 className="form-text">
-                                        {timetable[elementId]?.group}
-                                    </h5>
-                                </div>
-                                {timetable[elementId]?.type == 2 ? (
-                                    <div>
-                                        <span className="form-label">
-                                            Підрупа
-                                        </span>
-                                        <h5 className="form-text">
-                                            {timetable[elementId]?.pgroup}
-                                        </h5>
-                                    </div>
-                                ) : null}
-                            </>
-                        ) : (
-                            <div>
-                                <span className="form-label">Викладач</span>
-                                <h5 className="form-text">
-                                    {timetable[elementId]?.teacher ?? (
-                                        <small>Не визначений/а</small>
-                                    )}
-                                </h5>
-                            </div>
-                        )}
-                        <div>
-                            <span className="form-label">Аудиторія</span>
-                            <h5 className="form-text">
-                                {timetable[elementId]?.auditory ?? (
-                                    <small>Не визначена</small>
-                                )}
-                            </h5>
-                        </div>
-                    </div>
-                )}
-            </Modal>
         </div>
     );
 };

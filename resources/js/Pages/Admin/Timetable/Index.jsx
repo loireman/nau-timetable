@@ -89,6 +89,7 @@ export default function Index({ auth, timetables, can, message, error }) {
                                             </div>
                                             <div className="chip">
                                                 {element.group.name}
+                                                { element.type == 2 && `/${element.pgroup}` }
                                             </div>
                                         </>
                                     )}
@@ -103,7 +104,7 @@ export default function Index({ auth, timetables, can, message, error }) {
                                             "Четвер",
                                             "П'ятниця",
                                             "Субота",
-                                        ][element.day]
+                                        ][element.day - 1]
                                     },{" "}
                                     {element.lesson} пара
                                 </span>
@@ -135,6 +136,7 @@ export default function Index({ auth, timetables, can, message, error }) {
                                     <span className="form-label">Group</span>
                                     <h5 className="form-text">
                                         {timetables.data[elementId]?.group.name}
+                                        {timetables.data[elementId]?.type == 2 && ` (підгрупа ${timetables.data[elementId]?.pgroup})`}
                                     </h5>
                                 </div>
                                 <div className="grid gap-1 m-auto">

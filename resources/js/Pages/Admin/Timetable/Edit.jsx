@@ -22,7 +22,7 @@ export default function Edit({ auth, timetable, groups, streams }) {
             lesson: timetable.lesson,
             auditory: timetable.auditory,
             auditory_link: timetable.auditory_link,
-            pgroup: timetable.pgroup,
+            pgroup: timetable.type == 2 ? timetable.pgroup : 1,
             group_id: timetable.type != 0 ? timetable.group_id : null,
             stream_id: timetable.type == 0 ? timetable.group_id : null,
         });
@@ -30,7 +30,21 @@ export default function Edit({ auth, timetable, groups, streams }) {
     const submit = (e) => {
         e.preventDefault();
 
-        Inertia.put(route("timetable.update", { timetable: timetable }), data);
+        const timetableData = {
+            name: data.name,
+            teacher: data.teacher,
+            type: data.type,
+            week: data.week,
+            day: data.day,
+            lesson: data.lesson,
+            auditory: data.auditory,
+            auditory_link: data.auditory_link,
+            pgroup: data.type == 2 ? data.pgroup : 0,
+            group_id: data.group_id,
+            stream_id: data.stream_id,
+        }
+
+        Inertia.put(route("timetable.update", { timetable: timetable }), timetableData);
     };
 
     const handleStreamSelectChange = (newValue) => {
@@ -66,14 +80,6 @@ export default function Edit({ auth, timetable, groups, streams }) {
             setError("auditory_link", "");
         }
     };
-
-    useEffect(() => {
-        if (data.type == 2) {
-            setData("pgroup", 1);
-        } else {
-            setData("pgroup", 0);
-        }
-    }, [data.type]);
 
     return (
         <AuthenticatedLayout

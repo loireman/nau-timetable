@@ -10,6 +10,7 @@ $color-warning: #c19614
 $color-green: #15B991
 $color-blue: #2563EB
 $color-blue-active: #1a46a6
+$color-info: #28605e
 
 $size-lg: 1024px
 
@@ -667,20 +668,28 @@ body
     .time.inactive
         background-color: transparent
 
+    .lesson-meet
+        display: grid
+        align-items: center
+        padding: 12px
+        border-radius: 10px
+        background-color: $color-chip
+
     .lesson-type
-        position: absolute
-        top: 0
-        left: 0
+        height: fit-content
+        font-size: 14px
         padding: 8px
-        border-end-end-radius: 20px
+        border-radius: 10px
+        font-weight: 600
+        color: $color-light
         &.active
             padding-right: 50px
         &.type-0
-            background-color: $color-danger
+            background-color: $color-info
         &.type-1
-            background-color: $color-blue
+            background-color: $color-info
         &.type-2
-            background-color: $color-green
+            background-color: $color-info
 
 .timetable-container
 
