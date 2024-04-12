@@ -144,16 +144,39 @@ const TimetableDesktop = ({
                                                         {entry.name}
                                                     </span>
                                                     {isTeacher == true ? (
-                                                        <span className="font-medium text-gray-400">
+                                                        <span className="text-sm font-medium text-gray-400">
                                                             {entry.group}
                                                             {entry.type == 2
                                                                 ? ` / ${entry.pgroup}`
                                                                 : null}
                                                         </span>
                                                     ) : (
-                                                        <span className="font-medium text-gray-400">
-                                                            {entry.teacher}
-                                                        </span>
+                                                        <>
+                                                            {entry.teacher && (
+                                                                <div className="flex gap-3 items-center">
+                                                                    <Icon
+                                                                        className="w-6 h-6"
+                                                                        icon="mdi:person"
+                                                                    />
+                                                                    <span className="text-sm font-medium text-gray-400">
+                                                                        {
+                                                                            entry.teacher
+                                                                        }
+                                                                    </span>
+                                                                </div>
+                                                            )}
+                                                        </>
+                                                    )}
+                                                    {entry.auditory && (
+                                                        <div className="flex gap-3 items-center">
+                                                            <Icon
+                                                                className="w-6 h-6"
+                                                                icon="mdi:office-building-marker"
+                                                            />
+                                                            <span className="text-sm font-medium text-gray-400">
+                                                                {entry.auditory}
+                                                            </span>
+                                                        </div>
                                                     )}
                                                 </div>
                                             ) : null}
