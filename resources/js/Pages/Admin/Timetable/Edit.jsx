@@ -12,18 +12,20 @@ import Radio from "@/Components/Radio";
 import TimetableSelect from "@/Components/TimetableSelect";
 
 export default function Edit({ auth, timetable, groups, streams }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        name: timetable.name,
-        teacher: timetable.teacher,
-        type: timetable.type,
-        week: timetable.week,
-        day: timetable.day,
-        lesson: timetable.lesson,
-        auditory: timetable.auditory,
-        pgroup: timetable.pgroup,
-        group_id: timetable.type != 0 ? timetable.group_id : null,
-        stream_id: timetable.type == 0 ? timetable.group_id : null,
-    });
+    const { data, setData, post, processing, errors, reset, setError } =
+        useForm({
+            name: timetable.name,
+            teacher: timetable.teacher,
+            type: timetable.type,
+            week: timetable.week,
+            day: timetable.day,
+            lesson: timetable.lesson,
+            auditory: timetable.auditory,
+            auditory_link: timetable.auditory_link,
+            pgroup: timetable.pgroup,
+            group_id: timetable.type != 0 ? timetable.group_id : null,
+            stream_id: timetable.type == 0 ? timetable.group_id : null,
+        });
 
     const submit = (e) => {
         e.preventDefault();
@@ -41,6 +43,28 @@ export default function Edit({ auth, timetable, groups, streams }) {
 
     const handleTypeChange = (newValue) => {
         setData("type", newValue);
+    };
+
+    const validateAuditoryLink = (link) => {
+        const regex =
+            /^https:\/\/meet\.google\.com\/[a-zA-Z]{3}-[a-zA-Z]{4}-[a-zA-Z]{3}/;
+        return regex.test(link);
+    };
+
+    const validateMapLink = (link) => {
+        const regex = /^https:\/\/maps\.app\.goo\.gl\/[a-zA-Z0-9-]+$/;
+        return regex.test(link);
+    };
+
+    const handleAuditoryLinkChange = (e) => {
+        const { name, value } = e.target;
+        setData("auditory_link", e.target.value);
+
+        if (value && !validateAuditoryLink(value) && !validateMapLink(value)) {
+            setError("auditory_link", "Invalid Google Maps/Meet link format");
+        } else {
+            setError("auditory_link", "");
+        }
     };
 
     useEffect(() => {
@@ -210,6 +234,26 @@ export default function Edit({ auth, timetable, groups, streams }) {
                                 />
                                 <InputError
                                     message={errors.auditory}
+                                    className="mt-2"
+                                />
+                                <InputLabel
+                                    className="mt-3"
+                                    htmlFor="auditory_link"
+                                    value="Auditory Google Maps(Meet) link"
+                                />
+                                <TextInput
+                                    id="auditory_link"
+                                    name="auditory_link"
+                                    value={data.auditory_link}
+                                    className="mt-1 block w-full"
+                                    autoComplete="auditory_link"
+                                    isFocused={true}
+                                    onChange={(e) =>
+                                        handleAuditoryLinkChange(e)
+                                    }
+                                />
+                                <InputError
+                                    message={errors.auditory_link}
                                     className="mt-2"
                                 />
 

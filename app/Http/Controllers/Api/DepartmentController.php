@@ -31,6 +31,7 @@ class DepartmentController extends Controller
                     'day' => $timetable['day'],
                     'lesson' => $timetable['lesson'],
                     'auditory' => $timetable['auditory'],
+                    'auditory_link' => $timetable['auditory_link'],
                     'pgroup' => $timetable['pgroup'],
                 ];
             });
@@ -63,6 +64,7 @@ class DepartmentController extends Controller
                 'day' => $timetable['day'],
                 'lesson' => $timetable['lesson'],
                 'auditory' => $timetable['auditory'],
+                'auditory_link' => $timetable['auditory_link'],
                 'group' => $timetable['group']['name'],
                 'pgroup' => $timetable['pgroup'],
             ];

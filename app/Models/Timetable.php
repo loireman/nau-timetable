@@ -17,6 +17,7 @@ class Timetable extends Model
         'day',
         'lesson',
         'auditory',
+        'auditory_link',
         'pgroup',
         'group_id',
         'created_at',

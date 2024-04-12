@@ -48,6 +48,7 @@ class StoreTimetableRequest extends FormRequest
             'day' => 'required|integer',
             'pgroup' => 'nullable|integer',
             'auditory' => 'nullable|string',
+            'auditory_link' => 'nullable|string',
             'group_id' => 'nullable|integer',
             'stream_id' => 'nullable|integer',
         ];

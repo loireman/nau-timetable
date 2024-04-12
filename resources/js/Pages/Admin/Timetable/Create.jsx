@@ -18,6 +18,7 @@ export default function Create({ auth, groups, streams }) {
         day: 1,
         lesson: 1,
         auditory: "",
+        auditory_link: "",
         pgroup: 0,
         group_id: null,
         stream_id: null,
@@ -202,7 +203,27 @@ export default function Create({ auth, groups, streams }) {
                                     }
                                 />
                                 <InputError
-                                    message={errors.auditory}
+                                    message={errors.auditory_link}
+                                    className="mt-2"
+                                />
+                                <InputLabel
+                                    className="mt-3"
+                                    htmlFor="auditory_link"
+                                    value="Auditory Google Maps(Meet) link"
+                                />
+                                <TextInput
+                                    id="auditory_link"
+                                    name="auditory_link"
+                                    value={data.auditory_link}
+                                    className="mt-1 block w-full"
+                                    autoComplete="auditory_link"
+                                    isFocused={true}
+                                    onChange={(e) =>
+                                        setData("auditory_link", e.target.value)
+                                    }
+                                />
+                                <InputError
+                                    message={errors.auditory_link}
                                     className="mt-2"
                                 />
 
