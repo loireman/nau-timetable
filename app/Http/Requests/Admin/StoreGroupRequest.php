@@ -29,6 +29,8 @@ class StoreGroupRequest extends FormRequest
             'name' => 'required|string|max:63|unique:groups,name',
             'stream_id' => 'integer|nullable',
             'substream_id' => 'integer|nullable',
+            'single_week' => 'boolean|nullable',
+            'single_group' => 'boolean|nullable',
         ];
     }
 }

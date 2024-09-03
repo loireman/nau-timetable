@@ -1,4 +1,3 @@
-import Checkbox from "@/Components/Checkbox";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
@@ -9,17 +8,27 @@ import { useEffect, useState } from "react";
 import { Inertia } from "@inertiajs/inertia";
 import Select from "@/Components/Select";
 import InputSwitch from "@/Components/InputSwitch";
+import { Icon } from "@iconify/react";
 
-export default function Edit({ auth, group, streams, substreams }) {
+export default function Edit({
+    auth,
+    group,
+    streams,
+    substreams,
+    group_streams,
+}) {
     const { data, setData, post, processing, errors, reset } = useForm({
         _method: "PUT",
         name: group.name,
         stream_id: group.stream_id ?? null,
         substream_id: group.substream_id ?? null,
+        single_week: !!group.single_week ?? false,
+        single_group: !!group.single_group ?? false,
     });
 
     // Initialize isEnabled based on the initial data stream_id value
     const [isEnabled, setIsEnabled] = useState(group.stream_id === null);
+    const streamLocked = group_streams.length > 0;
 
     const submit = (e) => {
         e.preventDefault();
@@ -35,6 +44,7 @@ export default function Edit({ auth, group, streams, substreams }) {
     };
 
     const changeGroupType = (newValue) => {
+        if (streamLocked) return;
         if (newValue === true) {
             setData("stream_id", null);
         } else {
@@ -54,11 +64,37 @@ export default function Edit({ auth, group, streams, substreams }) {
 
             <div className="pb-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    {streamLocked && (
+                        <div className="px-8 py-4 bg-orange-200 text-orange-700 rounded-2xl">
+                            <p>
+                                Зміна типу групи неможлива, наявні групи що
+                                активні:
+                            </p>
+                            {group_streams.map((group, index) => (
+                                <div key={index}>
+                                    <a
+                                        href={route("group.edit", group.id)}
+                                        target="blank"
+                                    >
+                                        {group.name}
+                                        <Icon
+                                            className="inline align-top"
+                                            icon="mdi:external-link"
+                                        />
+                                    </a>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                     <form className="px-4 py-8" onSubmit={submit}>
                         <div className="mt-3 flex justify-around overflow-clip rounded-lg border bg-gray-100 border-gray-500">
                             <div
                                 className={`${
-                                    !isEnabled ? "bg-blue-600 text-white" : ""
+                                    !isEnabled
+                                        ? streamLocked
+                                            ? "bg-gray-600 text-white"
+                                            : "bg-blue-600 text-white"
+                                        : ""
                                 } w-1/2 p-3 text-center font-semibold rounded-md max-md:truncate overflow-hidden`}
                                 onClick={() => changeGroupType(false)}
                             >
@@ -101,6 +137,38 @@ export default function Edit({ auth, group, streams, substreams }) {
                                     value={data.substream_id}
                                     onChange={handleSubStreamChange}
                                 />
+                                <div className="mt-3">
+                                    <InputSwitch
+                                        label={
+                                            <span className="font-semibold">
+                                                Без поділу на тижні
+                                            </span>
+                                        }
+                                        initialValue={data.single_week}
+                                        onChange={() =>
+                                            setData(
+                                                "single_week",
+                                                !data.single_week
+                                            )
+                                        }
+                                    />
+                                </div>
+                                <div className="mt-3">
+                                    <InputSwitch
+                                        label={
+                                            <span className="font-semibold">
+                                                Без поділу на підгрупи
+                                            </span>
+                                        }
+                                        initialValue={data.single_group}
+                                        onChange={() =>
+                                            setData(
+                                                "single_group",
+                                                !data.single_group
+                                            )
+                                        }
+                                    />
+                                </div>
                             </>
                         ) : (
                             <>

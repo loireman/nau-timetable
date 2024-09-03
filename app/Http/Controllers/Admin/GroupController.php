@@ -84,7 +84,8 @@ class GroupController extends Controller
         return Inertia::render('Admin/Group/Edit', [
             'streams' => $streams,
             'substreams' => $substreams,
-            'group' => $group
+            'group' => $group,
+            'group_streams' => $group->substreams
         ]);
     }
 

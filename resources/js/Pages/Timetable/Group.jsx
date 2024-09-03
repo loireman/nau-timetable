@@ -16,13 +16,18 @@ export default function Group({ auth, group }) {
     const [currentWeek, setCurrentWeek] = useState(0);
     const [currentDay, setCurrentDay] = useState(0);
     const [currentLesson, setCurrentLesson] = useState(0);
+    const [singleGroup, setSingleGroup] = useState(false);
+    const [singleWeek, setSingleWeek] = useState(false);
 
     async function fetchGroups(group) {
         if (group != "") {
             const response = await axios.get(`/api/v1/group/${group}`);
-            if (response.data.data.timetables) {
-                setTimetable(response.data.data.timetables);
+            if (response.data.timetables) {
+                setTimetable(response.data.timetables);
+                setSingleGroup(response.data.single_group);
+                setSingleWeek(response.data.single_week);
             }
+
         }
     }
 
@@ -106,35 +111,40 @@ export default function Group({ auth, group }) {
                             isFocused={false}
                         />
                     </div>
-                    <div className="min-w-[190px] max-w-[260px] content-center grid lg:gap-3">
+                    {!singleGroup &&
+
+                        <div className="min-w-[190px] max-w-[260px] content-center grid lg:gap-3">
                         <div className="flex content-center items-center gap-4 justify-center">
                             <span className="font-semibold text-xl">1</span>
                             <InputSwitch
                                 initialValue={selectedPGroup}
                                 onChange={handlePGroupChange}
-                            />
+                                />
                             <span className="font-semibold text-xl">2</span>
                         </div>
                     </div>
+                    }
                 </div>
                 <div className="grid px-6 text-gray-900 w-full gap-12 max-xl:hidden">
                     <TimetableDesktop
                         currentLesson={currentLesson}
                         currentDay={currentDay}
-                        currentWeek={currentWeek}
+                        currentWeek={singleWeek ? singleWeek : currentWeek}
                         selectedPGroup={selectedPGroup + 1}
                         timetable={timetable}
-                        weekDefault={week}
+                        weekDefault={singleWeek ? !singleWeek : week}
+                        singleWeek={singleWeek}
                     />
                 </div>
                 <div className="grid px-6 text-gray-900 w-full gap-12 xl:hidden">
                     <TimetableMobile
                         currentLesson={currentLesson}
                         currentDay={currentDay}
-                        currentWeek={currentWeek}
+                        currentWeek={singleWeek ? singleWeek : currentWeek}
                         selectedPGroup={selectedPGroup + 1}
                         timetable={timetable}
-                        weekDefault={week}
+                        weekDefault={singleWeek ? !singleWeek : week}
+                        singleWeek={singleWeek}
                     />
                 </div>
             </div>

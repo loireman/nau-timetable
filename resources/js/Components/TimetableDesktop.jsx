@@ -11,6 +11,7 @@ const TimetableDesktop = ({
     selectedPGroup,
     timetable,
     weekDefault,
+    singleWeek=false,
     isTeacher = false,
 }) => {
     const [week, setWeek] = useState(0);
@@ -52,11 +53,13 @@ const TimetableDesktop = ({
 
     return (
         <div>
-            <div className="flex content-center items-center gap-4 justify-center mb-4">
+            {!singleWeek &&
+                <div className="flex content-center items-center gap-4 justify-center mb-4">
                 <span className="font-medium text-xl">Week 1</span>
                 <InputSwitch initialValue={week} onChange={handleWeekChange} />
                 <span className="font-medium text-xl">Week 2</span>
             </div>
+            }
 
             <table className="timetable">
                 <thead>

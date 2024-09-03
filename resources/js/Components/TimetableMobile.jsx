@@ -53,6 +53,7 @@ const TimetableMobile = ({
     selectedPGroup,
     timetable,
     weekDefault,
+    singleWeek = false,
     isTeacher = false,
 }) => {
     const [week, setWeek] = useState(weekDefault);
@@ -190,17 +191,19 @@ const TimetableMobile = ({
                                                     </span>
                                                 ) : (
                                                     <>
-                                                        { entry.teacher &&
+                                                        {entry.teacher && (
                                                             <div className="flex gap-3 items-center">
-                                                            <Icon
-                                                            className="w-6 h-6"
-                                                            icon="mdi:person"
-                                                            />
-                                                            <span className="text-sm font-medium text-gray-400">
-                                                            {entry.teacher}
-                                                            </span>
+                                                                <Icon
+                                                                    className="w-6 h-6"
+                                                                    icon="mdi:person"
+                                                                />
+                                                                <span className="text-sm font-medium text-gray-400">
+                                                                    {
+                                                                        entry.teacher
+                                                                    }
+                                                                </span>
                                                             </div>
-                                                        }
+                                                        )}
                                                     </>
                                                 )}
                                                 {entry.auditory && (
@@ -225,11 +228,15 @@ const TimetableMobile = ({
             </table>
 
             <div className="selectors-bottom">
-                <WeekSelector
-                    selectedWeek={week}
-                    onSelectWeek={handleWeekChange}
-                />
-                <div className="vertical-line"></div>
+                {!singleWeek && (
+                    <>
+                        <WeekSelector
+                            selectedWeek={week}
+                            onSelectWeek={handleWeekChange}
+                        />
+                        <div className="vertical-line"></div>
+                    </>
+                )}
                 <DaySelector
                     selectedDay={selectedDay}
                     onSelectDay={selectDay}

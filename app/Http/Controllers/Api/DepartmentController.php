@@ -40,9 +40,9 @@ class DepartmentController extends Controller
 
             return [
                 'status' => 200,
-                'data' => [
-                    'timetables' => $timetables,
-                ],
+                'single_group' => $group->single_group,
+                'single_week' => $group->single_week,
+                'timetables' => $timetables,
             ];
         }
         return ([

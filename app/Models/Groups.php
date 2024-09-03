@@ -13,6 +13,8 @@ class Groups extends Model
         'name',
         'stream_id',
         'substream_id',
+        'single_week',
+        'single_group',
         'updated_at',
         'created_at'
     ];
@@ -24,6 +26,10 @@ class Groups extends Model
     public function substream()
     {
         return $this->belongsTo(Groups::class, 'substream_id', 'id');
+    }
+    public function substreams()
+    {
+        return $this->hasMany(Groups::class, 'substream_id', 'id');
     }
     public function timetables()
     {
