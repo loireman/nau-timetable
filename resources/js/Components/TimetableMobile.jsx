@@ -163,7 +163,9 @@ const TimetableMobile = ({
 
                                                     {entry.auditory_link && (
                                                         <a
-                                                            className="lesson-meet"
+                                                        className={(entry.week === currentWeek &&
+                                                            entry.day === currentDay &&
+                                                            entry.lesson === currentLesson) ? `lesson-meet active` : `lesson-meet`}
                                                             href={
                                                                 entry.auditory_link
                                                                     ? entry.auditory_link
