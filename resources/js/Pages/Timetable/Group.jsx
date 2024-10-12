@@ -18,6 +18,7 @@ export default function Group({ auth, group }) {
     const [currentLesson, setCurrentLesson] = useState(0);
     const [singleGroup, setSingleGroup] = useState(false);
     const [singleWeek, setSingleWeek] = useState(false);
+    const [time, setTime] = useState("");
 
     async function fetchGroups(group) {
         if (group != "") {
@@ -27,7 +28,6 @@ export default function Group({ auth, group }) {
                 setSingleGroup(response.data.single_group);
                 setSingleWeek(response.data.single_week);
             }
-
         }
     }
 
@@ -47,6 +47,7 @@ export default function Group({ auth, group }) {
                 value++;
             }
         }
+        setTime(date.getHours() + ":" + date.getMinutes());
 
         date.setHours(0, 0, 0, 0);
         date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
@@ -63,6 +64,7 @@ export default function Group({ auth, group }) {
 
         week = (week % 2 == (rawDay == 0) ? 1 : 0) + 1;
 
+
         setWeek(week - 1);
         setCurrentWeek(week);
         setCurrentDay(rawDay == 0 ? rawDay + 1 : rawDay);
@@ -73,6 +75,17 @@ export default function Group({ auth, group }) {
         fetchGroups(_group);
         updateCurrentTime();
     }, [_group]);
+
+    useEffect(() => {
+        const timer = setInterval(
+            async () => await updateCurrentTime(),
+            20 * 1000
+        );
+        // Update every minute (in milliseconds)
+        return function cleanup() {
+            clearInterval(timer);
+        };
+    }, []);
 
     const handleSearch = (paramValue) => {
         const url = new URL(window.location);
@@ -101,7 +114,12 @@ export default function Group({ auth, group }) {
             <Head title="Timetable" />
 
             <div className="bg-white">
-                <h1 className="px-6 py-2 text-2xl font-semibold">Розклад групи</h1>
+                <div className="flex justify-between px-6 py-2">
+                    <h1 className="text-2xl font-semibold">
+                        Розклад групи
+                    </h1>
+                    <h2>Час: {time}</h2>
+                </div>
                 <div className="flex flex-wrap justify-center items-center gap-2 lg:gap-6 px-6 py-4 text-gray-900 w-full">
                     <div className="min-w-[190px] max-w-[260px] grid lg:gap-3">
                         <SearchExtInput
@@ -111,19 +129,18 @@ export default function Group({ auth, group }) {
                             isFocused={false}
                         />
                     </div>
-                    {!singleGroup &&
-
+                    {!singleGroup && (
                         <div className="min-w-[190px] max-w-[260px] content-center grid lg:gap-3">
-                        <div className="flex content-center items-center gap-4 justify-center">
-                            <span className="font-semibold text-xl">1</span>
-                            <InputSwitch
-                                initialValue={selectedPGroup}
-                                onChange={handlePGroupChange}
+                            <div className="flex content-center items-center gap-4 justify-center">
+                                <span className="font-semibold text-xl">1</span>
+                                <InputSwitch
+                                    initialValue={selectedPGroup}
+                                    onChange={handlePGroupChange}
                                 />
-                            <span className="font-semibold text-xl">2</span>
+                                <span className="font-semibold text-xl">2</span>
+                            </div>
                         </div>
-                    </div>
-                    }
+                    )}
                 </div>
                 <div className="grid px-6 text-gray-900 w-full gap-12 max-xl:hidden">
                     <TimetableDesktop

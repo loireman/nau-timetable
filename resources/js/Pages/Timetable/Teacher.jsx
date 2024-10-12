@@ -14,6 +14,7 @@ export default function Teacher({ auth, teacher }) {
     const [currentWeek, setCurrentWeek] = useState(0);
     const [currentDay, setCurrentDay] = useState(0);
     const [currentLesson, setCurrentLesson] = useState(0);
+    const [time, setTime] = useState("");
 
     async function fetchTeachers(teacher) {
         if (teacher != "") {
@@ -40,6 +41,7 @@ export default function Teacher({ auth, teacher }) {
                 value++;
             }
         }
+        setTime(date.getHours() + ":" + date.getMinutes());
 
         date.setHours(0, 0, 0, 0);
         date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
@@ -67,6 +69,17 @@ export default function Teacher({ auth, teacher }) {
         updateCurrentTime();
     }, [_teacher]);
 
+    useEffect(() => {
+        const timer = setInterval(
+            async () => await updateCurrentTime(),
+            20 * 1000
+        );
+        // Update every minute (in milliseconds)
+        return function cleanup() {
+            clearInterval(timer);
+        };
+    }, []);
+
     const handleSearch = (paramValue) => {
         const url = new URL(window.location);
         const paramName = "teacher";
@@ -90,7 +103,12 @@ export default function Teacher({ auth, teacher }) {
             <Head title="Timetable" />
 
             <div className="bg-white">
-                <h1 className="px-6 py-2 text-2xl font-semibold">Розклад викладача</h1>
+                <div className="flex justify-between px-6 py-2">
+                    <h1 className="text-2xl font-semibold">
+                        Розклад викладача
+                    </h1>
+                    <h2>Час: {time}</h2>
+                </div>
                 <div className="flex flex-wrap justify-center items-center gap-2 lg:gap-6 px-6 py-4 text-gray-900 w-full">
                     <div className="min-w-[190px] max-w-[260px] grid lg:gap-3">
                         <SearchExtInput
