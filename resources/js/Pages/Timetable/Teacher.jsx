@@ -48,6 +48,7 @@ export default function Teacher({ auth, teacher, startWeek }) {
 
         var week1 = new Date(date.getFullYear(), 0, 4);
         var week =
+            1 +
             Math.round(
                 ((date.getTime() - week1.getTime()) / 86400000 -
                     3 +
