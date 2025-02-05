@@ -7,7 +7,7 @@ import TimetableMobile from "@/Components/TimetableMobile";
 import SearchExtInput from "@/Components/SearchExtInput";
 import InputSwitch from "@/Components/InputSwitch";
 
-export default function Group({ auth, group }) {
+export default function Group({ auth, group, startWeek }) {
     const [timetable, setTimetable] = useState([]);
 
     const [_group, setGroup] = useState(group);
@@ -62,7 +62,7 @@ export default function Group({ auth, group }) {
                     7
             );
 
-        week = (week % 2 == (rawDay == 0) ? 1 : 0) + 1;
+        week = ((week + startWeek) % 2 == (rawDay == 0) ? 1 : 0) + 1;
 
 
         setWeek(week - 1);

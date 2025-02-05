@@ -6,7 +6,7 @@ import TimetableDesktop from "@/Components/TimetableDesktop";
 import TimetableMobile from "@/Components/TimetableMobile";
 import SearchExtInput from "@/Components/SearchExtInput";
 
-export default function Teacher({ auth, teacher }) {
+export default function Teacher({ auth, teacher, startWeek }) {
     const [timetable, setTimetable] = useState([]);
 
     const [_teacher, setTeacher] = useState(teacher);
@@ -56,7 +56,7 @@ export default function Teacher({ auth, teacher }) {
                     7
             );
 
-        week = (week % 2 == (rawDay == 0) ? 1 : 0) + 1;
+        week = ((week + startWeek) % 2 == (rawDay == 0) ? 1 : 0) + 1;
 
         setWeek(week - 1);
         setCurrentWeek(week);

@@ -72,18 +72,20 @@ Route::group([
 ], function () {
     Route::get('/', function () {
         $group = "";
+        $startWeek = config('config.start_week');
         if (request()->has('group')) {
             $group = request()->input('group');
         }
-        return Inertia::render('Timetable/Group', compact('group'));
+        return Inertia::render('Timetable/Group', compact('group', 'startWeek'));
     })->name('dashboard');
 
     Route::get('teacher', function () {
         $teacher = "";
+        $startWeek = config('config.start_week');
         if (request()->has('teacher')) {
             $teacher = request()->input('teacher');
         }
-        return Inertia::render('Timetable/Teacher', compact('teacher'));
+        return Inertia::render('Timetable/Teacher', compact('teacher', 'startWeek'));
     })->name('teacher');
 });
 
