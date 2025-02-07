@@ -35,6 +35,8 @@ Route::group(
             Route::get('teacher/{name?}', [App\Http\Controllers\Api\SearchController::class, 'getTeacherByName'])->name('api.teacher.find');
             Route::get('group/{name?}', [App\Http\Controllers\Api\SearchController::class, 'getGroupByName'])->name('api.group.find');
         });
+
+        Route::post('parse', [App\Http\Controllers\Api\ParseController::class, 'parse'])->name('api.parse');
     }
 );
 
