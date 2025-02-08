@@ -186,7 +186,25 @@ class ParseController extends Controller
         $this->parseWeek(0, "week1");
         $this->parseWeek(1, "week2");
 
-        return $this->result;
+        foreach($this->result['lessons'] as $item) {
+            if($item['type'] == 0) {
+                $item['group_id'] = $item['stream_id'];
+            }
+
+            Timetable::firstOrCreate([
+                'name' => $item['name'],
+                'teacher' => $item['teacher'],
+                'type' => $item['type'],
+                'week' => $item['week'],
+                'day' => $item['day'],
+                'lesson' => $item['lesson'],
+                'auditory' => $item['auditory'],
+                'pgroup' => $item['pgroup'],
+                'group_id' => $item['group_id'],
+            ]);
+        }
+
+        return "success";
     }
 
     private function parseWeek($tableIndex, $weekKey)
@@ -258,7 +276,7 @@ class ParseController extends Controller
                             'week' => $weekKey === 'week1' ? 1 : 2,
                             'day' => $cellIndex + 1,
                             'lesson' => $rowIndex + 1,
-                            'auditory' => $this->getNodeValue($pair, './/div[@class="room"]/span'),
+                            'auditory' => $this->getNodeValue($pair, './/div[@class="room"]/span') == "Без аудиторії" ? "" : $this->getNodeValue($pair, './/div[@class="room"]/span'),
                             'pgroup' => $pgroup,
                             'group_id' => $type == 0 ? $streamId : $groupId,
                             'stream_id' => $type == 0 ? $streamId : null,

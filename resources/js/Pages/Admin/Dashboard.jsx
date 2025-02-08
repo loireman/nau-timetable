@@ -8,35 +8,23 @@ import { toast } from "react-toastify";
 
 export default function Dashboard({ auth }) {
     const [group, setGroup] = useState("");
-    const [timetable, setTimetable] = useState([]);
     const [deps, setDeps] = useState([]);
     const [depLoader, setDepLoader] = useState(false);
     const [groupLoader, setGroupLoader] = useState(false);
-
-    const submit = async (e, item) => {
-        e.preventDefault();
-
-        try {
-            response = await axios.post(route("timetable.store"), item);
-        } catch (error) {
-            if (error.response) {
-                toast.error(error.response.data.message);
-            } else {
-                toast.success("Предмет додано (хз)");
-            }
-        }
-    };
+    const [timetableLoader, setTimetableLoader] = useState(false);
 
     const parse = async () => {
         try {
+            setTimetableLoader(true);
             const response = await axios.post(route("api.parse.timetable"), {
                 group: group,
             });
 
-            setTimetable(response.data);
             toast.success("Розклад спизджено");
         } catch (error) {
             toast.error(error.response.data.error);
+        } finally {
+            setTimetableLoader(false);
         }
     };
 
@@ -172,85 +160,20 @@ export default function Dashboard({ auth }) {
                                     </PrimaryButton>
                                     <PrimaryButton
                                         className="col-span-1"
+                                        disabled={timetableLoader}
                                         onClick={() => parse()}
                                     >
-                                        Спиздить розклад
+                                        {timetableLoader ? (
+                                            <Icon
+                                                icon="svg-spinners:bars-scale"
+                                                className="w-6 h-6 mx-auto"
+                                            />
+                                        ) : (
+                                            <>Спиздить розклад</>
+                                        )}
                                     </PrimaryButton>
                                 </div>
                             </div>
-
-                            {timetable && (
-                                <div>
-                                    <h2 className="text-lg font-semibold p-4">
-                                        Розклад {timetable.group}
-                                    </h2>
-                                    <div className="whitespace-pre-wrap">
-                                        {timetable.lessons?.map(
-                                            (item, index) => (
-                                                <div
-                                                    key={index}
-                                                    className="card-default flex flex-col lg:flex-row lg:justify-between lg:items-center my-4"
-                                                >
-                                                    <div>
-                                                        <p className="font-medium">
-                                                            {item.week} тиждень,{" "}
-                                                            {
-                                                                [
-                                                                    "Понеділок",
-                                                                    "Вівторок",
-                                                                    "Середа",
-                                                                    "Четвер",
-                                                                    "П'ятниця",
-                                                                    "Субота",
-                                                                ][item.day - 1]
-                                                            }
-                                                            {", "}
-                                                            {item.lesson} пара
-                                                        </p>
-                                                        <p className="text-lg font-semibold">
-                                                            {item.name}
-                                                        </p>
-                                                        <p>
-                                                            {
-                                                                [
-                                                                    "Лекція",
-                                                                    "Практичне",
-                                                                    "Лабораторна",
-                                                                ][item.type]
-                                                            }
-                                                            {item.pgroup !==
-                                                                0 && (
-                                                                <span>
-                                                                    {
-                                                                        " - Підгрупа "
-                                                                    }
-                                                                    {
-                                                                        item.pgroup
-                                                                    }
-                                                                </span>
-                                                            )}
-                                                        </p>
-                                                        <p>{item.teacher}</p>
-                                                        <p className="text-sm">
-                                                            {item.room}
-                                                        </p>
-                                                    </div>
-                                                    <div>
-                                                        <PrimaryButton
-                                                            className="w-full"
-                                                            onClick={(e) =>
-                                                                submit(e, item)
-                                                            }
-                                                        >
-                                                            Додати
-                                                        </PrimaryButton>
-                                                    </div>
-                                                </div>
-                                            )
-                                        )}
-                                    </div>
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>
