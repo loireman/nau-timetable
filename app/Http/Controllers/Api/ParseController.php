@@ -171,15 +171,16 @@ class ParseController extends Controller
             $links = $this->xpath->query($query);
 
             // Process in batches
-            foreach (array_chunk(iterator_to_array($links), 10) as $batch) {
+            foreach (array_chunk(iterator_to_array($links), 30) as $batch) {
                 foreach ($batch as $link) {
                     try {
                         $this->parseTimetableForGroup($link);
                     } catch (\Exception $e) {
+                        Log::error($e->getMessage());
                         continue;
                     }
                 }
-                sleep(1);
+                sleep(5);
             }
 
             return response()->json("success");
@@ -220,18 +221,22 @@ class ParseController extends Controller
         $this->parseWeek(1, "week2");
 
         foreach ($this->result['lessons'] as $item) {
-            // Bulk insert or batch update Timetable
-            Timetable::firstOrCreate([
-                'name' => $item['name'],
-                'teacher' => $item['teacher'],
-                'type' => $item['type'],
-                'week' => $item['week'],
-                'day' => $item['day'],
-                'lesson' => $item['lesson'],
-                'auditory' => $item['auditory'],
-                'pgroup' => $item['pgroup'],
-                'group_id' => $item['group_id'],
-            ]);
+            try {
+                Timetable::firstOrCreate([
+                    'name' => $item['name'],
+                    'teacher' => $item['teacher'],
+                    'type' => $item['type'],
+                    'week' => $item['week'],
+                    'day' => $item['day'],
+                    'lesson' => $item['lesson'],
+                    'auditory' => $item['auditory'],
+                    'pgroup' => $item['pgroup'],
+                    'group_id' => $item['group_id'],
+                ]);
+            } catch (\Exception $e) {
+                Log::error($e->getMessage());
+                continue;
+            }
         }
     }
 
@@ -240,34 +245,81 @@ class ParseController extends Controller
         $table = $this->xpath->query('//table[@class="schedule"]')->item($tableIndex);
         if (!$table) return;
 
-        // Cache day names
+        // Get day names first
         $dayNames = [];
         $dayHeaders = $this->xpath->query('.//th[@class="day-name"]', $table);
         foreach ($dayHeaders as $index => $header) {
             $dayNames[$index] = trim($header->nodeValue);
         }
 
+        // Parse schedule rows, skip the header row
         $rows = $this->xpath->query('.//tr[th[@class="hour-name"]]', $table);
         foreach ($rows as $rowIndex => $row) {
+
+            // Parse classes for each day
             $cells = $this->xpath->query('.//td', $row);
+
             foreach ($cells as $cellIndex => $cell) {
-                $classes = $this->xpath->query('.//div[@class="pairs"]', $cell);
-                if ($classes->length > 0) {
-                    foreach ($classes as $lesson) {
-                        $this->result['lessons'][] = [
-                            'name' => $lesson->nodeValue,
-                            'teacher' => '',
-                            'type' => '',
-                            'week' => $weekKey,
-                            'day' => $dayNames[$cellIndex],
+                $pairs = $this->xpath->query('.//div[@class="pairs"]', $cell);
+
+                if ($pairs->length === 0) {
+                    continue;
+                }
+
+                foreach ($pairs as $pair) {
+
+                    if ($this->getNodeValue($pair, './/div[@class="subject"]')) {
+                        $typestr = $this->getNodeValue($pair, './/div[@class="activity-tag"]');
+                        $type = 0;
+                        switch ($typestr) {
+                            case "Практичне":
+                                $type = 1;
+                                break;
+                            case "Лабораторна":
+                                $type = 2;
+                                break;
+                            default:
+                                $type = 0;
+                                break;
+                        }
+
+                        $pgroup = 0;
+                        $pgroupstr = $this->getNodeValue($pair, './/div[@class="subgroup"]');
+
+                        if ($pgroupstr == "Підгрупа 1") {
+                            $pgroup = 1;
+                        } else if ($pgroupstr == "Підгрупа 2") {
+                            $pgroup = 2;
+                        } else {
+                            $pgroup = 0;
+                        }
+
+                        $groupId = $this->group->id;
+                        $streamId = $this->group->substream_id;
+
+                        $class = [
+                            'name' => $this->getNodeValue($pair, './/div[@class="subject"]'),
+                            'teacher' => $this->getNodeValue($pair, './/div[@class="teacher"]/a'),
+                            'type' => $type,
+                            'week' => $weekKey === 'week1' ? 1 : 2,
+                            'day' => $cellIndex + 1,
                             'lesson' => $rowIndex + 1,
-                            'auditory' => '',
-                            'pgroup' => $this->result["group"],
-                            'group_id' => $this->group->id,
+                            'auditory' => $this->getNodeValue($pair, './/div[@class="room"]/span') == "Без аудиторії" ? "" : $this->getNodeValue($pair, './/div[@class="room"]/span'),
+                            'pgroup' => $pgroup,
+                            'group_id' => $type == 0 ? $streamId : $groupId,
                         ];
+
+                        if (!empty($class)) {
+                            $this->result['lessons'][] = $class;
+                        }
                     }
                 }
             }
         }
+    }
+    private function getNodeValue($context, $query)
+    {
+        $node = $this->xpath->query($query, $context)->item(0);
+        return $node ? trim($node->nodeValue) : null;
     }
 }
