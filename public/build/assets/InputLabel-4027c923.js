@@ -1,1 +1,0 @@
-import{j as e}from"./app-b8f9c03e.js";function o({value:s,className:r="",required:a=!1,children:l,...n}){return e.jsxs("label",{...n,className:"form-label "+r,children:[a&&e.jsx("span",{className:"form-required",children:"* "}),s||l]})}export{o as I};
