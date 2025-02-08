@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Departments;
 use App\Models\Groups;
+use App\Models\Stream;
 use App\Models\Timetable;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -30,14 +33,133 @@ class ParseController extends Controller
      *   stream_id: null,
      */
 
-    public function parse(Request $request)
+    public function parseDep()
     {
-        $groupID = $request->input('groupID');
-        if ($groupID == null) {
+        $html = file_get_contents("https://portal.nau.edu.ua/schedule/group/list");
+
+        // Initialize DOM and XPath
+        $doc = new \DOMDocument();
+        libxml_use_internal_errors(true);
+        $doc->loadHTML($html);
+        libxml_use_internal_errors(false);
+        $this->xpath = new \DOMXPath($doc);
+
+        // Get group name
+        $deps = $this->xpath->query('//*[contains(@class, "accordion-button")]');
+
+        foreach ($deps as $dep) {
+            $this->result[] = str_replace(["\r\n", "  "], "", $dep->nodeValue);
+        }
+
+        return $this->result;
+    }
+
+    public function parseGroup(Request $request)
+    {
+        $group = $request->input('group');
+
+        if ($group == null) {
             return response()->json([
-                'error' => 'Потрібний Ід групи'
+                'error' => 'Потрібно вказати групу'
             ], 400);
         }
+
+        $html = file_get_contents("https://portal.nau.edu.ua/schedule/group/list");
+
+        // Initialize DOM and XPath
+        $doc = new \DOMDocument();
+        libxml_use_internal_errors(true);
+        $doc->loadHTML($html);
+        libxml_use_internal_errors(false);
+        $this->xpath = new \DOMXPath($doc);
+
+        // Query to find the <a> tag with the group name
+        $query = "//a[text()='$group']";
+        $link = $this->xpath->query($query)->item(0);
+
+        if (!$link) {
+            return response()->json([
+                'error' => 'Групу не знайдено'
+            ], 404);
+        }
+
+        $parentDiv = $link->parentNode->parentNode->parentNode->parentNode->parentNode;
+        $departmentHeader = $parentDiv->previousSibling->previousSibling;
+        $departmentName = '';
+
+        if ($departmentHeader && $departmentHeader->nodeName === 'h2') {
+            $button = $departmentHeader->getElementsByTagName('button')->item(0);
+            if ($button) {
+                $departmentName = str_replace(["\r\n", "  "], "", $button->nodeValue);
+            }
+        }
+
+        $dep = Departments::where('name', $departmentName)->first('id');
+
+        // Parse the group number for the streamData (optional)
+        $parts = explode('-', $link->nodeValue);
+        [$part, $spec, $year, $group, $name] = $parts;
+
+        $stream = Stream::firstOrCreate([
+            'name' => $name . '-' . $spec . $part,
+            'course' => date('Y') - 2000 - $year,
+            'department_id' => $dep->id,
+        ]);
+
+        $group_stream = Groups::firstOrCreate([
+            'name' => $part . '-' . $spec . '-' . $year . '-x-' . $name,
+            'stream_id' => $stream->id,
+            'substream_id' => null,
+        ]);
+
+        $group = Groups::firstOrCreate([
+            'name' => $link->nodeValue,
+            'stream_id' => null,
+            'substream_id' => $group_stream->id,
+        ]);
+
+        $this->result = [
+            'group' => $group,
+            'stream' => $stream->name,
+            'department' => $departmentName,
+            'group_id' => $group_stream->id,
+            'stream_id' => $stream->id,
+        ];
+
+        return $this->result;
+    }
+
+    public function parseTimetable(Request $request)
+    {
+        $group = $request->input('group');
+
+        if ($group == null) {
+            return response()->json([
+                'error' => 'Потрібно вказати групу'
+            ], 400);
+        }
+
+        $html = file_get_contents("https://portal.nau.edu.ua/schedule/group/list");
+
+        // Initialize DOM and XPath
+        $doc = new \DOMDocument();
+        libxml_use_internal_errors(true);
+        $doc->loadHTML($html);
+        libxml_use_internal_errors(false);
+        $this->xpath = new \DOMXPath($doc);
+
+        // Query to find the <a> tag with the group name
+        $query = "//a[text()='$group']";
+        $link = $this->xpath->query($query)->item(0);
+
+        if (!$link) {
+            return response()->json([
+                'error' => 'Групу не знайдено'
+            ], 404);
+        }
+
+        $groupID = $link->getAttribute('href');
+        $groupID = explode('=', $groupID)[1];
 
         $html = file_get_contents("https://portal.nau.edu.ua/schedule/group?id=" . $groupID);
 
@@ -99,22 +221,6 @@ class ParseController extends Controller
 
 
                 foreach ($pairs as $pairIndex => $pair) {
-
-                    /**
-                     * Data to parse 
-                     * 
-                     *   name: "",  - done
-                     *   teacher: "", - done
-                     *   type: 0, - done
-                     *   week: 1, - done
-                     *   day: 1, - done
-                     *   lesson: 1, - done
-                     *   auditory: "", - done
-                     *   auditory_link: "", * no need
-                     *   pgroup: 0, - done
-                     *   group_id: null,
-                     *   stream_id: null,
-                     */
 
                     if ($this->getNodeValue($pair, './/div[@class="subject"]')) {
                         $typestr = $this->getNodeValue($pair, './/div[@class="activity-tag"]');

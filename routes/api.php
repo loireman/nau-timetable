@@ -36,7 +36,14 @@ Route::group(
             Route::get('group/{name?}', [App\Http\Controllers\Api\SearchController::class, 'getGroupByName'])->name('api.group.find');
         });
 
-        Route::post('parse', [App\Http\Controllers\Api\ParseController::class, 'parse'])->name('api.parse');
+        Route::get('fetchDep', function() {
+            return \App\Models\Departments::pluck('name')->toArray();
+        })->name('api.fetch.dep');
+
+        Route::post('parseDep', [App\Http\Controllers\Api\ParseController::class, 'parseDep'])->name('api.parse.dep');
+        Route::post('parseGroup', [App\Http\Controllers\Api\ParseController::class, 'parseGroup'])->name('api.parse.group');
+        Route::post('parseTimetable', [App\Http\Controllers\Api\ParseController::class, 'parseTimetable'])->name('api.parse.timetable');
+
     }
 );
 

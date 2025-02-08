@@ -1,13 +1,17 @@
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/Admin/AdminLayout";
+import { Icon } from "@iconify/react";
 import { Head, useForm } from "@inertiajs/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 export default function Dashboard({ auth }) {
-    const [groupID, setGroupID] = useState("");
+    const [group, setGroup] = useState("");
     const [timetable, setTimetable] = useState([]);
+    const [deps, setDeps] = useState([]);
+    const [depLoader, setDepLoader] = useState(false);
+    const [groupLoader, setGroupLoader] = useState(false);
 
     const submit = async (e, item) => {
         e.preventDefault();
@@ -25,8 +29,8 @@ export default function Dashboard({ auth }) {
 
     const parse = async () => {
         try {
-            const response = await axios.post("/api/v1/parse", {
-                groupID: groupID,
+            const response = await axios.post(route("api.parse.timetable"), {
+                group: group,
             });
 
             setTimetable(response.data);
@@ -35,6 +39,64 @@ export default function Dashboard({ auth }) {
             toast.error(error.response.data.error);
         }
     };
+
+    const parseDep = async () => {
+        try {
+            setDepLoader(true);
+
+            const depNames = await axios.post(route("api.parse.dep"));
+
+            const filteredDeps = depNames.data.filter(
+                (item) => !deps.includes(item)
+            );
+            filteredDeps.forEach(async (item) => {
+                const data = {
+                    name: item,
+                    short: item,
+                    chief: "-",
+                };
+                response = await axios.post(route("department.store"), data);
+            });
+
+            toast.success("Факультети спизджено");
+        } catch (error) {
+            toast.error(error);
+            toast.error(error.response.data.error);
+        } finally {
+            fetchDeps();
+            setDepLoader(false);
+        }
+    };
+
+    const parseGroup = async () => {
+        try {
+            setGroupLoader(true);
+
+            const depNames = await axios.post(route("api.parse.group"), {
+                group: group,
+            });
+
+            toast.success("Групу спизджено");
+        } catch (error) {
+            toast.error(error);
+            toast.error(error.response.data.error);
+        } finally {
+            setGroupLoader(false);
+        }
+    };
+
+    const fetchDeps = async () => {
+        try {
+            const response = await axios.get(route("api.fetch.dep"));
+            setDeps(response.data);
+        } catch (error) {
+            toast.error(error.response.data.error);
+        }
+    };
+
+    useEffect(() => {
+        fetchDeps();
+    }, []);
 
     return (
         <AuthenticatedLayout
@@ -47,7 +109,7 @@ export default function Dashboard({ auth }) {
 
             <div className="pb-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div >
+                    <div>
                         <div className="p-6">
                             Ультимативний пиздер розкладу нау
                         </div>
@@ -55,36 +117,70 @@ export default function Dashboard({ auth }) {
                         <div className="admin-list">
                             <div className="card-default">
                                 <h2 className="text-lg mb-1">
-                                    Ід групи, дивитись{" "}
+                                    Кількість факультетів: {deps.length}
+                                </h2>
+                                <PrimaryButton
+                                    disabled={depLoader}
+                                    onClick={() => parseDep()}
+                                >
+                                    {depLoader ? (
+                                        <Icon
+                                            icon="svg-spinners:bars-scale"
+                                            className="w-6 h-6 mx-auto"
+                                        />
+                                    ) : (
+                                        <>Спиздить факультети</>
+                                    )}
+                                </PrimaryButton>
+                            </div>
+
+                            <div className="card-default">
+                                <h2 className="text-lg mb-1">
+                                    Назва групи,{" "}
                                     <a
                                         href="https://portal.nau.edu.ua/schedule/group/list"
                                         className="text-blue-600 underline"
                                         target="_blank"
                                     >
-                                        тут
+                                        переглянути тут
                                     </a>
                                 </h2>
                                 <div className="flex flex-col gap-3 lg:grid lg:grid-cols-3">
                                     <TextInput
                                         className="col-span-1"
-                                        name="groupID"
-                                        type="number"
+                                        name="group"
+                                        type="text"
                                         label="Group"
-                                        value={groupID}
+                                        value={group}
                                         onChange={(e) =>
-                                            setGroupID(e.target.value)
+                                            setGroup(e.target.value)
                                         }
                                     />
                                     <PrimaryButton
-                                        className="col-span-2"
+                                        className="col-span-1"
+                                        disabled={groupLoader}
+                                        onClick={() => parseGroup()}
+                                    >
+                                        {groupLoader ? (
+                                            <Icon
+                                                icon="svg-spinners:bars-scale"
+                                                className="w-6 h-6 mx-auto"
+                                            />
+                                        ) : (
+                                            <>Спиздить групу</>
+                                        )}
+                                    </PrimaryButton>
+                                    <PrimaryButton
+                                        className="col-span-1"
                                         onClick={() => parse()}
                                     >
                                         Спиздить розклад
                                     </PrimaryButton>
                                 </div>
                             </div>
+
                             {timetable && (
-                                <div >
+                                <div>
                                     <h2 className="text-lg font-semibold p-4">
                                         Розклад {timetable.group}
                                     </h2>
@@ -95,7 +191,7 @@ export default function Dashboard({ auth }) {
                                                     key={index}
                                                     className="card-default flex flex-col lg:flex-row lg:justify-between lg:items-center my-4"
                                                 >
-                                                    <div >
+                                                    <div>
                                                         <p className="font-medium">
                                                             {item.week} тиждень,{" "}
                                                             {
@@ -114,7 +210,7 @@ export default function Dashboard({ auth }) {
                                                         <p className="text-lg font-semibold">
                                                             {item.name}
                                                         </p>
-                                                        <p >
+                                                        <p>
                                                             {
                                                                 [
                                                                     "Лекція",
@@ -134,16 +230,14 @@ export default function Dashboard({ auth }) {
                                                                 </span>
                                                             )}
                                                         </p>
-                                                        <p>
-                                                            {item.teacher}
-                                                        </p>
+                                                        <p>{item.teacher}</p>
                                                         <p className="text-sm">
                                                             {item.room}
                                                         </p>
                                                     </div>
-                                                    <div >
+                                                    <div>
                                                         <PrimaryButton
-                                                        className="w-full"
+                                                            className="w-full"
                                                             onClick={(e) =>
                                                                 submit(e, item)
                                                             }
