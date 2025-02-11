@@ -118,7 +118,6 @@ export default function Group({ auth, group, startWeek }) {
                     <h1 className="text-2xl font-semibold">
                         Розклад групи
                     </h1>
-                    <h2>Час: {time}</h2>
                 </div>
                 <div className="flex flex-wrap justify-center items-center gap-2 lg:gap-6 px-6 py-4 text-gray-900 w-full">
                     <div className="min-w-[190px] max-w-[260px] grid lg:gap-3">

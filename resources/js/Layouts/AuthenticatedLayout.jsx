@@ -37,6 +37,14 @@ export default function Authenticated({ user, header, children }) {
                                     Розклад викладача
                                 </NavLink>
                             </div>
+                            <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                                <NavLink
+                                    href={route("docs.api")}
+                                    active={route().current("docs.api")}
+                                >
+                                    API
+                                </NavLink>
+                            </div>
                         </div>
                         <div>
                             <div className="hidden sm:flex sm:items-center sm:ml-6">
@@ -165,6 +173,14 @@ export default function Authenticated({ user, header, children }) {
                             Розклад викладача
                         </ResponsiveNavLink>
                     </div>
+                    <div className="pt-2 pb-3 space-y-1">
+                        <ResponsiveNavLink
+                            href={route("docs.api")}
+                            active={route().current("docs.api")}
+                        >
+                            API
+                        </ResponsiveNavLink>
+                    </div>
 
                     {user ? (
                         <div className="pt-4 pb-1 border-t border-gray-200">
@@ -218,6 +234,23 @@ export default function Authenticated({ user, header, children }) {
             )}
 
             <main>{children}</main>
+
+            <footer className="bg-white border-t border-gray-100 py-6">
+                <div className="flex justify-center text-gray-600">
+                    © 2025 Andy Loiri
+                </div>
+                <div className="flex justify-center text-gray-600">
+                    <span>
+                        Основний сайт:{" "}
+                        <a
+                            href="https://loiri.com.ua"
+                            className="text-blue-600 hover:underline"
+                        >
+                            loiri.com.ua
+                        </a>
+                    </span>
+                </div>
+            </footer>
         </div>
     );
 }

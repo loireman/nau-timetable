@@ -59,7 +59,7 @@ Route::middleware('web')->get('google/auth/callback', function () {
 
 Route::get('/api', function () {
     return Inertia::render('Api');
-})->name('test1');
+})->name('docs.api');
 
 Route::get('/test', function () {
     $globalAlert = config('config.global_alert');

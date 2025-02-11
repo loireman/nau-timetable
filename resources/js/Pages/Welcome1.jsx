@@ -61,6 +61,11 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 </PrimaryButton>
                             </a>
                         </div>
+                        <div>
+                            <a href={route("docs.api")} className="text-blue-500 underline transform-none">
+                                Переглянути документацію API
+                            </a>
+                        </div>
                     </div>
                     <img src="storage/img/febb655.png" />
                 </div>
