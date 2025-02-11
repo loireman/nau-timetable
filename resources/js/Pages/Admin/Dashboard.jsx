@@ -1,5 +1,5 @@
 import PrimaryButton from "@/Components/PrimaryButton";
-import TextInput from "@/Components/TextInput";
+import Select from "@/Components/Select";
 import AuthenticatedLayout from "@/Layouts/Admin/AdminLayout";
 import { Icon } from "@iconify/react";
 import { Head, useForm } from "@inertiajs/react";
@@ -7,17 +7,17 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 export default function Dashboard({ auth }) {
-    const [group, setGroup] = useState("");
     const [deps, setDeps] = useState([]);
     const [depLoader, setDepLoader] = useState(false);
     const [groupLoader, setGroupLoader] = useState(false);
     const [timetableLoader, setTimetableLoader] = useState(false);
+    const [selectedDep, setSelectedDep] = useState("");
 
     const parse = async () => {
         try {
             setTimetableLoader(true);
-            const response = await axios.post(route("api.parse.timetable"), {
-                group: group,
+            await axios.post(route("api.parse.timetable"), {
+                dep: deps[selectedDep],
             });
 
             toast.success("Розклад спизджено");
@@ -60,14 +60,14 @@ export default function Dashboard({ auth }) {
         try {
             setGroupLoader(true);
 
-            const depNames = await axios.post(route("api.parse.group"), {
-                group: group,
+            await axios.post(route("api.parse.group"), {
+                dep: deps[selectedDep],
             });
 
-            toast.success("Групу спизджено");
+            toast.success("Задача виконана успішно");
         } catch (error) {
+            // console.error(error);
             toast.error(error);
-            toast.error(error.response.data.error);
         } finally {
             setGroupLoader(false);
         }
@@ -98,11 +98,16 @@ export default function Dashboard({ auth }) {
             <div className="pb-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div>
-                        <div className="p-6">
-                            Ультимативний пиздер розкладу нау
-                        </div>
+                        <div className="p-6">Парсер розкладу нау</div>
 
                         <div className="admin-list">
+                            <div className="card-default bg-orange-100 inline-flex">
+                                <Icon icon={"akar-icons:info"} className="w-6 h-6" />
+                                <span>
+                                    Якщо виникають проблеми зі створенням
+                                    розкладу, писати <a href="https://t.me/lo1ri_andy" target="_blank" className="font-semibold underline text-blue-600">мені</a>
+                                </span>
+                            </div>
                             <div className="card-default">
                                 <h2 className="text-lg mb-1">
                                     Кількість факультетів: {deps.length}
@@ -117,14 +122,14 @@ export default function Dashboard({ auth }) {
                                             className="w-6 h-6 mx-auto"
                                         />
                                     ) : (
-                                        <>Спиздить факультети</>
+                                        <>Оновити факультети</>
                                     )}
                                 </PrimaryButton>
                             </div>
 
                             <div className="card-default">
                                 <h2 className="text-lg mb-1">
-                                    Назва групи,{" "}
+                                    Назви груп,{" "}
                                     <a
                                         href="https://portal.nau.edu.ua/schedule/group/list"
                                         className="text-blue-600 underline"
@@ -134,15 +139,12 @@ export default function Dashboard({ auth }) {
                                     </a>
                                 </h2>
                                 <div className="flex flex-col gap-3 lg:grid lg:grid-cols-3">
-                                    <TextInput
-                                        className="col-span-1"
-                                        name="group"
-                                        type="text"
-                                        label="Group"
-                                        value={group}
-                                        onChange={(e) =>
-                                            setGroup(e.target.value)
-                                        }
+                                    <Select
+                                        options={deps}
+                                        defaultValue="Виберіть факультет"
+                                        defaultSelectable={false}
+                                        value={selectedDep}
+                                        onChange={(e) => setSelectedDep(e)}
                                     />
                                     <PrimaryButton
                                         className="col-span-1"
@@ -155,7 +157,7 @@ export default function Dashboard({ auth }) {
                                                 className="w-6 h-6 mx-auto"
                                             />
                                         ) : (
-                                            <>Спиздить групу</>
+                                            <>Зберегти групи</>
                                         )}
                                     </PrimaryButton>
                                     <PrimaryButton
@@ -169,7 +171,7 @@ export default function Dashboard({ auth }) {
                                                 className="w-6 h-6 mx-auto"
                                             />
                                         ) : (
-                                            <>Спиздить розклад</>
+                                            <>Зберегти розклад</>
                                         )}
                                     </PrimaryButton>
                                 </div>

@@ -37,9 +37,9 @@ class ParseController extends Controller
 
     public function parseGroup(Request $request)
     {
-        $group = $request->input('group');
-        if ($group == null) {
-            return response()->json(['error' => 'Потрібно вказати групу'], 400);
+        $dep = $request->input('dep');
+        if ($dep == null) {
+            return response()->json(['error' => 'Потрібно вказати факультет'], 400);
         }
 
         $html = file_get_contents("https://portal.nau.edu.ua/schedule/group/list");
@@ -49,34 +49,29 @@ class ParseController extends Controller
         libxml_use_internal_errors(false);
         $this->xpath = new \DOMXPath($doc);
 
-        if ($group === 'loiri') {
-            $query = '//a[starts-with(@href, "/schedule/group?id=")]';
-            $links = $this->xpath->query($query);
+        if (Departments::where('name', $dep)->first() == null) {
+            return response()->json(['error' => 'Факультет не знайдено'], 404);
+        }
 
-            // Process in batches
-            foreach (array_chunk(iterator_to_array($links), 10) as $batch) {
-                foreach ($batch as $link) {
-                    try {
-                        $this->processGroup($link);
-                    } catch (\Exception $e) {
-                        continue;
-                    }
+        $query = "//button[contains(normalize-space(text()), '$dep')]";
+        $element = $this->xpath->query($query)->item(0);
+
+        $links = $element->parentNode->nextSibling->nextSibling->getElementsByTagName('a');
+
+        // Process in batches
+        foreach (array_chunk(iterator_to_array($links), 10) as $batch) {
+            foreach ($batch as $link) {
+                try {
+                    $this->processGroup($link);
+                } catch (\Exception $e) {
+                    Log::error($e->getMessage());
+                    continue;
                 }
-                sleep(1);  // Adjust sleep to balance performance and rate-limiting
             }
-
-            return response()->json("success");
+            sleep(1);  // Adjust sleep to balance performance and rate-limiting
         }
 
-        // Direct group search
-        $query = "//a[text()='$group']";
-        $link = $this->xpath->query($query)->item(0);
-        if (!$link) {
-            return response()->json(['error' => 'Групу не знайдено'], 404);
-        }
-
-        $this->processGroup($link);
-        return $this->result;
+        return response()->json("success");
     }
 
     private function processGroup($link)
@@ -96,21 +91,24 @@ class ParseController extends Controller
         $dep = Departments::where('name', $departmentName)->first('id');
 
         $groupName = $link->nodeValue;
-        $stream = $this->handleStream($groupName, $dep);
+        [$groupStreamName, $stream] = $this->handleStream($groupName, $dep);
 
         $group_stream = Groups::firstOrCreate([
-            'name' => $groupName,
+            'name' => $groupStreamName,
+        ], [
             'stream_id' => $stream->id,
             'substream_id' => null,
         ]);
 
-        $this->result = [
-            'group' => $groupName,
-            'stream' => $stream->name,
-            'department' => $departmentName,
-            'group_id' => $group_stream->id,
-            'stream_id' => $stream->id,
-        ];
+        $group = Groups::firstOrCreate(
+            [
+                'name' => $groupName,
+            ],
+            [
+                'stream_id' => null,
+                'substream_id' => $group_stream->id,
+            ]
+        );
     }
 
     private function handleStream($groupName, $dep)
@@ -136,6 +134,10 @@ class ParseController extends Controller
                 'course' => $year,
                 'department_id' => $dep->id,
             ]);
+
+            $year = date('Y') - 2000 - $year;
+
+            $groupStreamName = $part . '-' . $spec . '-' . $year . '-x-' . $name;
         } else {
             // Handle the standard case where the name doesn't start with "ПБ"
             $parts = explode('-', $groupName);
@@ -147,16 +149,18 @@ class ParseController extends Controller
                 'course' => date('Y') - 2000 - preg_replace('/\D/', '', $year),
                 'department_id' => $dep->id,
             ]);
+
+            $groupStreamName = $part . '-' . $spec . '-' . $year . '-x-' . $name;
         }
 
-        return $stream; // Return the created stream
+        return [$groupStreamName, $stream]; // Return the created stream
     }
 
     public function parseTimetable(Request $request)
     {
-        $group = $request->input('group');
-        if ($group == null) {
-            return response()->json(['error' => 'Потрібно вказати групу'], 400);
+        $dep = $request->input('dep');
+        if ($dep == null) {
+            return response()->json(['error' => 'Потрібно вказати факультет'], 400);
         }
 
         $html = file_get_contents("https://portal.nau.edu.ua/schedule/group/list");
@@ -166,34 +170,28 @@ class ParseController extends Controller
         libxml_use_internal_errors(false);
         $this->xpath = new \DOMXPath($doc);
 
-        if ($group === 'loiri') {
-            $query = '//a[starts-with(@href, "/schedule/group?id=")]';
-            $links = $this->xpath->query($query);
+        if (Departments::where('name', $dep)->first() == null) {
+            return response()->json(['error' => 'Факультет не знайдено'], 404);
+        }
 
-            // Process in batches
-            foreach (array_chunk(iterator_to_array($links), 30) as $batch) {
-                foreach ($batch as $link) {
-                    try {
-                        $this->parseTimetableForGroup($link);
-                    } catch (\Exception $e) {
-                        Log::error($e->getMessage());
-                        continue;
-                    }
+        $query = "//button[contains(normalize-space(text()), '$dep')]";
+        $element = $this->xpath->query($query)->item(0);
+
+        $links = $element->parentNode->nextSibling->nextSibling->getElementsByTagName('a');
+
+        // Process in batches
+        foreach (array_chunk(iterator_to_array($links), 10) as $batch) {
+            foreach ($batch as $link) {
+                try {
+                    $this->parseTimetableForGroup($link);
+                } catch (\Exception $e) {
+                    Log::error($e->getMessage());
+                    continue;
                 }
-                sleep(5);
             }
-
-            return response()->json("success");
+            sleep(1);  // Adjust sleep to balance performance and rate-limiting
         }
 
-        // Direct group search
-        $query = "//a[text()='$group']";
-        $link = $this->xpath->query($query)->item(0);
-        if (!$link) {
-            return response()->json(['error' => 'Групу не знайдено'], 404);
-        }
-
-        $this->parseTimetableForGroup($link);
         return response()->json("success");
     }
 
@@ -286,12 +284,10 @@ class ParseController extends Controller
                         $pgroup = 0;
                         $pgroupstr = $this->getNodeValue($pair, './/div[@class="subgroup"]');
 
-                        if ($pgroupstr == "Підгрупа 1") {
-                            $pgroup = 1;
-                        } else if ($pgroupstr == "Підгрупа 2") {
+                        if ($pgroupstr == "Підгрупа 2") {
                             $pgroup = 2;
-                        } else {
-                            $pgroup = 0;
+                        } else if ($type == 2) {
+                            $pgroup = 1;
                         }
 
                         $groupId = $this->group->id;
