@@ -270,9 +270,12 @@ class ParseController extends Controller
                         'auditory' => $item['auditory'],
                     ]);
 
-                    $timetable->groups()->sync($item['group_ids']);
+                    $items = array_values(array_filter($item['group_ids']));
+
+                    $timetable->groups()->sync($items);
                 } catch (\Exception $e) {
-                    Log::error($e->getMessage());
+                    Log::error("Group " . $this->group->id . " error: " . $e->getMessage());
+
                     return response()->json(['error' => 'Помилка при отриманні розкладу'], 500);
                 }
             }
