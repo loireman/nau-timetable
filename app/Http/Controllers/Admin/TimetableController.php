@@ -5,9 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreTimetableRequest;
 use App\Http\Requests\Admin\UpdateTimetableRequest;
-use App\Models\Departments;
 use App\Models\Groups;
-use App\Models\Setting;
 use App\Models\Timetable;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -44,7 +42,7 @@ class TimetableController extends Controller
             $timetables->latest();
         }
 
-        $timetables = $timetables->with('group');
+        $timetables = $timetables->with('groups');
 
         $timetables = $timetables->paginate(10)->onEachSide(2)->appends(request()->query());
 
@@ -63,64 +61,80 @@ class TimetableController extends Controller
 
     public function create()
     {
-        if(Auth::user()->can('timetable allgroups'))
-        {
-            $groups = Groups::whereNotNull('substream_id')->pluck('name', 'id')->all();
-            $streams = Groups::whereNull('substream_id')->pluck('name', 'id')->all();
+        if (Auth::user()->can('timetable allgroups')) {
+            $groups = Groups::pluck('name', 'id')->all();
         } else {
-            $groups = Groups::where('id', Auth::user()->group_id)->stream()->pluck('name', 'id')->all();
-            $streams = Groups::where('id', Auth::user()->group_id)->pluck('name', 'id')->all();
+            $groups = Groups::where('id', Auth::user()->group_id)->pluck('name', 'id')->all();
         }
 
         return Inertia::render('Admin/Timetable/Create', [
             'groups' => $groups,
-            'streams' => $streams,
-        ]); 
+        ]);
     }
 
     public function edit(Timetable $timetable)
     {
-        if(Auth::user()->can('timetable allgroups'))
-        {
-            $groups = Groups::whereNotNull('substream_id')->pluck('name', 'id')->all();
-            $streams = Groups::whereNull('substream_id')->pluck('name', 'id')->all();
+        if (Auth::user()->can('timetable allgroups')) {
+            $groups = Groups::pluck('name', 'id')->all();
         } else {
-            $groups = Groups::where('id', Auth::user()->group_id)->stream()->pluck('name', 'id')->all();
-            $streams = Groups::where('id', Auth::user()->group_id)->pluck('name', 'id')->all();
+            $groups = Groups::where('id', Auth::user()->group_id)->pluck('name', 'id')->all();
         }
+
+        $selected = $timetable->groups->pluck('id');
 
         return Inertia::render('Admin/Timetable/Edit', [
             'groups' => $groups,
-            'streams' => $streams,
+            'selected' => $selected,
             'timetable' => $timetable
         ]);
     }
 
     public function store(StoreTimetableRequest $request)
     {
-        $data = $request->all();
+        $validated = $request->validated();
 
-        if($data['type'] == 0) {
-            $data['group_id'] = $data['stream_id'];
+        $timetable = Timetable::create([
+            'name' => $validated['name'],
+            'week' => $validated['week'],
+            'day' => $validated['day'],
+            'lesson' => $validated['lesson'],
+            'teacher' => $validated['teacher'],
+            'type' => $validated['type'],
+            'pgroup' => $validated['pgroup'],
+            'auditory' => $validated['auditory'],
+            'auditory_link' => $validated['auditory_link'],
+        ]);
+
+        // Attach groups
+        foreach ($validated['group_ids'] as $groupId) {
+            $timetable->groups()->attach($groupId);
         }
 
-        Timetable::create($data);
-        return redirect()->route('timetable.index')
-            ->with('message', __('Timetable created successfully.'));
+        return redirect()->route('timetable.index')->with('success', 'Timetable created successfully');
     }
 
     public function update(UpdateTimetableRequest $request, Timetable $timetable)
     {
-        $data = $request->all();
+        $validated = $request->validated();
 
-        if($data['type'] == 0) {
-            $data['group_id'] = $data['stream_id'];
-        }
+        // Update timetable basic information
+        $timetable->update([
+            'name' => $validated['name'],
+            'week' => $validated['week'],
+            'day' => $validated['day'],
+            'lesson' => $validated['lesson'],
+            'teacher' => $validated['teacher'],
+            'type' => $validated['type'],
+            'pgroup' => $validated['pgroup'],
+            'auditory' => $validated['auditory'],
+            'auditory_link' => $validated['auditory_link'],
+        ]);
 
-        $timetable->update($data);
+        // Sync groups (detach all existing and attach new ones)
+        $timetable->groups()->sync($validated['group_ids']);
 
         return redirect()->route('timetable.index')
-            ->with('message', __('Timetable updated successfully.'));
+            ->with('success', 'Timetable updated successfully');
     }
 
     /**

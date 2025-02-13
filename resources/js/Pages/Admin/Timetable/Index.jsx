@@ -76,7 +76,7 @@ export default function Index({ auth, timetables, can, message, error }) {
                                     <h5 className="form-text">
                                         {element.name}
                                     </h5>
-                                    {element.group && (
+                                    {element.groups && (
                                         <>
                                             <div className="chip">
                                                 {
@@ -87,10 +87,13 @@ export default function Index({ auth, timetables, can, message, error }) {
                                                     ][element.type]
                                                 }
                                             </div>
-                                            <div className="chip">
-                                                {element.group.name}
-                                                { element.type == 2 && `/${element.pgroup}` }
-                                            </div>
+                                            {element.groups.map((group) => (
+                                                <div className="bg-gray-200 px-4 py-1 rounded-3xl">
+                                                    {group.name}
+                                                    {element.type == 2 &&
+                                                        `/${element.pgroup}`}{" "}
+                                                </div>
+                                            ))}
                                         </>
                                     )}
                                 </div>
@@ -105,8 +108,8 @@ export default function Index({ auth, timetables, can, message, error }) {
                                             "П'ятниця",
                                             "Субота",
                                         ][element.day - 1]
-                                    },{" "}
-                                    {element.lesson} пара
+                                    }
+                                    , {element.lesson} пара
                                 </span>
                                 <span>
                                     Updated at{" "}
@@ -134,9 +137,17 @@ export default function Index({ auth, timetables, can, message, error }) {
                                 </div>
                                 <div>
                                     <span className="form-label">Group</span>
-                                    <h5 className="form-text">
-                                        {timetables.data[elementId]?.group.name}
-                                        {timetables.data[elementId]?.type == 2 && ` (підгрупа ${timetables.data[elementId]?.pgroup})`}
+                                    <h5 className="form-text flex flex-wrap gap-3">
+                                        {timetables.data[elementId]?.groups.map(
+                                            (group) => (
+                                                <div className="bg-gray-200 px-4 py-1 rounded-3xl">
+                                                    {group.name}
+                                                    {timetables.data[elementId]
+                                                        ?.type == 2 &&
+                                                        `/${timetables.data[elementId]?.pgroup}`}
+                                                </div>
+                                            )
+                                        )}{" "}
                                     </h5>
                                 </div>
                                 <div className="grid gap-1 m-auto">

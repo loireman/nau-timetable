@@ -12,7 +12,7 @@ class SearchController extends Controller
 {
     public function getGroupByName($name = null)
     {
-        $groups = Groups::whereNull('stream_id')->where('name', 'like', '%' . $name . '%')->pluck('name', 'id');
+        $groups = Groups::where('name', 'like', '%' . $name . '%')->pluck('name', 'id');
 
         return response()->json($groups);
     }

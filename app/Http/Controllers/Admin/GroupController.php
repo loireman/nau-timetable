@@ -27,15 +27,7 @@ class GroupController extends Controller
     public function index()
     {
         $groups = (new Groups)->newQuery();
-        if (request()->has('search')) {
-            $groups->where('name', 'Like', '%' . request()->input('search') . '%');
-        }
-        if (request()->has('group')) {
-            $groups->whereNotNull('substream_id');
-        }
-        if (request()->has('substream')) {
-            $groups->orWhereNotNull('stream_id');
-        }
+
         if (request()->query('sort')) {
             $attribute = request()->query('sort');
             $sort_order = 'ASC';
@@ -48,7 +40,7 @@ class GroupController extends Controller
             $groups->latest();
         }
 
-        $groups = $groups->with(['stream', 'substream']);
+        $groups = $groups->with(['stream']);
 
         $groups = $groups->paginate(10)->onEachSide(2)->appends(request()->query());
 
@@ -68,24 +60,19 @@ class GroupController extends Controller
     public function create()
     {
         $streams = Stream::selectRaw('id, CONCAT(name, " (", course, " курс)") as name')->pluck('name', 'id')->all();
-        $substreams = Groups::whereNull('substream_id')->whereNotNull('stream_id')->pluck('name', 'id')->all();
 
         return Inertia::render('Admin/Group/Create', [
             'streams' => $streams,
-            'substreams' => $substreams,
         ]);
     }
 
     public function edit(Groups $group)
     {
         $streams = Stream::selectRaw('id, CONCAT(name, " (", course, " курс)") as name')->pluck('name', 'id')->all();
-        $substreams = Groups::whereNull('substream_id')->whereNotNull('stream_id')->where('id', '!=', $group->id)->pluck('name', 'id')->all();
 
         return Inertia::render('Admin/Group/Edit', [
             'streams' => $streams,
-            'substreams' => $substreams,
             'group' => $group,
-            'group_streams' => $group->substreams
         ]);
     }
 
@@ -93,7 +80,7 @@ class GroupController extends Controller
     {
         Groups::create($request->all());
         return redirect()->route('group.index')
-            ->with('message', __('Group created successfully.'));
+            ->with('message', __('Groups created successfully.'));
     }
 
     public function update(UpdateGroupRequest $request, Groups $group)
@@ -101,13 +88,13 @@ class GroupController extends Controller
         $group->update($request->all());
 
         return redirect()->route('group.index')
-            ->with('message', __('Group updated successfully.'));
+            ->with('message', __('Groups updated successfully.'));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\groups  $Group
+     * @param  \App\Models\groups  $Groups
      * @return \Illuminate\Http\Response
      */
     public function destroy(Groups $group)
@@ -120,6 +107,6 @@ class GroupController extends Controller
         }
 
         return redirect()->route('group.index')
-            ->with('message', __('Group deleted successfully'));
+            ->with('message', __('Groups deleted successfully'));
     }
 }

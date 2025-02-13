@@ -7,108 +7,126 @@ use App\Models\Departments;
 use App\Models\Groups;
 use App\Models\Stream;
 use App\Models\Timetable;
-use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use GuzzleHttp\Client;
+use Symfony\Component\DomCrawler\Crawler;
 
 class ParseController extends Controller
 {
-    private $xpath;
     private $result = [];
     private $group;
 
+    // At the top of your controller, make client reusable
+    private $client;
+
+    public function __construct()
+    {
+        $this->client = new Client([
+            'timeout'  => 10.0,
+            'verify'   => false,
+            'connect_timeout' => 5.0,
+            'http_errors' => false,
+            'headers' => [
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            ]
+        ]);
+    }
+
     public function parseDep()
     {
-        $html = file_get_contents("https://portal.nau.edu.ua/schedule/group/list");
-        $doc = new \DOMDocument();
-        libxml_use_internal_errors(true);
-        $doc->loadHTML($html);
-        libxml_use_internal_errors(false);
-        $this->xpath = new \DOMXPath($doc);
+        try {
+            $response = $this->client->request('GET', "https://portal.nau.edu.ua/schedule/group/list");
+            $html = $response->getBody()->getContents();
 
-        // Cache department names directly
-        $deps = $this->xpath->query('//*[contains(@class, "accordion-button")]');
-        $this->result = iterator_to_array($deps);
+            $crawler = new Crawler($html);
 
-        return array_map(function ($dep) {
-            return str_replace(["\r\n", "  "], "", $dep->nodeValue);
-        }, $this->result);
+            $departments = $crawler->filter('.accordion-button')->each(function (Crawler $node) {
+                return trim(str_replace(["\r\n", "  "], "", $node->text()));
+            });
+
+            return $departments;
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return null;
+        }
     }
 
     public function parseGroup(Request $request)
     {
-        $dep = $request->input('dep');
-        if ($dep == null) {
+        $dep = trim($request->input('dep'));
+        if (!$dep) {
             return response()->json(['error' => 'Потрібно вказати факультет'], 400);
         }
 
-        $html = file_get_contents("https://portal.nau.edu.ua/schedule/group/list");
-        $doc = new \DOMDocument();
-        libxml_use_internal_errors(true);
-        $doc->loadHTML($html);
-        libxml_use_internal_errors(false);
-        $this->xpath = new \DOMXPath($doc);
-
-        if (Departments::where('name', $dep)->first() == null) {
+        if (!Departments::where('name', $dep)->exists()) {
             return response()->json(['error' => 'Факультет не знайдено'], 404);
         }
 
-        $query = "//button[contains(normalize-space(text()), '$dep')]";
-        $element = $this->xpath->query($query)->item(0);
+        $dep = Departments::where('name', $dep)->first(['id', 'name']);
 
-        $links = $element->parentNode->nextSibling->nextSibling->getElementsByTagName('a');
+        try {
+            $response = $this->client->request('GET', "https://portal.nau.edu.ua/schedule/group/list");
+            $html = $response->getBody()->getContents();
 
-        // Process in batches
-        foreach (array_chunk(iterator_to_array($links), 10) as $batch) {
-            foreach ($batch as $link) {
-                try {
-                    $this->processGroup($link);
-                } catch (\Exception $e) {
-                    Log::error($e->getMessage());
-                    continue;
+            $crawler = new Crawler($html);
+
+            $firstCollapse = $crawler->filter('.accordion-button')->each(function (Crawler $node) use ($dep) {
+                if (str_contains(trim($node->text()), $dep->name)) {
+                    // Instead of going up to ancestors twice, find the collapse directly
+                    $collapseElement = $node->closest('.accordion-header')
+                        ->nextAll('.accordion-collapse')
+                        ->first();
+
+                    if (!$collapseElement->count()) {
+                        return;
+                    }
+
+                    return $collapseElement;
+                }
+            });
+
+            if (!$firstCollapse) {
+                return response()->json(['error' => 'Не вдалося знайти групи для факультету'], 500);
+            }
+
+            $firstCollapse = array_values(array_filter($firstCollapse));
+
+            $links = $firstCollapse[0]->filter('a')->each(function (Crawler $node) {
+                return [
+                    'name' => trim($node->text()),
+                    'url'  => $node->attr('href'),
+                ];
+            });
+
+            if (empty($links)) {
+                return response()->json(['error' => 'Групи не знайдено'], 404);
+            }
+
+            // Process in batches
+            foreach (array_chunk($links, 25) as $batch) {
+                foreach ($batch as $group) {
+                    try {
+                        $stream = $this->handleStream($group['name'], $dep);
+
+                        Groups::firstOrCreate([
+                            'name' => $group['name'],
+                        ], [
+                            'stream_id' => $stream->id,
+                        ]);
+                    } catch (\Exception $e) {
+                        Log::error("Error processing group: " . $e->getMessage());
+                        return response()->json(['error' => 'Помилка при отриманні розкладу'], 500);
+                    }
                 }
             }
-            sleep(1);  // Adjust sleep to balance performance and rate-limiting
+
+            return response()->json(['message' => 'Групи успішно оброблені']);
+        } catch (\Exception $e) {
+            Log::error("Error fetching groups: " . $e->getMessage());
+            return response()->json(['error' => 'Помилка при отриманні розкладу'], 500);
         }
-
-        return response()->json("success");
-    }
-
-    private function processGroup($link)
-    {
-        $parentDiv = $link->parentNode->parentNode->parentNode->parentNode->parentNode;
-        $departmentHeader = $parentDiv->previousSibling->previousSibling;
-        $departmentName = '';
-
-        if ($departmentHeader && $departmentHeader->nodeName === 'h2') {
-            $button = $departmentHeader->getElementsByTagName('button')->item(0);
-            if ($button) {
-                $departmentName = str_replace(["\r\n", "  "], "", $button->nodeValue);
-            }
-        }
-
-        // Use batch lookup to avoid multiple queries
-        $dep = Departments::where('name', $departmentName)->first('id');
-
-        $groupName = $link->nodeValue;
-        [$groupStreamName, $stream] = $this->handleStream($groupName, $dep);
-
-        $group_stream = Groups::firstOrCreate([
-            'name' => $groupStreamName,
-        ], [
-            'stream_id' => $stream->id,
-            'substream_id' => null,
-        ]);
-
-        $group = Groups::firstOrCreate(
-            [
-                'name' => $groupName,
-            ],
-            [
-                'stream_id' => null,
-                'substream_id' => $group_stream->id,
-            ]
-        );
     }
 
     private function handleStream($groupName, $dep)
@@ -136,8 +154,6 @@ class ParseController extends Controller
             ]);
 
             $year = date('Y') - 2000 - $year;
-
-            $groupStreamName = $part . '-' . $spec . '-' . $year . '-x-' . $name;
         } else {
             // Handle the standard case where the name doesn't start with "ПБ"
             $parts = explode('-', $groupName);
@@ -149,173 +165,196 @@ class ParseController extends Controller
                 'course' => date('Y') - 2000 - preg_replace('/\D/', '', $year),
                 'department_id' => $dep->id,
             ]);
-
-            $groupStreamName = $part . '-' . $spec . '-' . $year . '-x-' . $name;
         }
 
-        return [$groupStreamName, $stream]; // Return the created stream
+        return $stream; // Return the created stream
     }
 
     public function parseTimetable(Request $request)
     {
-        $dep = $request->input('dep');
-        if ($dep == null) {
+        $dep = trim($request->input('dep'));
+        if (!$dep) {
             return response()->json(['error' => 'Потрібно вказати факультет'], 400);
         }
 
-        $html = file_get_contents("https://portal.nau.edu.ua/schedule/group/list");
-        $doc = new \DOMDocument();
-        libxml_use_internal_errors(true);
-        $doc->loadHTML($html);
-        libxml_use_internal_errors(false);
-        $this->xpath = new \DOMXPath($doc);
-
-        if (Departments::where('name', $dep)->first() == null) {
+        if (!Departments::where('name', $dep)->exists()) {
             return response()->json(['error' => 'Факультет не знайдено'], 404);
         }
 
-        $query = "//button[contains(normalize-space(text()), '$dep')]";
-        $element = $this->xpath->query($query)->item(0);
+        $dep = Departments::where('name', $dep)->first(['id', 'name']);
 
-        $links = $element->parentNode->nextSibling->nextSibling->getElementsByTagName('a');
+        try {
+            $response = $this->client->request('GET', "https://portal.nau.edu.ua/schedule/group/list");
+            $html = $response->getBody()->getContents();
 
-        // Process in batches
-        foreach (array_chunk(iterator_to_array($links), 10) as $batch) {
-            foreach ($batch as $link) {
-                try {
-                    $this->parseTimetableForGroup($link);
-                } catch (\Exception $e) {
-                    Log::error($e->getMessage());
-                    continue;
+            $crawler = new Crawler($html);
+
+            $firstCollapse = $crawler->filter('.accordion-button')->each(function (Crawler $node) use ($dep) {
+                if (str_contains(trim($node->text()), $dep->name)) {
+                    // Instead of going up to ancestors twice, find the collapse directly
+                    $collapseElement = $node->closest('.accordion-header')
+                        ->nextAll('.accordion-collapse')
+                        ->first();
+
+                    if (!$collapseElement->count()) {
+                        return;
+                    }
+
+                    return $collapseElement;
+                }
+            });
+
+            if (!$firstCollapse) {
+                return response()->json(['error' => 'Не вдалося знайти групи для факультету'], 500);
+            }
+
+            $firstCollapse = array_values(array_filter($firstCollapse));
+
+            $links = $firstCollapse[0]->filter('a')->each(function (Crawler $node) {
+                return [
+                    'name' => trim($node->text()),
+                    'url'  => $node->attr('href'),
+                ];
+            });
+
+            if (empty($links)) {
+                return response()->json(['error' => 'Групи не знайдено'], 404);
+            }
+
+            // Process in batches
+            foreach (array_chunk($links, 25) as $batch) {
+                foreach ($batch as $group) {
+                    try {
+                        $this->parseTimetableForGroup($group);
+                    } catch (\Exception $e) {
+                        Log::error("Error processing group: " . $e->getMessage());
+                        return response()->json(['error' => 'Помилка при отриманні розкладу'], 500);
+                    }
                 }
             }
-            sleep(1);  // Adjust sleep to balance performance and rate-limiting
-        }
 
-        return response()->json("success");
+            return response()->json(['message' => 'Групи успішно оброблені']);
+        } catch (\Exception $e) {
+            Log::error("Error fetching groups: " . $e->getMessage());
+            return response()->json(['error' => 'Помилка при отриманні розкладу'], 500);
+        }
     }
 
     private function parseTimetableForGroup($link)
     {
-        $groupID = explode('=', $link->getAttribute('href'))[1];
-        $html = file_get_contents("https://portal.nau.edu.ua/schedule/group?id=" . $groupID);
-        $doc = new \DOMDocument();
-        libxml_use_internal_errors(true);
-        $doc->loadHTML($html);
-        libxml_use_internal_errors(false);
-        $this->xpath = new \DOMXPath($doc);
-
-        $group = $this->xpath->query('//h1')->item(0)->nodeValue;
-        $this->result["group"] = str_replace(["Розклад групи", " ", "\r\n"], "", $group);
-
-        // Retrieve group and stream info in batches and optimize query
-        $this->group = Groups::where('name', $this->result["group"])->first();
+        $this->group = Groups::where('name', $link["name"])->first();
         if (!$this->group) {
             return response()->json(['error' => 'Група не знайдена'], 404);
         }
 
-        // Parse both weeks with batch processing
-        $this->parseWeek(0, "week1");
-        $this->parseWeek(1, "week2");
+        try {
+            $response = $this->client->request('GET', "https://portal.nau.edu.ua" . $link['url']);
+            $html = $response->getBody()->getContents();
 
-        foreach ($this->result['lessons'] as $item) {
-            try {
-                Timetable::firstOrCreate([
-                    'name' => $item['name'],
-                    'teacher' => $item['teacher'],
-                    'type' => $item['type'],
-                    'week' => $item['week'],
-                    'day' => $item['day'],
-                    'lesson' => $item['lesson'],
-                    'auditory' => $item['auditory'],
-                    'pgroup' => $item['pgroup'],
-                    'group_id' => $item['group_id'],
-                ]);
-            } catch (\Exception $e) {
-                Log::error($e->getMessage());
-                continue;
+            $crawler = new Crawler($html);
+
+            // Parse both weeks with batch processing
+            $this->parseWeek($crawler, 0);
+            $this->parseWeek($crawler, 1);
+
+            foreach ($this->result['lessons'] as $item) {
+                try {
+                    $timetable = Timetable::firstOrCreate([
+                        'name' => $item['name'],
+                        'week' => $item['week'],
+                        'day' => $item['day'],
+                        'lesson' => $item['lesson'],
+                        'teacher' => $item['teacher'],
+                        'type' => $item['type'],
+                        'pgroup' => $item['pgroup'],
+                        'auditory' => $item['auditory'],
+                    ]);
+
+                    $timetable->groups()->sync($item['group_ids']);
+                } catch (\Exception $e) {
+                    Log::error($e->getMessage());
+                    return response()->json(['error' => 'Помилка при отриманні розкладу'], 500);
+                }
             }
+        } catch (\Exception $e) {
+            Log::error("Error fetching groups: " . $e->getMessage());
+            return response()->json(['error' => 'Помилка при отриманні розкладу'], 500);
         }
     }
 
-    private function parseWeek($tableIndex, $weekKey)
+    private function parseWeek(Crawler $crawler, $tableIndex)
     {
-        $table = $this->xpath->query('//table[@class="schedule"]')->item($tableIndex);
-        if (!$table) return;
+        $table = $crawler->filter('table.schedule')->eq($tableIndex);
+        if ($table->count() === 0) return;
 
         // Get day names first
         $dayNames = [];
-        $dayHeaders = $this->xpath->query('.//th[@class="day-name"]', $table);
-        foreach ($dayHeaders as $index => $header) {
-            $dayNames[$index] = trim($header->nodeValue);
-        }
+        $table->filter('th.day-name')->each(function (Crawler $node, $index) use (&$dayNames) {
+            $dayNames[$index] = trim($node->text());
+        });
 
-        // Parse schedule rows, skip the header row
-        $rows = $this->xpath->query('.//tr[th[@class="hour-name"]]', $table);
-        foreach ($rows as $rowIndex => $row) {
+        // Parse schedule rows, skipping the header row
+        $table->filter('tr')->each(function (Crawler $row, $rowIndex) use ($tableIndex) {
+            if ($row->filter('th.hour-name')->count() === 0) return; // Skip header row
 
-            // Parse classes for each day
-            $cells = $this->xpath->query('.//td', $row);
-
-            foreach ($cells as $cellIndex => $cell) {
-                $pairs = $this->xpath->query('.//div[@class="pairs"]', $cell);
-
-                if ($pairs->length === 0) {
-                    continue;
-                }
-
-                foreach ($pairs as $pair) {
-
-                    if ($this->getNodeValue($pair, './/div[@class="subject"]')) {
-                        $typestr = $this->getNodeValue($pair, './/div[@class="activity-tag"]');
-                        $type = 0;
-                        switch ($typestr) {
-                            case "Практичне":
-                                $type = 1;
-                                break;
-                            case "Лабораторна":
-                                $type = 2;
-                                break;
-                            default:
-                                $type = 0;
-                                break;
-                        }
+            $row->filter('td')->each(function (Crawler $cell, $cellIndex) use ($rowIndex, $tableIndex) {
+                $cell->filter('div.pairs')->each(function (Crawler $pair) use ($cellIndex, $rowIndex, $tableIndex) {
+                    if ($this->getNodeValue($pair, 'div.subject')) {
+                        $typestr = $this->getNodeValue($pair, 'div.activity-tag');
+                        $type = match ($typestr) {
+                            'Практичне' => 1,
+                            'Лабораторна' => 2,
+                            default => 0,
+                        };
 
                         $pgroup = 0;
-                        $pgroupstr = $this->getNodeValue($pair, './/div[@class="subgroup"]');
-
+                        $pgroupstr = $this->getNodeValue($pair, 'div.subgroup');
                         if ($pgroupstr == "Підгрупа 2") {
                             $pgroup = 2;
-                        } else if ($type == 2) {
+                        } elseif ($type == 2) {
                             $pgroup = 1;
                         }
 
                         $groupId = $this->group->id;
-                        $streamId = $this->group->substream_id;
 
                         $class = [
-                            'name' => $this->getNodeValue($pair, './/div[@class="subject"]'),
-                            'teacher' => $this->getNodeValue($pair, './/div[@class="teacher"]/a'),
+                            'name' => $this->getNodeValue($pair, 'div.subject'),
+                            'teacher' => $this->getNodeValue($pair, 'div.teacher a'),
                             'type' => $type,
-                            'week' => $weekKey === 'week1' ? 1 : 2,
+                            'week' => $tableIndex + 1,
                             'day' => $cellIndex + 1,
-                            'lesson' => $rowIndex + 1,
-                            'auditory' => $this->getNodeValue($pair, './/div[@class="room"]/span') == "Без аудиторії" ? "" : $this->getNodeValue($pair, './/div[@class="room"]/span'),
+                            'lesson' => $rowIndex,
+                            'auditory' => ($this->getNodeValue($pair, 'div.room span') == "Без аудиторії") ? "" : $this->getNodeValue($pair, 'div.room span'),
                             'pgroup' => $pgroup,
-                            'group_id' => $type == 0 ? $streamId : $groupId,
+                            'group_id' => $groupId,
+                            'group_ids' => [],
                         ];
+
+                        if ($pair->filter('div.flow-groups')->count() > 0) {
+                            $class['group_ids'] = []; // Initialize group_ids if it's not already initialized
+                            $groupIds = $pair->filter('div.flow-groups a')->each(function (Crawler $groupNode) use ($class) {
+                                $groupName = trim($groupNode->text());
+                                if ($flowGroup = Groups::where('name', $groupName)->first(['id'])) {
+                                    return $flowGroup->id;
+                                }
+                            });
+                            
+                            $class['group_ids'] = $groupIds;
+                        } else {
+                            $class['group_ids'][] = $groupId;
+                        }
 
                         if (!empty($class)) {
                             $this->result['lessons'][] = $class;
                         }
                     }
-                }
-            }
-        }
+                });
+            });
+        });
     }
-    private function getNodeValue($context, $query)
+
+    private function getNodeValue(Crawler $crawler, string $selector)
     {
-        $node = $this->xpath->query($query, $context)->item(0);
-        return $node ? trim($node->nodeValue) : null;
+        return $crawler->filter($selector)->count() > 0 ? trim($crawler->filter($selector)->text()) : null;
     }
 }

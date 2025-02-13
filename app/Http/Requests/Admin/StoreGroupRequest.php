@@ -27,8 +27,7 @@ class StoreGroupRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:63|unique:groups,name',
-            'stream_id' => 'integer|nullable',
-            'substream_id' => 'integer|nullable',
+            'stream_id' => 'integer',
             'single_week' => 'boolean|nullable',
             'single_group' => 'boolean|nullable',
         ];

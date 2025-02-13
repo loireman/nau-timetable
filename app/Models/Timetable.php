@@ -19,13 +19,12 @@ class Timetable extends Model
         'auditory',
         'auditory_link',
         'pgroup',
-        'group_id',
         'created_at',
         'updated_at'
     ];
 
-    public function group()
+    public function groups()
     {
-        return $this->belongsTo(Groups::class, 'group_id', 'id');
+        return $this->belongsToMany(Groups::class, 'group_timetable', 'timetable_id', 'group_id');
     }
 }

@@ -4,53 +4,75 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\DB;
 
 class StoreTimetableRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
     public function authorize()
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, mixed>
-     */
     public function rules()
     {
-        $currentId = $this->route('timetable');
-
         return [
             'name' => 'required|string|max:63',
             'week' => 'required|integer',
-            'lesson' => [
-                'required',
-                'integer',
-                'max:6',
-                Rule::unique('timetables', 'lesson')
-                    ->ignore($currentId, 'id')
-                    ->where(function ($query) {
-                        $query->where('week', request('week'))
-                              ->where('day', request('day'))
-                              ->where('pgroup', request('pgroup'))
-                              ->where('group_id', request('group_id'));
-                    }),
-            ],
+            'lesson' => 'required|integer|max:6',
             'teacher' => 'nullable|string|max:255',
             'type' => 'required|integer',
             'day' => 'required|integer',
             'pgroup' => 'nullable|integer',
             'auditory' => 'nullable|string',
             'auditory_link' => 'nullable|string',
-            'group_id' => 'nullable|integer',
-            'stream_id' => 'nullable|integer',
+            'group_ids' => [
+                'required',
+                'array',
+                function ($attribute, $value, $fail) {
+                    $type = $this->input('type'); // Get the type from the request
+
+                    // Validate lecture type (0): At least one group must be selected
+                    if ($type == 0 && empty($value)) {
+                        $fail('At least one group must be selected for lectures.');
+                    }
+
+                    // Validate non-lectures (1 or 2): Only one group can be assigned
+                    if ($type != 0 && count($value) > 1) {
+                        $fail('Only one group can be selected for non-lecture classes.');
+                    }
+
+                    // Validate time conflicts
+                    foreach ($value as $groupId) {
+                        $exists = DB::table('group_timetable')
+                            ->join('timetables', 'group_timetable.timetable_id', '=', 'timetables.id')
+                            ->where('group_timetable.group_id', $groupId)
+                            ->where('timetables.week', $this->input('week'))
+                            ->where('timetables.day', $this->input('day'))
+                            ->where('timetables.lesson', $this->input('lesson'))
+                            ->where('timetables.pgroup', $this->input('pgroup'))
+                            ->exists();
+
+                        if ($exists) {
+                            $fail("Group with ID {$groupId} already has a class at this time slot.");
+                        }
+                    }
+                }
+            ],
+            'group_ids.*' => [
+                'required',
+                'integer',
+                'exists:groups,id',
+            ],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'group_ids.required' => 'At least one group must be selected.',
+            'group_ids.*.required' => 'Each group ID must be provided.',
+            'group_ids.*.integer' => 'Each group ID must be an integer.',
+            'group_ids.*.exists' => 'Selected group does not exist.',
         ];
     }
 }

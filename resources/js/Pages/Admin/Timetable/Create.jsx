@@ -9,7 +9,7 @@ import AuthenticatedLayout from "@/Layouts/Admin/AdminLayout";
 import { Head, useForm } from "@inertiajs/react";
 import { useEffect } from "react";
 
-export default function Create({ auth, groups, streams }) {
+export default function Create({ auth, groups }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         teacher: "",
@@ -21,7 +21,7 @@ export default function Create({ auth, groups, streams }) {
         auditory_link: "",
         pgroup: 0,
         group_id: null,
-        stream_id: null,
+        group_ids: [],
     });
     const submit = (e) => {
         e.preventDefault();
@@ -29,16 +29,36 @@ export default function Create({ auth, groups, streams }) {
         post(route("timetable.store"));
     };
 
-    const handleStreamSelectChange = (newValue) => {
-        setData("stream_id", newValue);
+    const handleTypeChange = (newValue) => {
+        setData("type", newValue);
     };
 
     const handleSelectChange = (newValue) => {
-        setData("group_id", newValue);
+        if (data.type == 0) {
+            setData({
+                ...data,
+                group_id: newValue,
+            });
+        }
     };
 
-    const handleTypeChange = (newValue) => {
-        setData("type", newValue);
+    const addGroup = (e) => {
+        e.preventDefault();
+        if (!data.group_id) return;
+        if (data.group_ids.some((item) => item == data.group_id)) return;
+
+        setData({
+            ...data,
+            group_ids: [...data.group_ids, data.group_id],
+            group_id: null,
+        });
+    };
+
+    const removeGroup = (groupValue) => {
+        setData({
+            ...data,
+            group_ids: data.group_ids.filter((item) => item !== groupValue),
+        });
     };
 
     useEffect(() => {
@@ -66,7 +86,9 @@ export default function Create({ auth, groups, streams }) {
                         <div className="mt-3 flex justify-around overflow-clip rounded-lg border bg-gray-100 border-gray-500">
                             <div
                                 className={`${
-                                    data.type == 0 ? "bg-blue-600 text-white" : ""
+                                    data.type == 0
+                                        ? "bg-blue-600 text-white"
+                                        : ""
                                 } w-1/3 p-3 text-center font-semibold rounded-md max-md:truncate overflow-hidden`}
                                 onClick={() => handleTypeChange("0")}
                             >
@@ -74,7 +96,9 @@ export default function Create({ auth, groups, streams }) {
                             </div>
                             <div
                                 className={`${
-                                    data.type == 1 ? "bg-blue-600 text-white" : ""
+                                    data.type == 1
+                                        ? "bg-blue-600 text-white"
+                                        : ""
                                 } w-1/3 p-3 text-center font-semibold rounded-md max-md:truncate overflow-hidden`}
                                 onClick={() => handleTypeChange("1")}
                             >
@@ -82,40 +106,57 @@ export default function Create({ auth, groups, streams }) {
                             </div>
                             <div
                                 className={`${
-                                    data.type == 2 ? "bg-blue-600 text-white" : ""
+                                    data.type == 2
+                                        ? "bg-blue-600 text-white"
+                                        : ""
                                 } w-1/3 p-3 text-center font-semibold rounded-md max-md:truncate overflow-hidden`}
                                 onClick={() => handleTypeChange("2")}
                             >
                                 Лабораторна
                             </div>
                         </div>
-
-                        {data.type == 0 ? (
-                            <>
-                                <InputLabel htmlFor="name" value="Stream" />
-                                <Select
-                                    options={streams}
-                                    defaultValue="Виберіть поток"
-                                    defaultSelectable={false}
-                                    value={data.stream_id}
-                                    onChange={handleStreamSelectChange}
-                                />
-                            </>
-                        ) : (
-                            <>
-                                <InputLabel htmlFor="name" value="Group" />
+                        <>
+                            <InputLabel htmlFor="name" value="Група" />
+                            <div className="flex gap-3">
                                 <Select
                                     options={groups}
-                                    defaultValue="Виберіть групу"
+                                    defaultValue="Додати групу"
                                     defaultSelectable={false}
                                     value={data.group_id}
                                     onChange={handleSelectChange}
                                 />
-                            </>
-                        )}
-
-                        {(data.type == 0 && data.stream_id != null) ||
-                        (data.type != 0 && data.group_id != null) ? (
+                                <PrimaryButton onClick={(e) => addGroup(e)}>
+                                    Додати групу
+                                </PrimaryButton>
+                            </div>
+                            {data.group_ids.length > 0 && (
+                                <div className="mt-4">
+                                    <InputLabel value="Додані групи" />
+                                    <div className="mt-2 flex flex-wrap gap-2">
+                                        {data.group_ids.map((group) => (
+                                            <div
+                                                key={group}
+                                                className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-lg"
+                                            >
+                                                <span>{groups[group]}</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        removeGroup(group)
+                                                    }
+                                                    className="text-red-500 hover:text-red-700"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </>
+                        )
+                        {(data.type == 0 && data.group_ids.length != 0) ||
+                        (data.type == 2 && data.group_id != null) ? (
                             <>
                                 {data.type == 2 ? (
                                     <>

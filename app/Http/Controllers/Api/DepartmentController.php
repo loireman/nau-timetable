@@ -13,16 +13,12 @@ class DepartmentController extends Controller
         if ($group) {
 
             $group = Groups::where('name', $group)
-                ->with('substream.timetables')
                 ->with('timetables')
                 ->first();
 
             $timetables_group = $group->timetables;
-            $timetables_stream = $group->substream->timetables;
 
-            $mergedTimetables = $timetables_group->merge($timetables_stream);
-
-            $filteredTimetables = $mergedTimetables->map(function ($timetable) {
+            $filteredTimetables = $timetables_group->map(function ($timetable) {
                 return [
                     'name' => $timetable['name'],
                     'teacher' => $timetable['teacher'],

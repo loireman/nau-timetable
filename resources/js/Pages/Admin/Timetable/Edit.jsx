@@ -1,85 +1,87 @@
-import Checkbox from "@/Components/Checkbox";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
-import TextInput from "@/Components/TextInput";
-import AuthenticatedLayout from "@/Layouts/Admin/AdminLayout";
-import { Head, useForm } from "@inertiajs/react";
-import { useEffect, useState } from "react";
-import { Inertia } from "@inertiajs/inertia";
 import Select from "@/Components/Select";
-import Radio from "@/Components/Radio";
+import TextInput from "@/Components/TextInput";
 import TimetableSelect from "@/Components/TimetableSelect";
+import AuthenticatedLayout from "@/Layouts/Admin/AdminLayout";
+import { Inertia } from "@inertiajs/inertia";
+import { Head, useForm } from "@inertiajs/react";
+import { useEffect } from "react";
 
-export default function Edit({ auth, timetable, groups, streams }) {
-    const { data, setData, post, processing, errors, reset, setError } =
-        useForm({
-            name: timetable.name,
-            teacher: timetable.teacher,
-            type: timetable.type,
-            week: timetable.week,
-            day: timetable.day,
-            lesson: timetable.lesson,
-            auditory: timetable.auditory,
-            auditory_link: timetable.auditory_link,
-            pgroup: timetable.type == 2 ? timetable.pgroup : 1,
-            group_id: timetable.type != 0 ? timetable.group_id : null,
-            stream_id: timetable.type == 0 ? timetable.group_id : null,
-        });
+export default function Edit({ auth, timetable, groups, selected }) {
+    const { data, setData, processing, errors, setError } = useForm({
+        name: timetable.name,
+        teacher: timetable.teacher,
+        type: timetable.type,
+        week: timetable.week,
+        day: timetable.day,
+        lesson: timetable.lesson,
+        auditory: timetable.auditory,
+        auditory_link: timetable.auditory_link,
+        pgroup: timetable.type == 2 ? timetable.pgroup : 0,
+        group_id: timetable.type != 0 ? selected : null,
+        group_ids: timetable.type == 0 ? [...selected] : [],
+    });
+
+    console.log(errors);
 
     const submit = (e) => {
         e.preventDefault();
 
-        const timetableData = {
-            name: data.name,
-            teacher: data.teacher,
-            type: data.type,
-            week: data.week,
-            day: data.day,
-            lesson: data.lesson,
-            auditory: data.auditory,
-            auditory_link: data.auditory_link,
-            pgroup: data.type == 2 ? data.pgroup : 0,
-            group_id: data.group_id,
-            stream_id: data.stream_id,
-        }
-
-        Inertia.put(route("timetable.update", { timetable: timetable }), timetableData);
-    };
-
-    const handleStreamSelectChange = (newValue) => {
-        setData("stream_id", newValue);
-    };
-
-    const handleSelectChange = (newValue) => {
-        setData("group_id", newValue);
+        Inertia.put(route("timetable.update", { timetable: timetable }), data);
     };
 
     const handleTypeChange = (newValue) => {
         setData("type", newValue);
     };
 
-    const validateAuditoryLink = (link) => {
-        const regex =
-            /^https:\/\/meet\.google\.com\/[a-zA-Z]{3}-[a-zA-Z]{4}-[a-zA-Z]{3}/;
-        return regex.test(link);
+    const handleSelectChange = (newValue) => {
+        setData("group_id", newValue);
     };
 
-    const validateMapLink = (link) => {
-        const regex = /^https:\/\/maps\.app\.goo\.gl\/[a-zA-Z0-9-]+$/;
-        return regex.test(link);
+    const addGroup = (e) => {
+        e.preventDefault();
+        if (!data.group_id) return;
+        if (data.group_ids.some((item) => item == data.group_id)) return;
+
+        setData({
+            ...data,
+            group_ids: [...data.group_ids, data.group_id],
+            group_id: null,
+        });
+    };
+
+    const removeGroup = (groupValue) => {
+        setData({
+            ...data,
+            group_ids: data.group_ids.filter((item) => item !== groupValue),
+        });
+    };
+
+    const validateAuditoryLink = (link) => {
+        if (!link) return true;
+        const googleMeetRegex = /^https:\/\/meet\.google\.com\/[a-zA-Z]{3}-[a-zA-Z]{4}-[a-zA-Z]{3}/;
+        const googleMapsRegex = /^https:\/\/maps\.app\.goo\.gl\/[a-zA-Z0-9-]+$/;
+        return googleMeetRegex.test(link) || googleMapsRegex.test(link);
     };
 
     const handleAuditoryLinkChange = (e) => {
-        const { name, value } = e.target;
-        setData("auditory_link", e.target.value);
+        const value = e.target.value;
+        setData("auditory_link", value);
 
-        if (value && !validateAuditoryLink(value) && !validateMapLink(value)) {
+        if (!validateAuditoryLink(value)) {
             setError("auditory_link", "Invalid Google Maps/Meet link format");
-        } else {
-            setError("auditory_link", "");
         }
     };
+
+    useEffect(() => {
+        if (data.type == 2) {
+            setData("pgroup", 1);
+        } else {
+            setData("pgroup", 0);
+        }
+    }, [data.type]);
 
     return (
         <AuthenticatedLayout
@@ -127,16 +129,46 @@ export default function Edit({ auth, timetable, groups, streams }) {
                                 Лабораторна
                             </div>
                         </div>
+
                         {data.type == 0 ? (
                             <>
-                                <InputLabel htmlFor="name" value="Stream" />
-                                <Select
-                                    options={streams}
-                                    defaultValue="Виберіть поток"
-                                    defaultSelectable={false}
-                                    value={data.stream_id}
-                                    onChange={handleStreamSelectChange}
-                                />
+                                <InputLabel htmlFor="name" value="Група" />
+                                <div className="flex gap-3">
+                                    <Select
+                                        options={groups}
+                                        defaultValue="Додати групу"
+                                        defaultSelectable={false}
+                                        value={data.group_id}
+                                        onChange={handleSelectChange}
+                                    />
+                                    <PrimaryButton onClick={(e) => addGroup(e)}>
+                                        Додати групу
+                                    </PrimaryButton>
+                                </div>
+                                {data.group_ids.length > 0 && (
+                                    <div className="mt-4">
+                                        <InputLabel value="Додані групи" />
+                                        <div className="mt-2 flex flex-wrap gap-2">
+                                            {data.group_ids.map((group) => (
+                                                <div
+                                                    key={group}
+                                                    className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-lg"
+                                                >
+                                                    <span>{groups[group]}</span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            removeGroup(group)
+                                                        }
+                                                        className="text-red-500 hover:text-red-700"
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </>
                         ) : (
                             <>
@@ -151,7 +183,7 @@ export default function Edit({ auth, timetable, groups, streams }) {
                             </>
                         )}
 
-                        {(data.type == 0 && data.stream_id != null) ||
+                        {(data.type == 0 && data.group_ids.length != 0) ||
                         (data.type != 0 && data.group_id != null) ? (
                             <>
                                 {data.type == 2 ? (
@@ -181,6 +213,7 @@ export default function Edit({ auth, timetable, groups, streams }) {
                                         />
                                     </>
                                 ) : null}
+
                                 <InputLabel
                                     htmlFor="name"
                                     value="Lesson name"
@@ -254,9 +287,7 @@ export default function Edit({ auth, timetable, groups, streams }) {
                                     className="mt-1 block w-full"
                                     autoComplete="auditory_link"
                                     isFocused={true}
-                                    onChange={(e) =>
-                                        handleAuditoryLinkChange(e)
-                                    }
+                                    onChange={handleAuditoryLinkChange}
                                 />
                                 <InputError
                                     message={errors.auditory_link}
