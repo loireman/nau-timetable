@@ -149,8 +149,16 @@ const TimetableDesktop = ({
                                                         {entry.name}
                                                     </span>
                                                     {isTeacher == true ? (
-                                                        <span className="text-sm font-medium text-gray-400">
-                                                            {entry.group}
+                                                        <span className="text-sm font-medium text-gray-400 flex flex-wrap gap-1">
+                                                            <span className="flex flex-wrap gap-x-3">
+                                                            {entry.groups.map(
+                                                                (group, index) => (
+                                                                    <span key={index}>
+                                                                        {group}{' '}
+                                                                    </span>
+                                                                )
+                                                            )}
+                                                            </span>
                                                             {entry.type == 2
                                                                 ? ` / ${entry.pgroup}`
                                                                 : null}

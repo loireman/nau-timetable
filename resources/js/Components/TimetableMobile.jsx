@@ -161,11 +161,18 @@ const TimetableMobile = ({
                                                         }
                                                     </div>
 
-                                                    {entry.auditory_link && (
+                                                    {entry.auditory_link ? (
                                                         <a
-                                                        className={(entry.week === currentWeek &&
-                                                            entry.day === currentDay &&
-                                                            entry.lesson === currentLesson) ? `lesson-meet active` : `lesson-meet`}
+                                                            className={
+                                                                entry.week ===
+                                                                    currentWeek &&
+                                                                entry.day ===
+                                                                    currentDay &&
+                                                                entry.lesson ===
+                                                                    currentLesson
+                                                                    ? `lesson-meet active`
+                                                                    : `lesson-meet`
+                                                            }
                                                             href={
                                                                 entry.auditory_link
                                                                     ? entry.auditory_link
@@ -178,6 +185,23 @@ const TimetableMobile = ({
                                                                 icon="logos:google-meet"
                                                             />
                                                         </a>
+                                                    ) : (
+                                                        <>
+                                                            {entry.week ===
+                                                                currentWeek &&
+                                                                entry.day ===
+                                                                    currentDay &&
+                                                                entry.lesson ===
+                                                                    currentLesson && (
+                                                                    <div className="text-red-600 font-semibold flex overflow-visible items-center gap-2">
+                                                                        Наразі{" "}
+                                                                        <Icon
+                                                                            icon="oui:dot"
+                                                                            className="w-4 h-4 pulsating-dot"
+                                                                        />
+                                                                    </div>
+                                                                )}
+                                                        </>
                                                     )}
                                                 </div>
 
@@ -185,8 +209,23 @@ const TimetableMobile = ({
                                                     {entry.name}
                                                 </span>
                                                 {isTeacher == true ? (
-                                                    <span className="text-sm font-medium text-gray-400">
-                                                        {entry.group}
+                                                    <span className="text-sm font-medium text-gray-400 flex flex-wrap gap-1">
+                                                        <span className="flex flex-wrap gap-x-3">
+                                                            {entry.groups.map(
+                                                                (
+                                                                    group,
+                                                                    index
+                                                                ) => (
+                                                                    <span
+                                                                        key={
+                                                                            index
+                                                                        }
+                                                                    >
+                                                                        {group}{" "}
+                                                                    </span>
+                                                                )
+                                                            )}
+                                                        </span>
                                                         {entry.type == 2
                                                             ? ` / ${entry.pgroup}`
                                                             : null}

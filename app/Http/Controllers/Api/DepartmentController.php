@@ -49,9 +49,12 @@ class DepartmentController extends Controller
 
     public function getTeachersSchedule($teacher)
     {
-        $timetables = Timetable::where('teacher', $teacher)->with('group')->get();
+        $timetables = Timetable::where('teacher', $teacher)->with('groups')->get();
+
 
         $timetables = $timetables->map(function ($timetable) {
+            $groupNames = $timetable->groups->pluck('name')->toArray();
+
             return [
                 'name' => $timetable['name'],
                 'teacher' => $timetable['teacher'],
@@ -61,7 +64,7 @@ class DepartmentController extends Controller
                 'lesson' => $timetable['lesson'],
                 'auditory' => $timetable['auditory'],
                 'auditory_link' => $timetable['auditory_link'],
-                'group' => $timetable['group']['name'],
+                'groups' => $groupNames,
                 'pgroup' => $timetable['pgroup'],
             ];
         });

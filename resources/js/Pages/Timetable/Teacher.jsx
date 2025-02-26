@@ -46,7 +46,7 @@ export default function Teacher({ auth, teacher, startWeek }) {
         date.setHours(0, 0, 0, 0);
         date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
 
-        var week1 = new Date(date.getFullYear(), 0, 4);
+        var week1 = startWeek ? new Date(date.getFullYear(), 0, 11) : new Date(date.getFullYear(), 0, 4);
         var week =
             1 +
             Math.round(
@@ -56,7 +56,7 @@ export default function Teacher({ auth, teacher, startWeek }) {
                     7
             );
 
-        week = ((week + startWeek) % 2 == (rawDay == 0) ? 1 : 0) + 1;
+        week = (week % 2 == (rawDay == 0) ? 1 : 0) + 1;
 
         setWeek(week - 1);
         setCurrentWeek(week);
