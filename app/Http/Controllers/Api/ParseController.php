@@ -301,8 +301,9 @@ class ParseController extends Controller
             if ($row->filter('th.hour-name')->count() === 0) return; // Skip header row
 
             $row->filter('td')->each(function (Crawler $cell, $cellIndex) use ($rowIndex, $tableIndex) {
-                $cell->filter('div.pairs')->each(function (Crawler $pair) use ($cellIndex, $rowIndex, $tableIndex) {
-                    if ($this->getNodeValue($pair, 'div.subject')) {
+                // Process each pair div separately
+                $cell->filter('div.pairs .pair')->each(function (Crawler $pair) use ($cellIndex, $rowIndex, $tableIndex) {
+                    if ($pair->filter('div.subject')->count() > 0) {
                         $typestr = $this->getNodeValue($pair, 'div.activity-tag');
                         $type = match ($typestr) {
                             'Практичне' => 1,
@@ -314,12 +315,13 @@ class ParseController extends Controller
                         $pgroupstr = $this->getNodeValue($pair, 'div.subgroup');
                         if ($pgroupstr == "Підгрупа 2") {
                             $pgroup = 2;
+                        } elseif ($pgroupstr == "Підгрупа 1") {
+                            $pgroup = 1;
                         } elseif ($type == 2) {
                             $pgroup = 1;
                         }
 
                         $groupId = $this->group->id;
-
                         $class = [
                             'name' => $this->getNodeValue($pair, 'div.subject'),
                             'teacher' => $this->getNodeValue($pair, 'div.teacher a'),
@@ -334,17 +336,18 @@ class ParseController extends Controller
                         ];
 
                         if ($pair->filter('div.flow-groups')->count() > 0) {
-                            $class['group_ids'] = []; // Initialize group_ids if it's not already initialized
-                            $groupIds = $pair->filter('div.flow-groups a')->each(function (Crawler $groupNode) use ($class) {
+                            $class['group_ids'] = []; // Initialize group_ids array
+                            $groupIds = $pair->filter('div.flow-groups a')->each(function (Crawler $groupNode) {
                                 $groupName = trim($groupNode->text());
                                 if ($flowGroup = Groups::where('name', $groupName)->first(['id'])) {
                                     return $flowGroup->id;
                                 }
+                                return null;
                             });
-                            
-                            $class['group_ids'] = $groupIds;
+                            // Filter out null values
+                            $class['group_ids'] = array_filter($groupIds);
                         } else {
-                            $class['group_ids'][] = $groupId;
+                            $class['group_ids'] = [$groupId];
                         }
 
                         if (!empty($class)) {
