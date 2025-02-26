@@ -11,7 +11,7 @@ const TimetableDesktop = ({
     selectedPGroup,
     timetable,
     weekDefault,
-    singleWeek=false,
+    singleWeek = false,
     isTeacher = false,
 }) => {
     const [week, setWeek] = useState(0);
@@ -53,13 +53,16 @@ const TimetableDesktop = ({
 
     return (
         <div>
-            {!singleWeek &&
+            {!singleWeek && (
                 <div className="flex content-center items-center gap-4 justify-center mb-4">
-                <span className="font-medium text-xl">Week 1</span>
-                <InputSwitch initialValue={week} onChange={handleWeekChange} />
-                <span className="font-medium text-xl">Week 2</span>
-            </div>
-            }
+                    <span className="font-medium text-xl">Week 1</span>
+                    <InputSwitch
+                        initialValue={week}
+                        onChange={handleWeekChange}
+                    />
+                    <span className="font-medium text-xl">Week 2</span>
+                </div>
+            )}
 
             <table className="timetable">
                 <thead>
@@ -125,11 +128,18 @@ const TimetableDesktop = ({
                                                             }
                                                         </div>
 
-                                                        {entry.auditory_link && (
+                                                        {entry.auditory_link ? (
                                                             <a
-                                                                className={(entry.week === currentWeek &&
-                                                                    entry.day === currentDay &&
-                                                                    entry.lesson === currentLesson) ? `lesson-meet active` : `lesson-meet`}
+                                                                className={
+                                                                    entry.week ===
+                                                                        currentWeek &&
+                                                                    entry.day ===
+                                                                        currentDay &&
+                                                                    entry.lesson ===
+                                                                        currentLesson
+                                                                        ? `lesson-meet active`
+                                                                        : `lesson-meet`
+                                                                }
                                                                 href={
                                                                     entry.auditory_link
                                                                         ? entry.auditory_link
@@ -142,6 +152,23 @@ const TimetableDesktop = ({
                                                                     icon="logos:google-meet"
                                                                 />
                                                             </a>
+                                                        ) : (
+                                                            <>
+                                                                {entry.week ===
+                                                                    currentWeek &&
+                                                                    entry.day ===
+                                                                        currentDay &&
+                                                                    entry.lesson ===
+                                                                        currentLesson && (
+                                                                        <div className="text-red-600 font-semibold flex overflow-visible items-center gap-2">
+                                                                            Наразі{" "}
+                                                                            <Icon
+                                                                                icon="oui:dot"
+                                                                                className="w-4 h-4 pulsating-dot"
+                                                                            />
+                                                                        </div>
+                                                                    )}
+                                                            </>
                                                         )}
                                                     </div>
 
@@ -151,13 +178,22 @@ const TimetableDesktop = ({
                                                     {isTeacher == true ? (
                                                         <span className="text-sm font-medium text-gray-400 flex flex-wrap gap-1">
                                                             <span className="flex flex-wrap gap-x-3">
-                                                            {entry.groups.map(
-                                                                (group, index) => (
-                                                                    <span key={index}>
-                                                                        {group}{' '}
-                                                                    </span>
-                                                                )
-                                                            )}
+                                                                {entry.groups.map(
+                                                                    (
+                                                                        group,
+                                                                        index
+                                                                    ) => (
+                                                                        <span
+                                                                            key={
+                                                                                index
+                                                                            }
+                                                                        >
+                                                                            {
+                                                                                group
+                                                                            }{" "}
+                                                                        </span>
+                                                                    )
+                                                                )}
                                                             </span>
                                                             {entry.type == 2
                                                                 ? ` / ${entry.pgroup}`
