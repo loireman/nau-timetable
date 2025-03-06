@@ -3,6 +3,7 @@
 namespace SergiX44\Nutgram\Telegram\Types\Inline;
 
 use SergiX44\Hydrator\Annotation\ArrayType;
+use SergiX44\Hydrator\Annotation\SkipConstructor;
 use SergiX44\Hydrator\Resolver\EnumOrScalar;
 use SergiX44\Nutgram\Telegram\Properties\InlineQueryResultType;
 use SergiX44\Nutgram\Telegram\Properties\ParseMode;
@@ -17,6 +18,7 @@ use function SergiX44\Nutgram\Support\array_filter_null;
  * Alternatively, you can use input_message_content to send a message with the specified content instead of the voice message.
  * @see https://core.telegram.org/bots/api#inlinequeryresultcachedvoice
  */
+#[SkipConstructor]
 class InlineQueryResultCachedVoice extends InlineQueryResult
 {
     /** Type of the result, must be voice */
@@ -92,7 +94,7 @@ class InlineQueryResultCachedVoice extends InlineQueryResult
         string $voice_file_id,
         string $title,
         ?string $caption = null,
-        ?ParseMode $parse_mode = null,
+        ParseMode|string|null $parse_mode = null,
         ?array $caption_entities = null,
         ?InlineKeyboardMarkup $reply_markup = null,
         ?InputMessageContent $input_message_content = null,
@@ -112,12 +114,12 @@ class InlineQueryResultCachedVoice extends InlineQueryResult
     public function jsonSerialize(): array
     {
         return array_filter_null([
-            'type' => $this->type->value,
+            'type' => $this->type,
             'id' => $this->id,
             'voice_file_id' => $this->voice_file_id,
             'title' => $this->title,
             'caption' => $this->caption,
-            'parse_mode' => $this->parse_mode?->value,
+            'parse_mode' => $this->parse_mode,
             'caption_entities' => $this->caption_entities,
             'reply_markup' => $this->reply_markup,
             'input_message_content' => $this->input_message_content,

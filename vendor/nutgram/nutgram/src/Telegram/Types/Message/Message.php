@@ -6,6 +6,7 @@ use SergiX44\Hydrator\Annotation\ArrayType;
 use SergiX44\Nutgram\Telegram\Properties\MessageType;
 use SergiX44\Nutgram\Telegram\Properties\ParseMode;
 use SergiX44\Nutgram\Telegram\Types\BaseType;
+use SergiX44\Nutgram\Telegram\Types\Boost\ChatBoostAdded;
 use SergiX44\Nutgram\Telegram\Types\Chat\Chat;
 use SergiX44\Nutgram\Telegram\Types\Forum\ForumTopicClosed;
 use SergiX44\Nutgram\Telegram\Types\Forum\ForumTopicCreated;
@@ -39,8 +40,11 @@ use SergiX44\Nutgram\Telegram\Types\Media\VideoNote;
 use SergiX44\Nutgram\Telegram\Types\Media\Voice;
 use SergiX44\Nutgram\Telegram\Types\Passport\PassportData;
 use SergiX44\Nutgram\Telegram\Types\Payment\Invoice;
+use SergiX44\Nutgram\Telegram\Types\Payment\PaidMediaInfo;
+use SergiX44\Nutgram\Telegram\Types\Payment\RefundedPayment;
 use SergiX44\Nutgram\Telegram\Types\Payment\SuccessfulPayment;
 use SergiX44\Nutgram\Telegram\Types\Poll\Poll;
+use SergiX44\Nutgram\Telegram\Types\Reaction\ReactionType;
 use SergiX44\Nutgram\Telegram\Types\Shared\ChatShared;
 use SergiX44\Nutgram\Telegram\Types\Shared\UserShared;
 use SergiX44\Nutgram\Telegram\Types\Shared\UsersShared;
@@ -84,8 +88,25 @@ class Message extends BaseType
      */
     public ?Chat $sender_chat = null;
 
+    /**
+     * Optional. If the sender of the message boosted the chat, the number of boosts added by the user
+     */
+    public ?int $sender_boost_count = null;
+
+    /**
+     * Optional. The bot that actually sent the message on behalf of the business account.
+     * Available only for outgoing messages sent on behalf of the connected business account.
+     */
+    public ?User $sender_business_bot = null;
+
     /** Date the message was sent in Unix time */
     public int $date;
+
+    /**
+     * Optional. Unique identifier of the business connection from which the message was received.
+     * If non-empty, the message belongs to a chat of the corresponding business account that is independent from any potential bot chat which might share the same identifier.
+     */
+    public ?string $business_connection_id = null;
 
     /** Conversation the message belongs to */
     public Chat $chat;
@@ -169,6 +190,11 @@ class Message extends BaseType
     public ?TextQuote $quote = null;
 
     /**
+     * Optional. For replies to a story, the original story
+     */
+    public ?Story $reply_to_story = null;
+
+    /**
      * Optional.
      * Bot through which the message was sent
      */
@@ -185,6 +211,12 @@ class Message extends BaseType
      * True, if the message can't be forwarded
      */
     public ?bool $has_protected_content = null;
+
+    /**
+     * Optional.
+     * True, if the message was sent by an implicit action, for example, as an away or a greeting business message, or as a scheduled message
+     */
+    public ?bool $is_from_offline = null;
 
     /**
      * Optional.
@@ -220,6 +252,10 @@ class Message extends BaseType
     public ?LinkPreviewOptions $link_preview_options = null;
 
     /**
+     * Optional. Unique identifier of the message effect added to the message
+     */
+    public ?string $effect_id = null;
+    /**
      * Optional.
      * Message is an animation, information about the animation.
      * For backward compatibility, when this field is set, the document field will also be set
@@ -237,6 +273,11 @@ class Message extends BaseType
      * Message is a general file, information about the file
      */
     public ?Document $document = null;
+
+    /**
+     * Optional. Message contains paid media; information about the paid media
+     */
+    public ?PaidMediaInfo $paid_media = null;
 
     /**
      * Optional.
@@ -290,6 +331,11 @@ class Message extends BaseType
      */
     #[ArrayType(MessageEntity::class)]
     public ?array $caption_entities = null;
+
+    /**
+     * Optional. True, if the caption must be shown above the message media
+     */
+    public ?bool $show_caption_above_media = null;
 
     /**
      * Optional.
@@ -434,6 +480,8 @@ class Message extends BaseType
      */
     public ?SuccessfulPayment $successful_payment = null;
 
+    public ?RefundedPayment $refunded_payment = null;
+
     /**
      * Optional.
      * Service message: a user was shared with the bot
@@ -477,6 +525,17 @@ class Message extends BaseType
      * A user in the chat triggered another user's proximity alert while sharing Live Location.
      */
     public ?ProximityAlertTriggered $proximity_alert_triggered = null;
+
+    /**
+     * Optional.
+     * Service message: user boosted the chat
+     */
+    public ?ChatBoostAdded $boost_added = null;
+
+    /**
+     * Optional. Service message: chat background set
+     */
+    public ?ChatBackground $chat_background_set = null;
 
     /**
      * Optional.
@@ -596,7 +655,7 @@ class Message extends BaseType
      */
     public function isForwarded(): bool
     {
-        return $this->forward_from !== null || $this->forward_from_chat !== null;
+        return $this->forward_origin !== null;
     }
 
     /**
@@ -609,7 +668,6 @@ class Message extends BaseType
             $this->text !== null => MessageType::TEXT,
             $this->audio !== null => MessageType::AUDIO,
             $this->animation !== null => MessageType::ANIMATION,
-            $this->document !== null => MessageType::DOCUMENT,
             $this->game !== null => MessageType::GAME,
             $this->photo !== null => MessageType::PHOTO,
             $this->sticker !== null => MessageType::STICKER,
@@ -635,12 +693,14 @@ class Message extends BaseType
             $this->pinned_message !== null => MessageType::PINNED_MESSAGE,
             $this->invoice !== null => MessageType::INVOICE,
             $this->successful_payment !== null => MessageType::SUCCESSFUL_PAYMENT,
+            $this->refunded_payment !== null => MessageType::REFUNDED_PAYMENT,
             $this->users_shared !== null => MessageType::USERS_SHARED,
             $this->chat_shared !== null => MessageType::CHAT_SHARED,
             $this->message_auto_delete_timer_changed !== null => MessageType::MESSAGE_AUTO_DELETE_TIMER_CHANGED,
             $this->connected_website !== null => MessageType::CONNECTED_WEBSITE,
             $this->passport_data !== null => MessageType::PASSPORT_DATA,
             $this->proximity_alert_triggered !== null => MessageType::PROXIMITY_ALERT_TRIGGERED,
+            $this->boost_added !== null => MessageType::BOOST_ADDED,
             $this->forum_topic_created !== null => MessageType::FORUM_TOPIC_CREATED,
             $this->forum_topic_edited !== null => MessageType::FORUM_TOPIC_EDITED,
             $this->forum_topic_closed !== null => MessageType::FORUM_TOPIC_CLOSED,
@@ -654,6 +714,7 @@ class Message extends BaseType
             $this->video_chat_ended !== null => MessageType::VIDEO_CHAT_ENDED,
             $this->video_chat_participants_invited !== null => MessageType::VIDEO_CHAT_PARTICIPANTS_INVITED,
             $this->web_app_data !== null => MessageType::WEB_APP_DATA,
+            $this->document !== null => MessageType::DOCUMENT,
             default => null
         };
     }
@@ -825,5 +886,29 @@ class Message extends BaseType
     public function isInaccessible(): bool
     {
         return $this->date === 0;
+    }
+
+    /**
+     * Use this method to change the chosen reactions on a message.
+     * Service messages can't be reacted to.
+     * Automatically forwarded messages from a channel to its discussion group have the same available reactions as messages in the channel.
+     * Returns True on success.
+     * @see https://core.telegram.org/bots/api#setmessagereaction
+     * @param ReactionType|ReactionType[]|null $reaction Optional. New list of reaction types to set on the message. Currently, as non-premium users, bots can set up to one reaction per message. A custom emoji reaction can be used if it is either already present on the message or explicitly allowed by chat administrators.
+     * @param bool $is_big Optional. Pass True to set the reaction with a big animation
+     * @return bool|null
+     */
+    public function react(ReactionType|array|null $reaction = null, bool $is_big = false): ?bool
+    {
+        if ($reaction instanceof ReactionType) {
+            $reaction = [$reaction];
+        }
+
+        return $this->getBot()->setMessageReaction(
+            reaction: $reaction,
+            is_big: $is_big,
+            chat_id: $this->chat->id,
+            message_id: $this->message_id
+        );
     }
 }

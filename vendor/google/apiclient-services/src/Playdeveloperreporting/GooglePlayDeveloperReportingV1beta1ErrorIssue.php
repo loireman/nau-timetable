@@ -17,8 +17,11 @@
 
 namespace Google\Service\Playdeveloperreporting;
 
-class GooglePlayDeveloperReportingV1beta1ErrorIssue extends \Google\Model
+class GooglePlayDeveloperReportingV1beta1ErrorIssue extends \Google\Collection
 {
+  protected $collection_key = 'sampleErrorReports';
+  protected $annotationsType = GooglePlayDeveloperReportingV1beta1IssueAnnotation::class;
+  protected $annotationsDataType = 'array';
   /**
    * @var string
    */
@@ -58,10 +61,28 @@ class GooglePlayDeveloperReportingV1beta1ErrorIssue extends \Google\Model
    */
   public $name;
   /**
+   * @var string[]
+   */
+  public $sampleErrorReports;
+  /**
    * @var string
    */
   public $type;
 
+  /**
+   * @param GooglePlayDeveloperReportingV1beta1IssueAnnotation[]
+   */
+  public function setAnnotations($annotations)
+  {
+    $this->annotations = $annotations;
+  }
+  /**
+   * @return GooglePlayDeveloperReportingV1beta1IssueAnnotation[]
+   */
+  public function getAnnotations()
+  {
+    return $this->annotations;
+  }
   /**
    * @param string
    */
@@ -229,6 +250,20 @@ class GooglePlayDeveloperReportingV1beta1ErrorIssue extends \Google\Model
   public function getName()
   {
     return $this->name;
+  }
+  /**
+   * @param string[]
+   */
+  public function setSampleErrorReports($sampleErrorReports)
+  {
+    $this->sampleErrorReports = $sampleErrorReports;
+  }
+  /**
+   * @return string[]
+   */
+  public function getSampleErrorReports()
+  {
+    return $this->sampleErrorReports;
   }
   /**
    * @param string

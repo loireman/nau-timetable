@@ -35,21 +35,22 @@ class ProjectsLocationsStoredInfoTypes extends \Google\Service\Resource
 {
   /**
    * Creates a pre-built stored infoType to be used for inspection. See
-   * https://cloud.google.com/dlp/docs/creating-stored-infotypes to learn more.
-   * (storedInfoTypes.create)
+   * https://cloud.google.com/sensitive-data-protection/docs/creating-stored-
+   * infotypes to learn more. (storedInfoTypes.create)
    *
    * @param string $parent Required. Parent resource name. The format of this
    * value varies depending on the scope of the request (project or organization)
    * and whether you have [specified a processing
-   * location](https://cloud.google.com/dlp/docs/specifying-location): + Projects
-   * scope, location specified: `projects/`PROJECT_ID`/locations/`LOCATION_ID +
-   * Projects scope, no location specified (defaults to global):
-   * `projects/`PROJECT_ID + Organizations scope, location specified:
-   * `organizations/`ORG_ID`/locations/`LOCATION_ID + Organizations scope, no
-   * location specified (defaults to global): `organizations/`ORG_ID The following
-   * example `parent` string specifies a parent project with the identifier
-   * `example-project`, and specifies the `europe-west3` location for processing
-   * data: parent=projects/example-project/locations/europe-west3
+   * location](https://cloud.google.com/sensitive-data-protection/docs/specifying-
+   * location): + Projects scope, location specified:
+   * `projects/{project_id}/locations/{location_id}` + Projects scope, no location
+   * specified (defaults to global): `projects/{project_id}` + Organizations
+   * scope, location specified: `organizations/{org_id}/locations/{location_id}` +
+   * Organizations scope, no location specified (defaults to global):
+   * `organizations/{org_id}` The following example `parent` string specifies a
+   * parent project with the identifier `example-project`, and specifies the
+   * `europe-west3` location for processing data: parent=projects/example-
+   * project/locations/europe-west3
    * @param GooglePrivacyDlpV2CreateStoredInfoTypeRequest $postBody
    * @param array $optParams Optional parameters.
    * @return GooglePrivacyDlpV2StoredInfoType
@@ -62,8 +63,9 @@ class ProjectsLocationsStoredInfoTypes extends \Google\Service\Resource
     return $this->call('create', [$params], GooglePrivacyDlpV2StoredInfoType::class);
   }
   /**
-   * Deletes a stored infoType. See https://cloud.google.com/dlp/docs/creating-
-   * stored-infotypes to learn more. (storedInfoTypes.delete)
+   * Deletes a stored infoType. See https://cloud.google.com/sensitive-data-
+   * protection/docs/creating-stored-infotypes to learn more.
+   * (storedInfoTypes.delete)
    *
    * @param string $name Required. Resource name of the organization and
    * storedInfoType to be deleted, for example
@@ -80,8 +82,9 @@ class ProjectsLocationsStoredInfoTypes extends \Google\Service\Resource
     return $this->call('delete', [$params], GoogleProtobufEmpty::class);
   }
   /**
-   * Gets a stored infoType. See https://cloud.google.com/dlp/docs/creating-
-   * stored-infotypes to learn more. (storedInfoTypes.get)
+   * Gets a stored infoType. See https://cloud.google.com/sensitive-data-
+   * protection/docs/creating-stored-infotypes to learn more.
+   * (storedInfoTypes.get)
    *
    * @param string $name Required. Resource name of the organization and
    * storedInfoType to be read, for example
@@ -98,24 +101,24 @@ class ProjectsLocationsStoredInfoTypes extends \Google\Service\Resource
     return $this->call('get', [$params], GooglePrivacyDlpV2StoredInfoType::class);
   }
   /**
-   * Lists stored infoTypes. See https://cloud.google.com/dlp/docs/creating-
-   * stored-infotypes to learn more.
+   * Lists stored infoTypes. See https://cloud.google.com/sensitive-data-
+   * protection/docs/creating-stored-infotypes to learn more.
    * (storedInfoTypes.listProjectsLocationsStoredInfoTypes)
    *
    * @param string $parent Required. Parent resource name. The format of this
    * value varies depending on the scope of the request (project or organization)
    * and whether you have [specified a processing
-   * location](https://cloud.google.com/dlp/docs/specifying-location): + Projects
-   * scope, location specified: `projects/`PROJECT_ID`/locations/`LOCATION_ID +
-   * Projects scope, no location specified (defaults to global):
-   * `projects/`PROJECT_ID The following example `parent` string specifies a
-   * parent project with the identifier `example-project`, and specifies the
-   * `europe-west3` location for processing data: parent=projects/example-
-   * project/locations/europe-west3
+   * location](https://cloud.google.com/sensitive-data-protection/docs/specifying-
+   * location): + Projects scope, location specified:
+   * `projects/{project_id}/locations/{location_id}` + Projects scope, no location
+   * specified (defaults to global): `projects/{project_id}` The following example
+   * `parent` string specifies a parent project with the identifier `example-
+   * project`, and specifies the `europe-west3` location for processing data:
+   * parent=projects/example-project/locations/europe-west3
    * @param array $optParams Optional parameters.
    *
    * @opt_param string locationId Deprecated. This field has no effect.
-   * @opt_param string orderBy Comma separated list of fields to order by,
+   * @opt_param string orderBy Comma-separated list of fields to order by,
    * followed by `asc` or `desc` postfix. This list is case insensitive. The
    * default sorting order is ascending. Redundant space characters are
    * insignificant. Example: `name asc, display_name, create_time desc` Supported
@@ -139,8 +142,8 @@ class ProjectsLocationsStoredInfoTypes extends \Google\Service\Resource
   /**
    * Updates the stored infoType by creating a new version. The existing version
    * will continue to be used until the new version is ready. See
-   * https://cloud.google.com/dlp/docs/creating-stored-infotypes to learn more.
-   * (storedInfoTypes.patch)
+   * https://cloud.google.com/sensitive-data-protection/docs/creating-stored-
+   * infotypes to learn more. (storedInfoTypes.patch)
    *
    * @param string $name Required. Resource name of organization and
    * storedInfoType to be updated, for example

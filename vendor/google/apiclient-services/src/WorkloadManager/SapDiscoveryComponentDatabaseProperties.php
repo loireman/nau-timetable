@@ -22,11 +22,23 @@ class SapDiscoveryComponentDatabaseProperties extends \Google\Model
   /**
    * @var string
    */
+  public $databaseSid;
+  /**
+   * @var string
+   */
   public $databaseType;
   /**
    * @var string
    */
   public $databaseVersion;
+  /**
+   * @var string
+   */
+  public $instanceNumber;
+  /**
+   * @var string
+   */
+  public $landscapeId;
   /**
    * @var string
    */
@@ -36,6 +48,20 @@ class SapDiscoveryComponentDatabaseProperties extends \Google\Model
    */
   public $sharedNfsUri;
 
+  /**
+   * @param string
+   */
+  public function setDatabaseSid($databaseSid)
+  {
+    $this->databaseSid = $databaseSid;
+  }
+  /**
+   * @return string
+   */
+  public function getDatabaseSid()
+  {
+    return $this->databaseSid;
+  }
   /**
    * @param string
    */
@@ -63,6 +89,34 @@ class SapDiscoveryComponentDatabaseProperties extends \Google\Model
   public function getDatabaseVersion()
   {
     return $this->databaseVersion;
+  }
+  /**
+   * @param string
+   */
+  public function setInstanceNumber($instanceNumber)
+  {
+    $this->instanceNumber = $instanceNumber;
+  }
+  /**
+   * @return string
+   */
+  public function getInstanceNumber()
+  {
+    return $this->instanceNumber;
+  }
+  /**
+   * @param string
+   */
+  public function setLandscapeId($landscapeId)
+  {
+    $this->landscapeId = $landscapeId;
+  }
+  /**
+   * @return string
+   */
+  public function getLandscapeId()
+  {
+    return $this->landscapeId;
   }
   /**
    * @param string

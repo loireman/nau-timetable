@@ -35,6 +35,12 @@ class GoogleCloudDialogflowCxV3Flow extends \Google\Collection
   protected $knowledgeConnectorSettingsType = GoogleCloudDialogflowCxV3KnowledgeConnectorSettings::class;
   protected $knowledgeConnectorSettingsDataType = '';
   /**
+   * @var bool
+   */
+  public $locked;
+  protected $multiLanguageSettingsType = GoogleCloudDialogflowCxV3FlowMultiLanguageSettings::class;
+  protected $multiLanguageSettingsDataType = '';
+  /**
    * @var string
    */
   public $name;
@@ -116,6 +122,34 @@ class GoogleCloudDialogflowCxV3Flow extends \Google\Collection
   public function getKnowledgeConnectorSettings()
   {
     return $this->knowledgeConnectorSettings;
+  }
+  /**
+   * @param bool
+   */
+  public function setLocked($locked)
+  {
+    $this->locked = $locked;
+  }
+  /**
+   * @return bool
+   */
+  public function getLocked()
+  {
+    return $this->locked;
+  }
+  /**
+   * @param GoogleCloudDialogflowCxV3FlowMultiLanguageSettings
+   */
+  public function setMultiLanguageSettings(GoogleCloudDialogflowCxV3FlowMultiLanguageSettings $multiLanguageSettings)
+  {
+    $this->multiLanguageSettings = $multiLanguageSettings;
+  }
+  /**
+   * @return GoogleCloudDialogflowCxV3FlowMultiLanguageSettings
+   */
+  public function getMultiLanguageSettings()
+  {
+    return $this->multiLanguageSettings;
   }
   /**
    * @param string

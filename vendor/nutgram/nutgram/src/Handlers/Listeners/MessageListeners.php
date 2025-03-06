@@ -388,6 +388,30 @@ trait MessageListeners
      * @param $callable
      * @return Handler
      */
+    public function onRefundedPayment($callable): Handler
+    {
+        $this->checkFinalized();
+        return $this->{$this->target}[UpdateType::MESSAGE->value][MessageType::REFUNDED_PAYMENT->value][] = new Handler($callable);
+    }
+
+    /**
+     * @param string $pattern
+     * @param $callable
+     * @return Handler
+     */
+    public function onRefundedPaymentPayload(string $pattern, $callable): Handler
+    {
+        $this->checkFinalized();
+        return $this->{$this->target}[UpdateType::MESSAGE->value][MessageType::REFUNDED_PAYMENT->value][$pattern] = new Handler(
+            $callable,
+            $pattern
+        );
+    }
+
+    /**
+     * @param $callable
+     * @return Handler
+     */
     public function onUsersShared($callable): Handler
     {
         $this->checkFinalized();
@@ -432,6 +456,12 @@ trait MessageListeners
     {
         $this->checkFinalized();
         return $this->{$this->target}[UpdateType::MESSAGE->value][MessageType::PROXIMITY_ALERT_TRIGGERED->value][] = new Handler($callable);
+    }
+
+    public function onBoostAdded($callable): Handler
+    {
+        $this->checkFinalized();
+        return $this->{$this->target}[UpdateType::MESSAGE->value][MessageType::BOOST_ADDED->value][] = new Handler($callable);
     }
 
     /**

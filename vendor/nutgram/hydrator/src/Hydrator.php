@@ -74,7 +74,7 @@ class Hydrator implements HydratorInterface
      *
      * @return T
      *
-     * @template T
+     * @template T of object
      */
     public function hydrate(string|object $object, array|object $data): object
     {
@@ -118,7 +118,7 @@ class Hydrator implements HydratorInterface
                     $propertyType = $resolver->resolve(
                         $key,
                         $propertyType->getTypes(),
-                        is_array($data[$key]) ? $data[$key] : $data
+                        isset($data[$key]) && is_array($data[$key]) ? $data[$key] : $data
                     );
                 } else {
                     throw new Exception\UnsupportedPropertyTypeException(sprintf(
@@ -174,7 +174,7 @@ class Hydrator implements HydratorInterface
      *
      * @return T
      *
-     * @template T
+     * @template T of object
      */
     public function hydrateWithJson(string|object $object, string $json, ?int $flags = null): object
     {

@@ -7,6 +7,8 @@ use SergiX44\Nutgram\Telegram\Properties\UpdateType;
 use SergiX44\Nutgram\Telegram\Types\BaseType;
 use SergiX44\Nutgram\Telegram\Types\Boost\ChatBoostRemoved;
 use SergiX44\Nutgram\Telegram\Types\Boost\ChatBoostUpdated;
+use SergiX44\Nutgram\Telegram\Types\Business\BusinessConnection;
+use SergiX44\Nutgram\Telegram\Types\Business\BusinessMessagesDeleted;
 use SergiX44\Nutgram\Telegram\Types\Chat\Chat;
 use SergiX44\Nutgram\Telegram\Types\Chat\ChatJoinRequest;
 use SergiX44\Nutgram\Telegram\Types\Chat\ChatMemberUpdated;
@@ -14,6 +16,7 @@ use SergiX44\Nutgram\Telegram\Types\Inline\CallbackQuery;
 use SergiX44\Nutgram\Telegram\Types\Inline\ChosenInlineResult;
 use SergiX44\Nutgram\Telegram\Types\Inline\InlineQuery;
 use SergiX44\Nutgram\Telegram\Types\Message\Message;
+use SergiX44\Nutgram\Telegram\Types\Payment\PaidMediaPurchased;
 use SergiX44\Nutgram\Telegram\Types\Payment\PreCheckoutQuery;
 use SergiX44\Nutgram\Telegram\Types\Payment\ShippingQuery;
 use SergiX44\Nutgram\Telegram\Types\Poll\Poll;
@@ -62,6 +65,30 @@ class Update extends BaseType
 
     /**
      * Optional.
+     * New non-service message from a connected business account
+     */
+    public ?BusinessConnection $business_connection = null;
+
+    /**
+     * Optional.
+     * New non-service message from a connected business account
+     */
+    public ?Message $business_message = null;
+
+    /**
+     * Optional.
+     * New version of a message from a connected business account
+     */
+    public ?Message $edited_business_message = null;
+
+    /**
+     * Optional.
+     * Messages were deleted from a connected business account
+     */
+    public ?BusinessMessagesDeleted $deleted_business_messages = null;
+
+    /**
+     * Optional.
      * A reaction to a message was changed by a user.
      * The bot must be an administrator in the chat and must explicitly specify "message_reaction" in the list of allowed_updates to receive these updates.
      * The update isn't received for reactions set by bots.
@@ -107,6 +134,12 @@ class Update extends BaseType
      * Contains full information about checkout
      */
     public ?PreCheckoutQuery $pre_checkout_query = null;
+
+    /**
+     * Optional.
+     * A user purchased paid media with a non-empty payload sent by the bot in a non-channel chat
+     */
+    public ?PaidMediaPurchased $purchased_paid_media = null;
 
     /**
      * Optional.
@@ -168,6 +201,10 @@ class Update extends BaseType
             $this->edited_message !== null => UpdateType::EDITED_MESSAGE,
             $this->channel_post !== null => UpdateType::CHANNEL_POST,
             $this->edited_channel_post !== null => UpdateType::EDITED_CHANNEL_POST,
+            $this->business_connection !== null => UpdateType::BUSINESS_CONNECTION,
+            $this->business_message !== null => UpdateType::BUSINESS_MESSAGE,
+            $this->edited_business_message !== null => UpdateType::EDITED_BUSINESS_MESSAGE,
+            $this->deleted_business_messages !== null => UpdateType::DELETED_BUSINESS_MESSAGES,
             $this->message_reaction !== null => UpdateType::MESSAGE_REACTION,
             $this->message_reaction_count !== null => UpdateType::MESSAGE_REACTION_COUNT,
             $this->inline_query !== null => UpdateType::INLINE_QUERY,
@@ -175,6 +212,7 @@ class Update extends BaseType
             $this->callback_query !== null => UpdateType::CALLBACK_QUERY,
             $this->shipping_query !== null => UpdateType::SHIPPING_QUERY,
             $this->pre_checkout_query !== null => UpdateType::PRE_CHECKOUT_QUERY,
+            $this->purchased_paid_media !== null => UpdateType::PURCHASED_PAID_MEDIA,
             $this->poll !== null => UpdateType::POLL,
             $this->poll_answer !== null => UpdateType::POLL_ANSWER,
             $this->my_chat_member !== null => UpdateType::MY_CHAT_MEMBER,
@@ -197,6 +235,10 @@ class Update extends BaseType
             $this->edited_message !== null => $this->edited_message->from,
             // channel_post: doesn't have a user
             // edited_channel_post: doesn't have a user
+            $this->business_connection !== null => $this->business_connection->user,
+            $this->business_message !== null => $this->business_message->from,
+            $this->edited_business_message !== null => $this->edited_business_message->from,
+            // deleted_business_messages: doesn't have a user
             $this->message_reaction !== null => $this->message_reaction->user,
             // message_reaction_count: doesn't have a user
             $this->inline_query !== null => $this->inline_query->from,
@@ -204,6 +246,7 @@ class Update extends BaseType
             $this->callback_query !== null => $this->callback_query->from,
             $this->shipping_query !== null => $this->shipping_query->from,
             $this->pre_checkout_query !== null => $this->pre_checkout_query->from,
+            $this->purchased_paid_media !== null => $this->purchased_paid_media->from,
             // poll: doesn't have a user
             $this->poll_answer !== null => $this->poll_answer->user,
             $this->my_chat_member !== null => $this->my_chat_member->from,
@@ -222,6 +265,10 @@ class Update extends BaseType
             $this->edited_message !== null => $this->edited_message->from = $user,
             // channel_post: doesn't have a user
             // edited_channel_post: doesn't have a user
+            $this->business_connection !== null => $this->business_connection->user = $user,
+            $this->business_message !== null => $this->business_message->from = $user,
+            $this->edited_business_message !== null => $this->edited_business_message->from = $user,
+            // deleted_business_messages: doesn't have a user
             $this->message_reaction !== null => $this->message_reaction->user = $user,
             // message_reaction_count: doesn't have a user
             $this->inline_query !== null => $this->inline_query->from = $user,
@@ -229,6 +276,7 @@ class Update extends BaseType
             $this->callback_query !== null => $this->callback_query->from = $user,
             $this->shipping_query !== null => $this->shipping_query->from = $user,
             $this->pre_checkout_query !== null => $this->pre_checkout_query->from = $user,
+            $this->purchased_paid_media !== null => $this->purchased_paid_media->from = $user,
             // poll: doesn't have a user
             $this->poll_answer !== null => $this->poll_answer->user = $user,
             $this->my_chat_member !== null => $this->my_chat_member->from = $user,
@@ -247,13 +295,18 @@ class Update extends BaseType
             $this->edited_message !== null => $this->edited_message->chat,
             $this->channel_post !== null => $this->channel_post->chat,
             $this->edited_channel_post !== null => $this->edited_channel_post->chat,
+            // business_connection doesn't have a chat
+            $this->business_message !== null => $this->business_message->chat,
+            $this->edited_business_message !== null => $this->edited_business_message->chat,
+            $this->deleted_business_messages !== null => $this->deleted_business_messages->chat,
             $this->message_reaction !== null => $this->message_reaction->chat,
             $this->message_reaction_count !== null => $this->message_reaction_count->chat,
-            // inline query doesn't have a chat
-            // chosen inline result doesn't have a chat
+            // inline_query doesn't have a chat
+            // chosen_inline_result doesn't have a chat
             $this->callback_query !== null => $this->callback_query->message?->chat,
-            // shipping query doesn't have a chat
-            // pre checkout query doesn't have a chat
+            // shipping_query doesn't have a chat
+            // pre_checkout_query doesn't have a chat
+            // purchased_paid_media doesn't have a chat
             // poll doesn't have a chat
             $this->poll_answer !== null => Chat::make($this->poll_answer->user->id, ChatType::PRIVATE),
             $this->my_chat_member !== null => $this->my_chat_member->chat,
@@ -272,9 +325,19 @@ class Update extends BaseType
             $this->edited_message !== null => $this->edited_message->chat = $chat,
             $this->channel_post !== null => $this->channel_post->chat = $chat,
             $this->edited_channel_post !== null => $this->edited_channel_post->chat = $chat,
+            // business_connection doesn't have a chat
+            $this->business_message !== null => $this->business_message->chat = $chat,
+            $this->edited_business_message !== null => $this->edited_business_message->chat = $chat,
+            $this->deleted_business_messages !== null => $this->deleted_business_messages->chat = $chat,
             $this->message_reaction !== null => $this->message_reaction->chat = $chat,
             $this->message_reaction_count !== null => $this->message_reaction_count->chat = $chat,
+            // inline_query doesn't have a chat
+            // chosen_inline_result doesn't have a chat
             $this->callback_query !== null => $this->callback_query->message !== null ? $this->callback_query->message->chat = $chat : null,
+            // shipping_query doesn't have a chat
+            // pre_checkout_query doesn't have a chat
+            // purchased_paid_media doesn't have a chat
+            // poll doesn't have a chat
             $this->poll_answer !== null => $chat,
             $this->my_chat_member !== null => $this->my_chat_member->chat = $chat,
             $this->chat_member !== null => $this->chat_member->chat = $chat,
@@ -292,6 +355,8 @@ class Update extends BaseType
             $this->edited_message !== null => $this->edited_message,
             $this->channel_post !== null => $this->channel_post,
             $this->edited_channel_post !== null => $this->edited_channel_post,
+            $this->business_message !== null => $this->business_message,
+            $this->edited_business_message !== null => $this->edited_business_message,
             $this->callback_query !== null => $this->callback_query->message,
             default => null
         };

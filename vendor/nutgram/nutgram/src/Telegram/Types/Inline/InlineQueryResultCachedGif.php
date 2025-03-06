@@ -3,6 +3,7 @@
 namespace SergiX44\Nutgram\Telegram\Types\Inline;
 
 use SergiX44\Hydrator\Annotation\ArrayType;
+use SergiX44\Hydrator\Annotation\SkipConstructor;
 use SergiX44\Hydrator\Resolver\EnumOrScalar;
 use SergiX44\Nutgram\Telegram\Properties\InlineQueryResultType;
 use SergiX44\Nutgram\Telegram\Properties\ParseMode;
@@ -17,6 +18,7 @@ use function SergiX44\Nutgram\Support\array_filter_null;
  * Alternatively, you can use input_message_content to send a message with specified content instead of the animation.
  * @see https://core.telegram.org/bots/api#inlinequeryresultcachedgif
  */
+#[SkipConstructor]
 class InlineQueryResultCachedGif extends InlineQueryResult
 {
     /** Type of the result, must be gif */
@@ -58,6 +60,11 @@ class InlineQueryResultCachedGif extends InlineQueryResult
     public ?array $caption_entities = null;
 
     /**
+     * Optional. True, if the caption must be shown above the message media
+     */
+    public ?bool $show_caption_above_media = null;
+
+    /**
      * Optional.
      * {@see https://core.telegram.org/bots/features#inline-keyboards Inline keyboard} attached to the message
      */
@@ -78,6 +85,7 @@ class InlineQueryResultCachedGif extends InlineQueryResult
         ?array $caption_entities = null,
         ?InlineKeyboardMarkup $reply_markup = null,
         ?InputMessageContent $input_message_content = null,
+        ?bool $show_caption_above_media = null,
     ) {
         parent::__construct();
         $this->id = $id;
@@ -88,6 +96,7 @@ class InlineQueryResultCachedGif extends InlineQueryResult
         $this->caption_entities = $caption_entities;
         $this->reply_markup = $reply_markup;
         $this->input_message_content = $input_message_content;
+        $this->show_caption_above_media = $show_caption_above_media;
     }
 
     public static function make(
@@ -95,10 +104,11 @@ class InlineQueryResultCachedGif extends InlineQueryResult
         string $gif_file_id,
         ?string $title = null,
         ?string $caption = null,
-        ?ParseMode $parse_mode = null,
+        ParseMode|string|null $parse_mode = null,
         ?array $caption_entities = null,
         ?InlineKeyboardMarkup $reply_markup = null,
         ?InputMessageContent $input_message_content = null,
+        ?bool $show_caption_above_media = null,
     ): self {
         return new self(
             id: $id,
@@ -109,19 +119,21 @@ class InlineQueryResultCachedGif extends InlineQueryResult
             caption_entities: $caption_entities,
             reply_markup: $reply_markup,
             input_message_content: $input_message_content,
+            show_caption_above_media: $show_caption_above_media,
         );
     }
 
     public function jsonSerialize(): array
     {
         return array_filter_null([
-            'type' => $this->type->value,
+            'type' => $this->type,
             'id' => $this->id,
             'gif_file_id' => $this->gif_file_id,
             'title' => $this->title,
             'caption' => $this->caption,
-            'parse_mode' => $this->parse_mode?->value,
+            'parse_mode' => $this->parse_mode,
             'caption_entities' => $this->caption_entities,
+            'show_caption_above_media' => $this->show_caption_above_media,
             'reply_markup' => $this->reply_markup,
             'input_message_content' => $this->input_message_content,
         ]);

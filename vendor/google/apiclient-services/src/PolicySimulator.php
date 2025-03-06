@@ -44,18 +44,20 @@ class PolicySimulator extends \Google\Service
   const CLOUD_PLATFORM =
       "https://www.googleapis.com/auth/cloud-platform";
 
+  public $folders_locations_orgPolicyViolationsPreviews_operations;
   public $folders_locations_replays;
   public $folders_locations_replays_operations;
   public $folders_locations_replays_results;
   public $operations;
-  public $organizations_locations_orgPolicyViolationsPreviews;
-  public $organizations_locations_orgPolicyViolationsPreviews_orgPolicyViolations;
+  public $organizations_locations_orgPolicyViolationsPreviews_operations;
   public $organizations_locations_replays;
   public $organizations_locations_replays_operations;
   public $organizations_locations_replays_results;
+  public $projects_locations_orgPolicyViolationsPreviews_operations;
   public $projects_locations_replays;
   public $projects_locations_replays_operations;
   public $projects_locations_replays_results;
+  public $rootUrlTemplate;
 
   /**
    * Constructs the internal representation of the PolicySimulator service.
@@ -68,11 +70,32 @@ class PolicySimulator extends \Google\Service
   {
     parent::__construct($clientOrConfig);
     $this->rootUrl = $rootUrl ?: 'https://policysimulator.googleapis.com/';
+    $this->rootUrlTemplate = $rootUrl ?: 'https://policysimulator.UNIVERSE_DOMAIN/';
     $this->servicePath = '';
     $this->batchPath = 'batch';
     $this->version = 'v1';
     $this->serviceName = 'policysimulator';
 
+    $this->folders_locations_orgPolicyViolationsPreviews_operations = new PolicySimulator\Resource\FoldersLocationsOrgPolicyViolationsPreviewsOperations(
+        $this,
+        $this->serviceName,
+        'operations',
+        [
+          'methods' => [
+            'get' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
     $this->folders_locations_replays = new PolicySimulator\Resource\FoldersLocationsReplays(
         $this,
         $this->serviceName,
@@ -215,27 +238,13 @@ class PolicySimulator extends \Google\Service
           ]
         ]
     );
-    $this->organizations_locations_orgPolicyViolationsPreviews = new PolicySimulator\Resource\OrganizationsLocationsOrgPolicyViolationsPreviews(
+    $this->organizations_locations_orgPolicyViolationsPreviews_operations = new PolicySimulator\Resource\OrganizationsLocationsOrgPolicyViolationsPreviewsOperations(
         $this,
         $this->serviceName,
-        'orgPolicyViolationsPreviews',
+        'operations',
         [
           'methods' => [
-            'create' => [
-              'path' => 'v1/{+parent}/orgPolicyViolationsPreviews',
-              'httpMethod' => 'POST',
-              'parameters' => [
-                'parent' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'orgPolicyViolationsPreviewId' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-              ],
-            ],'get' => [
+            'get' => [
               'path' => 'v1/{+name}',
               'httpMethod' => 'GET',
               'parameters' => [
@@ -243,52 +252,6 @@ class PolicySimulator extends \Google\Service
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
-                ],
-              ],
-            ],'list' => [
-              'path' => 'v1/{+parent}/orgPolicyViolationsPreviews',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'parent' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'pageSize' => [
-                  'location' => 'query',
-                  'type' => 'integer',
-                ],
-                'pageToken' => [
-                  'location' => 'query',
-                  'type' => 'string',
-                ],
-              ],
-            ],
-          ]
-        ]
-    );
-    $this->organizations_locations_orgPolicyViolationsPreviews_orgPolicyViolations = new PolicySimulator\Resource\OrganizationsLocationsOrgPolicyViolationsPreviewsOrgPolicyViolations(
-        $this,
-        $this->serviceName,
-        'orgPolicyViolations',
-        [
-          'methods' => [
-            'list' => [
-              'path' => 'v1/{+parent}/orgPolicyViolations',
-              'httpMethod' => 'GET',
-              'parameters' => [
-                'parent' => [
-                  'location' => 'path',
-                  'type' => 'string',
-                  'required' => true,
-                ],
-                'pageSize' => [
-                  'location' => 'query',
-                  'type' => 'integer',
-                ],
-                'pageToken' => [
-                  'location' => 'query',
-                  'type' => 'string',
                 ],
               ],
             ],
@@ -389,6 +352,26 @@ class PolicySimulator extends \Google\Service
                 'pageToken' => [
                   'location' => 'query',
                   'type' => 'string',
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
+    $this->projects_locations_orgPolicyViolationsPreviews_operations = new PolicySimulator\Resource\ProjectsLocationsOrgPolicyViolationsPreviewsOperations(
+        $this,
+        $this->serviceName,
+        'operations',
+        [
+          'methods' => [
+            'get' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
                 ],
               ],
             ],

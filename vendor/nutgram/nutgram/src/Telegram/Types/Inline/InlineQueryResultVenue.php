@@ -2,6 +2,7 @@
 
 namespace SergiX44\Nutgram\Telegram\Types\Inline;
 
+use SergiX44\Hydrator\Annotation\SkipConstructor;
 use SergiX44\Hydrator\Resolver\EnumOrScalar;
 use SergiX44\Nutgram\Telegram\Properties\InlineQueryResultType;
 use SergiX44\Nutgram\Telegram\Types\Input\InputMessageContent;
@@ -14,6 +15,7 @@ use function SergiX44\Nutgram\Support\array_filter_null;
  * Alternatively, you can use input_message_content to send a message with the specified content instead of the venue.
  * @see https://core.telegram.org/bots/api#inlinequeryresultvenue
  */
+#[SkipConstructor]
 class InlineQueryResultVenue extends InlineQueryResult
 {
     /** Type of the result, must be venue */
@@ -161,7 +163,7 @@ class InlineQueryResultVenue extends InlineQueryResult
     public function jsonSerialize(): array
     {
         return array_filter_null([
-            'type' => $this->type->value,
+            'type' => $this->type,
             'id' => $this->id,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
@@ -173,9 +175,9 @@ class InlineQueryResultVenue extends InlineQueryResult
             'google_place_type' => $this->google_place_type,
             'reply_markup' => $this->reply_markup,
             'input_message_content' => $this->input_message_content,
-            'thumb_url' => $this->thumbnail_url,
-            'thumb_width' => $this->thumbnail_width,
-            'thumb_height' => $this->thumbnail_height,
+            'thumbnail_url' => $this->thumbnail_url,
+            'thumbnail_width' => $this->thumbnail_width,
+            'thumbnail_height' => $this->thumbnail_height,
         ]);
     }
 }

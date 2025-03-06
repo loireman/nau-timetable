@@ -4,6 +4,7 @@ namespace SergiX44\Nutgram\Telegram\Types\Input;
 
 use JsonSerializable;
 use SergiX44\Hydrator\Annotation\ArrayType;
+use SergiX44\Hydrator\Annotation\SkipConstructor;
 use SergiX44\Hydrator\Resolver\EnumOrScalar;
 use SergiX44\Nutgram\Telegram\Properties\InputMediaType;
 use SergiX44\Nutgram\Telegram\Properties\ParseMode;
@@ -15,6 +16,7 @@ use function SergiX44\Nutgram\Support\array_filter_null;
  * Represents a photo to be sent.
  * @see https://core.telegram.org/bots/api#inputmediaphoto
  */
+#[SkipConstructor]
 class InputMediaPhoto extends InputMedia implements JsonSerializable
 {
     /** Type of the result, must be photo */
@@ -44,6 +46,11 @@ class InputMediaPhoto extends InputMedia implements JsonSerializable
     public ?array $caption_entities = null;
 
     /**
+     * Optional. True, if the caption must be shown above the message media
+     */
+    public ?bool $show_caption_above_media = null;
+
+    /**
      * Optional.
      * Pass True if the photo needs to be covered with a spoiler animation
      */
@@ -51,10 +58,11 @@ class InputMediaPhoto extends InputMedia implements JsonSerializable
 
     public function __construct(
         InputFile|string $media,
-        ?string $caption,
-        ParseMode|string|null $parse_mode,
-        ?array $caption_entities,
-        ?bool $has_spoiler
+        ?string $caption = null,
+        ParseMode|string|null $parse_mode = null,
+        ?array $caption_entities = null,
+        ?bool $has_spoiler = null,
+        ?bool $show_caption_above_media = null,
     ) {
         parent::__construct();
         $this->media = $media;
@@ -62,21 +70,24 @@ class InputMediaPhoto extends InputMedia implements JsonSerializable
         $this->parse_mode = $parse_mode;
         $this->caption_entities = $caption_entities;
         $this->has_spoiler = $has_spoiler;
+        $this->show_caption_above_media = $show_caption_above_media;
     }
 
     public static function make(
         InputFile|string $media,
         ?string $caption = null,
-        ?ParseMode $parse_mode = null,
+        ParseMode|string|null $parse_mode = null,
         ?array $caption_entities = null,
-        ?bool $has_spoiler = null
+        ?bool $has_spoiler = null,
+        ?bool $show_caption_above_media = null,
     ): self {
         return new self(
             media: $media,
             caption: $caption,
             parse_mode: $parse_mode,
             caption_entities: $caption_entities,
-            has_spoiler: $has_spoiler
+            has_spoiler: $has_spoiler,
+            show_caption_above_media: $show_caption_above_media,
         );
     }
 
@@ -84,11 +95,12 @@ class InputMediaPhoto extends InputMedia implements JsonSerializable
     public function jsonSerialize(): array
     {
         return array_filter_null([
-            'type' => $this->type->value,
+            'type' => $this->type,
             'media' => $this->media,
             'caption' => $this->caption,
-            'parse_mode' => $this->parse_mode?->value,
+            'parse_mode' => $this->parse_mode,
             'caption_entities' => $this->caption_entities,
+            'show_caption_above_media' => $this->show_caption_above_media,
             'has_spoiler' => $this->has_spoiler,
         ]);
     }

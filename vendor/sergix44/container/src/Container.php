@@ -33,14 +33,32 @@ class Container implements ContainerInterface
      * @template T
      *
      * @param  class-string<T>  $id
+     * @param  mixed  $resolverArgs
      * @return T
      *
      * @inheritDoc
      */
     public function get(string $id)
     {
+        return $this->make($id);
+    }
+
+    /**
+     * @template T
+     *
+     * @param  class-string<T>  $id
+     * @param  array  $arguments
+     * @param  bool  $fresh
+     * @return T
+     */
+    public function make(string $id, array $arguments = [], bool $fresh = false)
+    {
         if (array_key_exists($id, $this->definitions)) {
-            return $this->definitions[$id]?->make($this);
+            if ($fresh) {
+                $this->definitions[$id]->clear();
+            }
+
+            return $this->definitions[$id]->make($this, $arguments, $fresh);
         }
 
         if ($this->delegate !== null && $this->delegate->has($id)) {
@@ -48,7 +66,7 @@ class Container implements ContainerInterface
         }
 
         try {
-            return $this->resolve($id);
+            return $this->makeInstance($id);
         } catch (Throwable $e) {
             throw NotFoundException::notResolvable($id, $e);
         }
@@ -59,17 +77,20 @@ class Container implements ContainerInterface
      */
     public function has(string $id): bool
     {
-        // check if is something we match right away
+        return array_key_exists($id, $this->definitions) || ($this->delegate !== null && $this->delegate->has($id));
+    }
+
+    /**
+     * Remove the cached instance from the container.
+     *
+     * @param  string  $id
+     * @return void
+     */
+    public function forget(string $id): void
+    {
         if (array_key_exists($id, $this->definitions)) {
-            return true;
+            $this->definitions[$id]->clear();
         }
-
-        // check if the delegate can resolve it, if defined
-        if ($this->delegate !== null && $this->delegate->has($id)) {
-            return true;
-        }
-
-        return false;
     }
 
     public function bind(string $abstract, mixed $resolverOrConcrete): Definition
@@ -106,7 +127,7 @@ class Container implements ContainerInterface
             if (is_string($callable[0]) && class_exists($callable[0])) {
                 $callable[0] = $this->get($callable[0]);
             }
-            if (method_exists(...$callable)) {
+            if (method_exists($callable[0], $callable[1])) {
                 $method = new ReflectionMethod(...$callable);
             }
         } elseif ($callable instanceof Closure || (is_string($callable) && function_exists($callable))) {
@@ -140,7 +161,7 @@ class Container implements ContainerInterface
      * @throws NotFoundExceptionInterface
      * @throws ReflectionException
      */
-    protected function resolve(string $class): object|string|null
+    protected function makeInstance(string $class): object|string|null
     {
         $targetClass = new ReflectionClass($class);
 
@@ -185,7 +206,7 @@ class Container implements ContainerInterface
                 ) => $additional[$param->getName()], // defined by the user
                 !empty($positionalArgs) => array_shift($positionalArgs),
                 $param->isOptional() && $param->isDefaultValueAvailable() => $param->getDefaultValue(), // use default when available
-                $type !== null && class_exists($type) && !enum_exists($type) => $this->resolve($type), // via reflection
+                $type !== null && class_exists($type) && !enum_exists($type) => $this->makeInstance($type), // via reflection
                 default => throw ContainerException::parameterNotResolvable($param),
             };
         }

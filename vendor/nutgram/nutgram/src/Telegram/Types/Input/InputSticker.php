@@ -3,6 +3,8 @@
 namespace SergiX44\Nutgram\Telegram\Types\Input;
 
 use JsonSerializable;
+use SergiX44\Hydrator\Annotation\SkipConstructor;
+use SergiX44\Nutgram\Telegram\Properties\StickerFormat;
 use SergiX44\Nutgram\Telegram\Types\BaseType;
 use SergiX44\Nutgram\Telegram\Types\Internal\InputFile;
 use SergiX44\Nutgram\Telegram\Types\Internal\Uploadable;
@@ -13,6 +15,7 @@ use function SergiX44\Nutgram\Support\array_filter_null;
  * This object describes a sticker to be added to a sticker set.
  * @see https://core.telegram.org/bots/api#inputsticker
  */
+#[SkipConstructor]
 class InputSticker extends BaseType implements JsonSerializable, Uploadable
 {
     /**
@@ -22,6 +25,12 @@ class InputSticker extends BaseType implements JsonSerializable, Uploadable
      * {@see https://core.telegram.org/bots/api#sending-files More information on Sending Files »}
      */
     public InputFile|string $sticker;
+
+    /**
+     * Format of the added sticker, must be one of “static” for a .WEBP or .PNG image,
+     * “animated” for a .TGS animation, “video” for a WEBM video
+     */
+    public StickerFormat|string|null $format = null;
 
     /**
      * List of 1-20 emoji associated with the sticker
@@ -49,9 +58,11 @@ class InputSticker extends BaseType implements JsonSerializable, Uploadable
         array $emoji_list,
         ?MaskPosition $mask_position = null,
         ?array $keywords = null,
+        StickerFormat|string|null $format = null,
     ) {
         parent::__construct();
         $this->sticker = $sticker;
+        $this->format = $format;
         $this->emoji_list = $emoji_list;
         $this->mask_position = $mask_position;
         $this->keywords = $keywords;
@@ -62,12 +73,14 @@ class InputSticker extends BaseType implements JsonSerializable, Uploadable
         array $emoji_list,
         ?MaskPosition $mask_position = null,
         ?array $keywords = null,
+        StickerFormat|string|null $format = null,
     ): self {
         return new self(
             sticker: $sticker,
             emoji_list: $emoji_list,
             mask_position: $mask_position,
-            keywords: $keywords
+            keywords: $keywords,
+            format: $format,
         );
     }
 
@@ -75,6 +88,7 @@ class InputSticker extends BaseType implements JsonSerializable, Uploadable
     {
         return array_filter_null([
             'sticker' => $this->sticker,
+            'format' => $this->format,
             'emoji_list' => $this->emoji_list,
             'mask_position' => $this->mask_position,
             'keywords' => $this->keywords,

@@ -3,6 +3,7 @@
 namespace SergiX44\Nutgram\Telegram\Types\Inline;
 
 use SergiX44\Hydrator\Annotation\ArrayType;
+use SergiX44\Hydrator\Annotation\SkipConstructor;
 use SergiX44\Hydrator\Resolver\EnumOrScalar;
 use SergiX44\Nutgram\Telegram\Properties\InlineQueryResultType;
 use SergiX44\Nutgram\Telegram\Properties\ParseMode;
@@ -18,6 +19,7 @@ use function SergiX44\Nutgram\Support\array_filter_null;
  * Currently, only .PDF and .ZIP files can be sent using this method.
  * @see https://core.telegram.org/bots/api#inlinequeryresultdocument
  */
+#[SkipConstructor]
 class InlineQueryResultDocument extends InlineQueryResult
 {
     /** Type of the result, must be document */
@@ -131,7 +133,7 @@ class InlineQueryResultDocument extends InlineQueryResult
         string $document_url,
         string $mime_type,
         ?string $caption = null,
-        ?ParseMode $parse_mode = null,
+        ParseMode|string|null $parse_mode = null,
         ?array $caption_entities = null,
         ?string $description = null,
         ?InlineKeyboardMarkup $reply_markup = null,
@@ -160,11 +162,11 @@ class InlineQueryResultDocument extends InlineQueryResult
     public function jsonSerialize(): array
     {
         return array_filter_null([
-            'type' => $this->type->value,
+            'type' => $this->type,
             'id' => $this->id,
             'title' => $this->title,
             'caption' => $this->caption,
-            'parse_mode' => $this->parse_mode?->value,
+            'parse_mode' => $this->parse_mode,
             'caption_entities' => $this->caption_entities,
             'document_url' => $this->document_url,
             'mime_type' => $this->mime_type,

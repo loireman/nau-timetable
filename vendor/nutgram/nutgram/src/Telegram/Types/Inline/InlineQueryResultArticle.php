@@ -2,6 +2,7 @@
 
 namespace SergiX44\Nutgram\Telegram\Types\Inline;
 
+use SergiX44\Hydrator\Annotation\SkipConstructor;
 use SergiX44\Hydrator\Resolver\EnumOrScalar;
 use SergiX44\Nutgram\Telegram\Properties\InlineQueryResultType;
 use SergiX44\Nutgram\Telegram\Types\Input\InputMessageContent;
@@ -12,6 +13,7 @@ use function SergiX44\Nutgram\Support\array_filter_null;
  * Represents a link to an article or web page.
  * @see https://core.telegram.org/bots/api#inlinequeryresultarticle
  */
+#[SkipConstructor]
 class InlineQueryResultArticle extends InlineQueryResult
 {
     /** Type of the result, must be article */
@@ -42,6 +44,7 @@ class InlineQueryResultArticle extends InlineQueryResult
     /**
      * Optional.
      * Pass True if you don't want the URL to be shown in the message
+     * @deprecated Pass an empty string as "url" instead.
      */
     public ?bool $hide_url = null;
 
@@ -69,6 +72,18 @@ class InlineQueryResultArticle extends InlineQueryResult
      */
     public ?int $thumbnail_height = null;
 
+    /**
+     * @param string $id Unique identifier for this result, 1-64 Bytes
+     * @param string $title Title of the result
+     * @param InputMessageContent $input_message_content Content of the message to be sent
+     * @param InlineKeyboardMarkup|null $reply_markup Optional. {@see https://core.telegram.org/bots/features#inline-keyboards Inline keyboard} attached to the message
+     * @param string|null $url Optional. URL of the result
+     * @param bool|null $hide_url [DEPRECATED] Pass an empty string as "url" instead.
+     * @param string|null $description Optional. Short description of the result
+     * @param string|null $thumbnail_url Optional. Url of the thumbnail for the result
+     * @param int|null $thumbnail_width Optional. Thumbnail width
+     * @param int|null $thumbnail_height Optional. Thumbnail height
+     */
     public function __construct(
         string $id,
         string $title,
@@ -94,6 +109,18 @@ class InlineQueryResultArticle extends InlineQueryResult
         $this->thumbnail_height = $thumbnail_height;
     }
 
+    /**
+     * @param string $id Unique identifier for this result, 1-64 Bytes
+     * @param string $title Title of the result
+     * @param InputMessageContent $input_message_content Content of the message to be sent
+     * @param InlineKeyboardMarkup|null $reply_markup Optional. {@see https://core.telegram.org/bots/features#inline-keyboards Inline keyboard} attached to the message
+     * @param string|null $url Optional. URL of the result
+     * @param bool|null $hide_url [DEPRECATED] Pass an empty string as "url" instead.
+     * @param string|null $description Optional. Short description of the result
+     * @param string|null $thumbnail_url Optional. Url of the thumbnail for the result
+     * @param int|null $thumbnail_width Optional. Thumbnail width
+     * @param int|null $thumbnail_height Optional. Thumbnail height
+     */
     public static function make(
         string $id,
         string $title,
@@ -123,7 +150,7 @@ class InlineQueryResultArticle extends InlineQueryResult
     public function jsonSerialize(): array
     {
         return array_filter_null([
-            'type' => $this->type->value,
+            'type' => $this->type,
             'id' => $this->id,
             'title' => $this->title,
             'input_message_content' => $this->input_message_content,

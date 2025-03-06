@@ -72,13 +72,21 @@ class InlineKeyboardButton extends BaseType implements JsonSerializable
 
     /**
      * Optional.
+     * Description of the button that copies the specified text to the clipboard.
+     */
+    public ?CopyTextButton $copy_text = null;
+
+    /**
+     * Optional.
      * Description of the game that will be launched when the user presses the button.NOTE: This type of button must always be the first button in the first row.
      */
     public ?CallbackGame $callback_game = null;
 
     /**
      * Optional.
-     * Specify True, to send a {@see https://core.telegram.org/bots/api#payments Pay button}.NOTE: This type of button must always be the first button in the first row and can only be used in invoice messages.
+     * Specify True, to send a {@see https://core.telegram.org/bots/api#payments Pay button}.
+     * Substrings “⭐” and “XTR” in the buttons's text will be replaced with a Telegram Star icon.
+     * NOTE: This type of button must always be the first button in the first row and can only be used in invoice messages.
      */
     public ?bool $pay = null;
 
@@ -93,6 +101,7 @@ class InlineKeyboardButton extends BaseType implements JsonSerializable
         ?bool $pay = null,
         ?WebAppInfo $web_app = null,
         ?SwitchInlineQueryChosenChat $switch_inline_query_chosen_chat = null,
+        ?CopyTextButton $copy_text = null,
     ) {
         parent::__construct();
         $this->text = $text;
@@ -105,6 +114,7 @@ class InlineKeyboardButton extends BaseType implements JsonSerializable
         $this->pay = $pay;
         $this->web_app = $web_app;
         $this->switch_inline_query_chosen_chat = $switch_inline_query_chosen_chat;
+        $this->copy_text = $copy_text;
     }
 
     public static function make(
@@ -118,6 +128,7 @@ class InlineKeyboardButton extends BaseType implements JsonSerializable
         ?bool $pay = null,
         ?WebAppInfo $web_app = null,
         ?SwitchInlineQueryChosenChat $switch_inline_query_chosen_chat = null,
+        ?CopyTextButton $copy_text = null,
     ): InlineKeyboardButton {
         return new self(
             $text,
@@ -130,6 +141,7 @@ class InlineKeyboardButton extends BaseType implements JsonSerializable
             $pay,
             $web_app,
             $switch_inline_query_chosen_chat,
+            $copy_text,
         );
     }
 
@@ -138,14 +150,15 @@ class InlineKeyboardButton extends BaseType implements JsonSerializable
         return array_filter_null([
             'text' => $this->text,
             'url' => $this->url,
-            'login_url' => $this->login_url,
             'callback_data' => $this->callback_data,
+            'web_app' => $this->web_app,
+            'login_url' => $this->login_url,
             'switch_inline_query' => $this->switch_inline_query,
             'switch_inline_query_current_chat' => $this->switch_inline_query_current_chat,
             'switch_inline_query_chosen_chat' => $this->switch_inline_query_chosen_chat,
+            'copy_text' => $this->copy_text,
             'callback_game' => $this->callback_game,
             'pay' => $this->pay,
-            'web_app' => $this->web_app,
         ]);
     }
 }

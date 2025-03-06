@@ -10,7 +10,10 @@ use SergiX44\Nutgram\Telegram\Types\BaseType;
  */
 class SuccessfulPayment extends BaseType
 {
-    /** Three-letter ISO 4217 {@see https://core.telegram.org/bots/payments#supported-currencies currency} code */
+    /**
+     * Three-letter ISO 4217 {@see https://core.telegram.org/bots/payments#supported-currencies currency} code,
+     * or “XTR” for payments in {@see https://t.me/BotNews/90 Telegram Stars}.
+     */
     public string $currency;
 
     /**
@@ -22,6 +25,25 @@ class SuccessfulPayment extends BaseType
 
     /** Bot specified invoice payload */
     public string $invoice_payload;
+
+    /**
+     * Optional.
+     * Expiration date of the subscription, in Unix time;
+     * for recurring payments only
+     */
+    public ?int $subscription_expiration_date = null;
+
+    /**
+     * Optional.
+     * True, if the payment is a recurring payment for a subscription
+     */
+    public ?bool $is_recurring = null;
+
+    /**
+     * Optional.
+     * True, if the payment is the first payment for a subscription
+     */
+    public ?bool $is_first_recurring = null;
 
     /**
      * Optional.

@@ -74,6 +74,20 @@ class User extends BaseType
      */
     public ?bool $supports_inline_queries = null;
 
+    /**
+     * Optional.
+     * True, if the bot can be connected to a Telegram Business account to receive its messages.
+     * Returned only in {@see https://core.telegram.org/bots/api#getme getMe}.
+     */
+    public ?bool $can_connect_to_business = null;
+
+    /**
+     * Optional.
+     * True, if the bot has a main Web App.
+     * Returned only in {@see https://core.telegram.org/bots/api#getme getMe}.
+     */
+    public ?bool $has_main_web_app = null;
+
     public static function make(
         int $id,
         bool $is_bot,
@@ -86,6 +100,8 @@ class User extends BaseType
         ?bool $can_join_groups = null,
         ?bool $can_read_all_group_messages = null,
         ?bool $supports_inline_queries = null,
+        ?bool $can_connect_to_business = null,
+        ?bool $has_main_web_app = null,
     ): User {
         $user = new self();
         $user->id = $id;
@@ -99,6 +115,8 @@ class User extends BaseType
         $user->can_join_groups = $can_join_groups;
         $user->can_read_all_group_messages = $can_read_all_group_messages;
         $user->supports_inline_queries = $supports_inline_queries;
+        $user->can_connect_to_business = $can_connect_to_business;
+        $user->has_main_web_app = $has_main_web_app;
         return $user;
     }
 }

@@ -114,23 +114,23 @@ class Nutgram extends ResolveHandlers
             'version' => $config->enableHttp2 ? '2.0' : '1.1',
             ...$config->clientOptions,
         ]);
-        $botId = $config->botId ?? (int)explode(':', $this->token)[0];
         $this->container->set(ClientInterface::class, $this->http);
         $this->container->singleton(Hydrator::class, $config->hydrator);
         $this->container->singleton(CacheInterface::class, $config->cache);
         $this->container->singleton(LoggerInterface::class, $config->logger);
-        $this->container->singleton(
-            ConversationCache::class,
-            fn (ContainerInterface $c) => new ConversationCache($c->get(CacheInterface::class), $botId)
-        );
-        $this->container->singleton(
-            GlobalCache::class,
-            fn (ContainerInterface $c) => new GlobalCache($c->get(CacheInterface::class), $botId)
-        );
-        $this->container->singleton(
-            UserCache::class,
-            fn (ContainerInterface $c) => new UserCache($c->get(CacheInterface::class), $botId)
-        );
+        $this->container->singleton(ConversationCache::class, fn (ContainerInterface $c) => new ConversationCache(
+            cache: $c->get(CacheInterface::class),
+            botId: $this->getBotId(),
+            ttl: $config->conversationTtl,
+        ));
+        $this->container->singleton(GlobalCache::class, fn (ContainerInterface $c) => new GlobalCache(
+            cache: $c->get(CacheInterface::class),
+            botId: $this->getBotId(),
+        ));
+        $this->container->singleton(UserCache::class, fn (ContainerInterface $c) => new UserCache(
+            cache: $c->get(CacheInterface::class),
+            botId: $this->getBotId(),
+        ));
 
         $this->hydrator = $this->container->get(Hydrator::class);
         $this->conversationCache = $this->container->get(ConversationCache::class);
@@ -140,6 +140,11 @@ class Nutgram extends ResolveHandlers
 
         $this->container->singleton(RunningMode::class, Polling::class);
         $this->container->set(__CLASS__, $this);
+    }
+
+    protected function getBotId(): int
+    {
+        return $this->config->botId ?? (int)explode(':', $this->token)[0];
     }
 
     /**
@@ -273,9 +278,14 @@ class Nutgram extends ResolveHandlers
         return $this;
     }
 
-    public function getContainer(): ContainerInterface
+    public function getContainer(): Container
     {
         return $this->container;
+    }
+
+    public function bindParameter(string $name, callable $resolver): \SergiX44\Container\Definition
+    {
+        return $this->container->bind("param.$name", $resolver);
     }
 
     /**
@@ -305,7 +315,7 @@ class Nutgram extends ResolveHandlers
 
         $myCommands = [];
         array_walk_recursive($this->handlers, static function ($handler) use (&$myCommands) {
-            if ($handler instanceof Command && !$handler->isHidden()) {
+            if ($handler instanceof Command && !$handler->isHidden() && !$handler->isDisabled()) {
                 // scopes
                 foreach ($handler->scopes() as $scope) {
                     $hashCode = crc32(serialize(get_object_vars($scope)));

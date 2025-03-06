@@ -15,12 +15,14 @@ use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionUnionType;
+use RuntimeException;
 use SergiX44\Nutgram\Configuration;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\RunningMode\Fake;
 use SergiX44\Nutgram\Telegram\Client;
 use SergiX44\Nutgram\Telegram\Types\Chat\Chat;
 use SergiX44\Nutgram\Telegram\Types\User\User;
+use function sodium_bin2base64;
 
 class FakeNutgram extends Nutgram
 {
@@ -89,9 +91,9 @@ class FakeNutgram extends Nutgram
      * @return FakeNutgram
      */
     public static function instance(
-        array|object $update = null,
+        null|array|object $update = null,
         array $responses = [],
-        Configuration $config = null
+        ?Configuration $config = null
     ): self {
         $mock = new MockHandler($responses);
         $handlerStack = HandlerStack::create($mock);
@@ -188,12 +190,11 @@ class FakeNutgram extends Nutgram
     }
 
     /**
-     * @param array $result
+     * @param array|int|true $result
      * @param bool $ok
      * @return $this
-     * @throws \JsonException
      */
-    public function willReceive(array $result, bool $ok = true): self
+    public function willReceive(array|int|true $result, bool $ok = true): self
     {
         $body = json_encode(compact('ok', 'result'), JSON_THROW_ON_ERROR);
         $this->mockHandler->append(new Response($ok ? 200 : 400, [], $body));
@@ -202,10 +203,11 @@ class FakeNutgram extends Nutgram
     }
 
     /**
-     * @param array $result
+     * @param array|int|true $result
+     * @param bool $ok
      * @return $this
      */
-    public function willReceivePartial(array $result, bool $ok = true): self
+    public function willReceivePartial(array|int|true $result, bool $ok = true): self
     {
         array_unshift($this->partialReceives, [$result, $ok]);
 
@@ -268,10 +270,7 @@ class FakeNutgram extends Nutgram
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function dd(): self
+    public function dd(): never
     {
         $this->dump();
         die();
@@ -423,11 +422,44 @@ class FakeNutgram extends Nutgram
     {
         $queryString = http_build_query(array_filter($data));
 
-        [, $sortedData] = $this->parseQueryString($queryString);
+        [$sortedData] = self::parseQueryString($queryString, ['hash']);
         $secretKey = $this->createHashHmac(self::TOKEN, 'WebAppData');
         $hash = bin2hex($this->createHashHmac($sortedData, $secretKey));
 
         return $queryString.'&hash='.$hash;
+    }
+
+    /**
+     * Generates webapp data for third party + signature.
+     * @param int $botId The bot id.
+     * @param array $data The generated webapp data as query string.
+     * @return array
+     * @internal For testing purposes only.
+     */
+    public static function generateWebAppDataForThirdParty(int $botId, array $data): array
+    {
+        if (!extension_loaded('sodium')) {
+            throw new RuntimeException('Sodium extension is required for this method');
+        }
+
+        // generate keypair
+        $keyPair = sodium_crypto_sign_keypair();
+
+        // generate secret key
+        $secretKey = sodium_crypto_sign_secretkey($keyPair);
+
+        // generate public key (hex)
+        $publicKey = sodium_bin2hex(sodium_crypto_sign_publickey($keyPair));
+
+        // generate signature
+        $queryString = http_build_query(array_filter($data));
+        [$sortedData] = self::parseQueryString($queryString, ['hash', 'signature']);
+        $dataCheckString = sprintf("%s:WebAppData\n%s", $botId, $sortedData);
+        $signature = sodium_crypto_sign_detached($dataCheckString, $secretKey);
+        $signature = sodium_bin2base64($signature, SODIUM_BASE64_VARIANT_URLSAFE_NO_PADDING);
+        $initData = $queryString.'&signature='.$signature.'&hash=test';
+
+        return [$initData, $publicKey];
     }
 
     /**
@@ -440,7 +472,7 @@ class FakeNutgram extends Nutgram
     {
         $queryString = http_build_query(array_filter($data));
 
-        [, $sortedData] = $this->parseQueryString($queryString);
+        [$sortedData] = self::parseQueryString($queryString, ['hash']);
         $secretKey = $this->createHash(self::TOKEN);
         $hash = bin2hex($this->createHashHmac($sortedData, $secretKey));
 

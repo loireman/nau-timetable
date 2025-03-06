@@ -3,6 +3,7 @@
 namespace SergiX44\Nutgram\Telegram\Types\Inline;
 
 use SergiX44\Hydrator\Annotation\ArrayType;
+use SergiX44\Hydrator\Annotation\SkipConstructor;
 use SergiX44\Hydrator\Resolver\EnumOrScalar;
 use SergiX44\Nutgram\Telegram\Properties\InlineQueryResultType;
 use SergiX44\Nutgram\Telegram\Properties\ParseMode;
@@ -17,6 +18,7 @@ use function SergiX44\Nutgram\Support\array_filter_null;
  * Alternatively, you can use input_message_content to send a message with the specified content instead of the video.
  * @see https://core.telegram.org/bots/api#inlinequeryresultvideo
  */
+#[SkipConstructor]
 class InlineQueryResultVideo extends InlineQueryResult
 {
     /** Type of the result, must be video */
@@ -85,6 +87,11 @@ class InlineQueryResultVideo extends InlineQueryResult
     public ?string $description = null;
 
     /**
+     * Optional. True, if the caption must be shown above the message media
+     */
+    public ?bool $show_caption_above_media = null;
+
+    /**
      * Optional.
      * {@see https://core.telegram.org/bots/features#inline-keyboards Inline keyboard} attached to the message
      */
@@ -112,6 +119,7 @@ class InlineQueryResultVideo extends InlineQueryResult
         ?string $description = null,
         ?InlineKeyboardMarkup $reply_markup = null,
         ?InputMessageContent $input_message_content = null,
+        ?bool $show_caption_above_media = null,
     ) {
         parent::__construct();
         $this->id = $id;
@@ -128,6 +136,7 @@ class InlineQueryResultVideo extends InlineQueryResult
         $this->description = $description;
         $this->reply_markup = $reply_markup;
         $this->input_message_content = $input_message_content;
+        $this->show_caption_above_media = $show_caption_above_media;
     }
 
     public static function make(
@@ -137,7 +146,7 @@ class InlineQueryResultVideo extends InlineQueryResult
         string $thumbnail_url,
         string $title,
         ?string $caption = null,
-        ?ParseMode $parse_mode = null,
+        ParseMode|string|null $parse_mode = null,
         ?array $caption_entities = null,
         ?int $video_width = null,
         ?int $video_height = null,
@@ -145,6 +154,7 @@ class InlineQueryResultVideo extends InlineQueryResult
         ?string $description = null,
         ?InlineKeyboardMarkup $reply_markup = null,
         ?InputMessageContent $input_message_content = null,
+        ?bool $show_caption_above_media = null,
     ): self {
         return new self(
             id: $id,
@@ -161,25 +171,27 @@ class InlineQueryResultVideo extends InlineQueryResult
             description: $description,
             reply_markup: $reply_markup,
             input_message_content: $input_message_content,
+            show_caption_above_media: $show_caption_above_media,
         );
     }
 
     public function jsonSerialize(): array
     {
         return array_filter_null([
-            'type' => $this->type->value,
+            'type' => $this->type,
             'id' => $this->id,
             'video_url' => $this->video_url,
             'mime_type' => $this->mime_type,
             'thumbnail_url' => $this->thumbnail_url,
             'title' => $this->title,
             'caption' => $this->caption,
-            'parse_mode' => $this->parse_mode?->value,
+            'parse_mode' => $this->parse_mode,
             'caption_entities' => $this->caption_entities,
             'video_width' => $this->video_width,
             'video_height' => $this->video_height,
             'video_duration' => $this->video_duration,
             'description' => $this->description,
+            'show_caption_above_media' => $this->show_caption_above_media,
             'reply_markup' => $this->reply_markup,
             'input_message_content' => $this->input_message_content,
         ]);

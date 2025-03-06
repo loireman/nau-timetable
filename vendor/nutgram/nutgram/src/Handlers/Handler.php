@@ -4,18 +4,21 @@
 namespace SergiX44\Nutgram\Handlers;
 
 use Illuminate\Support\Traits\Macroable;
+use Laravel\SerializableClosure\SerializableClosure;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use SergiX44\Container\Container;
 use SergiX44\Nutgram\Middleware\Link;
 use SergiX44\Nutgram\Middleware\MiddlewareChain;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Support\Constraints;
 use SergiX44\Nutgram\Support\Disable;
+use SergiX44\Nutgram\Support\InteractsWithRateLimit;
 use SergiX44\Nutgram\Support\Taggable;
 
 class Handler extends MiddlewareChain
 {
-    use Taggable, Macroable, Disable, Constraints;
+    use Taggable, Macroable, Disable, Constraints, InteractsWithRateLimit;
 
     /**
      * Regex to capture named parameters.
@@ -41,7 +44,6 @@ class Handler extends MiddlewareChain
      * @var string|null
      */
     protected ?string $pattern;
-
 
     /**
      * @var array
@@ -77,9 +79,10 @@ class Handler extends MiddlewareChain
 
     /**
      * @param string $value
+     * @param Container $container
      * @return bool
      */
-    public function matching(string $value): bool
+    public function matching(string $value, Container $container): bool
     {
         if ($this->pattern === null) {
             return false;
@@ -94,14 +97,32 @@ class Handler extends MiddlewareChain
             $constraint = $this->constraints[$parameterName] ?? '.*';
             return sprintf("(?<%s>%s?)", $parameterName, $constraint);
         };
-        $regex = '/^'.preg_replace_callback(self::PARAM_NAME_REGEX, $replaceRule, $pattern).'$/mu';
+        $regex = sprintf(
+            '/^%s$/%s',
+            preg_replace_callback(self::PARAM_NAME_REGEX, $replaceRule, $pattern) ?? '',
+            $this->getPatternFlags(),
+        );
 
         // match + return only named parameters
         $regexMatched = (bool)preg_match($regex, $value, $matches, PREG_UNMATCHED_AS_NULL);
         if ($regexMatched) {
-            array_walk($matches, fn (&$x) => $x = ($x === '' ? null : $x));
             array_shift($matches);
-            $this->setParameters(...array_filter($matches, 'is_numeric', ARRAY_FILTER_USE_KEY));
+
+            $params = [];
+            foreach ($matches as $k => $v) {
+                if (is_numeric($k) && is_string(array_search($v, $matches, true))) {
+                    continue;
+                }
+                $v = $v === '' ? null : $v;
+
+                if (is_string($k) && $container->has("param.$k")) {
+                    $v = $container->make("param.$k", [$v]);
+                }
+
+                $params[] = $v;
+            }
+
+            $this->setParameters(...$params);
         }
 
         return $regexMatched;
@@ -184,5 +205,26 @@ class Handler extends MiddlewareChain
     public function getPattern(): ?string
     {
         return $this->pattern;
+    }
+
+    protected function getPatternFlags(): string
+    {
+        return $this->insensitive ? 'mui' : 'mu';
+    }
+
+    public function getHash(): string
+    {
+        $data = [
+            'pattern' => $this->pattern,
+            'callable' => new SerializableClosure($this->callable),
+            'disabled' => $this->disabled,
+            'constraints' => $this->constraints,
+            'tags' => $this->tags,
+            'insensitive' => $this->insensitive,
+            'parameters' => $this->parameters,
+            'skippedGlobalMiddlewares' => $this->skippedGlobalMiddlewares,
+        ];
+
+        return (string)crc32(serialize($data));
     }
 }

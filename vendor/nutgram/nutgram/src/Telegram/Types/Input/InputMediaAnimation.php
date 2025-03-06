@@ -4,6 +4,7 @@ namespace SergiX44\Nutgram\Telegram\Types\Input;
 
 use JsonSerializable;
 use SergiX44\Hydrator\Annotation\ArrayType;
+use SergiX44\Hydrator\Annotation\SkipConstructor;
 use SergiX44\Hydrator\Resolver\EnumOrScalar;
 use SergiX44\Nutgram\Telegram\Properties\InputMediaType;
 use SergiX44\Nutgram\Telegram\Properties\ParseMode;
@@ -15,6 +16,7 @@ use function SergiX44\Nutgram\Support\array_filter_null;
  * Represents an animation file (GIF or H.264/MPEG-4 AVC video without sound) to be sent.
  * @see https://core.telegram.org/bots/api#inputmediaanimation
  */
+#[SkipConstructor]
 class InputMediaAnimation extends InputMedia implements JsonSerializable
 {
     /** Type of the result, must be animation */
@@ -56,6 +58,11 @@ class InputMediaAnimation extends InputMedia implements JsonSerializable
     public ?array $caption_entities = null;
 
     /**
+     * Optional. True, if the caption must be shown above the message media
+     */
+    public ?bool $show_caption_above_media = null;
+
+    /**
      * Optional.
      * Animation width
      */
@@ -81,14 +88,15 @@ class InputMediaAnimation extends InputMedia implements JsonSerializable
 
     public function __construct(
         InputFile|string $media,
-        InputFile|string|null $thumbnail,
-        ?string $caption,
-        ParseMode|string|null $parse_mode,
-        ?array $caption_entities,
-        ?int $width,
-        ?int $height,
-        ?int $duration,
-        ?bool $has_spoiler
+        InputFile|string|null $thumbnail = null,
+        ?string $caption = null,
+        ParseMode|string|null $parse_mode = null,
+        ?array $caption_entities = null,
+        ?int $width = null,
+        ?int $height = null,
+        ?int $duration = null,
+        ?bool $has_spoiler = null,
+        ?bool $show_caption_above_media = null,
     ) {
         parent::__construct();
         $this->media = $media;
@@ -100,18 +108,20 @@ class InputMediaAnimation extends InputMedia implements JsonSerializable
         $this->height = $height;
         $this->duration = $duration;
         $this->has_spoiler = $has_spoiler;
+        $this->show_caption_above_media = $show_caption_above_media;
     }
 
     public static function make(
         InputFile|string $media,
         InputFile|string|null $thumbnail = null,
         ?string $caption = null,
-        ?ParseMode $parse_mode = null,
+        ParseMode|string|null $parse_mode = null,
         ?array $caption_entities = null,
         ?int $width = null,
         ?int $height = null,
         ?int $duration = null,
-        ?bool $has_spoiler = null
+        ?bool $has_spoiler = null,
+        ?bool $show_caption_above_media = null,
     ): self {
         return new self(
             media: $media,
@@ -122,7 +132,8 @@ class InputMediaAnimation extends InputMedia implements JsonSerializable
             width: $width,
             height: $height,
             duration: $duration,
-            has_spoiler: $has_spoiler
+            has_spoiler: $has_spoiler,
+            show_caption_above_media: $show_caption_above_media,
         );
     }
 
@@ -131,10 +142,11 @@ class InputMediaAnimation extends InputMedia implements JsonSerializable
         return array_filter_null([
             'type' => $this->type,
             'media' => $this->media,
-            'thumb' => $this->thumbnail,
+            'thumbnail' => $this->thumbnail,
             'caption' => $this->caption,
-            'parse_mode' => $this->parse_mode?->value,
+            'parse_mode' => $this->parse_mode,
             'caption_entities' => $this->caption_entities,
+            'show_caption_above_media' => $this->show_caption_above_media,
             'width' => $this->width,
             'height' => $this->height,
             'duration' => $this->duration,

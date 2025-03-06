@@ -63,6 +63,30 @@ trait UpdateListeners
         return $this->{$this->target}[UpdateType::EDITED_CHANNEL_POST->value][] = new Handler($callable);
     }
 
+    public function onBusinessConnection($callable): Handler
+    {
+        $this->checkFinalized();
+        return $this->{$this->target}[UpdateType::BUSINESS_CONNECTION->value][] = new Handler($callable);
+    }
+
+    public function onBusinessMessage($callable): Handler
+    {
+        $this->checkFinalized();
+        return $this->{$this->target}[UpdateType::BUSINESS_MESSAGE->value][] = new Handler($callable);
+    }
+
+    public function onEditedBusinessMessage($callable): Handler
+    {
+        $this->checkFinalized();
+        return $this->{$this->target}[UpdateType::EDITED_BUSINESS_MESSAGE->value][] = new Handler($callable);
+    }
+
+    public function onDeletedBusinessMessages($callable): Handler
+    {
+        $this->checkFinalized();
+        return $this->{$this->target}[UpdateType::DELETED_BUSINESS_MESSAGES->value][] = new Handler($callable);
+    }
+
     public function onMessageReaction($callable): Handler
     {
         $this->checkFinalized();
@@ -170,6 +194,30 @@ trait UpdateListeners
     {
         $this->checkFinalized();
         return $this->{$this->target}[UpdateType::PRE_CHECKOUT_QUERY->value][$pattern] = new Handler(
+            $callable,
+            $pattern
+        );
+    }
+
+    /**
+     * @param $callable
+     * @return Handler
+     */
+    public function onPaidMediaPurchased($callable): Handler
+    {
+        $this->checkFinalized();
+        return $this->{$this->target}[UpdateType::PURCHASED_PAID_MEDIA->value][] = new Handler($callable);
+    }
+
+    /**
+     * @param string $pattern
+     * @param $callable
+     * @return Handler
+     */
+    public function onPaidMediaPurchasedPayload(string $pattern, $callable): Handler
+    {
+        $this->checkFinalized();
+        return $this->{$this->target}[UpdateType::PURCHASED_PAID_MEDIA->value][$pattern] = new Handler(
             $callable,
             $pattern
         );

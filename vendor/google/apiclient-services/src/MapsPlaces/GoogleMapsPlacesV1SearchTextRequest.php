@@ -20,6 +20,12 @@ namespace Google\Service\MapsPlaces;
 class GoogleMapsPlacesV1SearchTextRequest extends \Google\Collection
 {
   protected $collection_key = 'priceLevels';
+  protected $evOptionsType = GoogleMapsPlacesV1SearchTextRequestEVOptions::class;
+  protected $evOptionsDataType = '';
+  /**
+   * @var bool
+   */
+  public $includePureServiceAreaBusinesses;
   /**
    * @var string
    */
@@ -42,6 +48,14 @@ class GoogleMapsPlacesV1SearchTextRequest extends \Google\Collection
    */
   public $openNow;
   /**
+   * @var int
+   */
+  public $pageSize;
+  /**
+   * @var string
+   */
+  public $pageToken;
+  /**
    * @var string[]
    */
   public $priceLevels;
@@ -53,6 +67,10 @@ class GoogleMapsPlacesV1SearchTextRequest extends \Google\Collection
    * @var string
    */
   public $regionCode;
+  protected $routingParametersType = GoogleMapsPlacesV1RoutingParameters::class;
+  protected $routingParametersDataType = '';
+  protected $searchAlongRouteParametersType = GoogleMapsPlacesV1SearchTextRequestSearchAlongRouteParameters::class;
+  protected $searchAlongRouteParametersDataType = '';
   /**
    * @var bool
    */
@@ -62,6 +80,34 @@ class GoogleMapsPlacesV1SearchTextRequest extends \Google\Collection
    */
   public $textQuery;
 
+  /**
+   * @param GoogleMapsPlacesV1SearchTextRequestEVOptions
+   */
+  public function setEvOptions(GoogleMapsPlacesV1SearchTextRequestEVOptions $evOptions)
+  {
+    $this->evOptions = $evOptions;
+  }
+  /**
+   * @return GoogleMapsPlacesV1SearchTextRequestEVOptions
+   */
+  public function getEvOptions()
+  {
+    return $this->evOptions;
+  }
+  /**
+   * @param bool
+   */
+  public function setIncludePureServiceAreaBusinesses($includePureServiceAreaBusinesses)
+  {
+    $this->includePureServiceAreaBusinesses = $includePureServiceAreaBusinesses;
+  }
+  /**
+   * @return bool
+   */
+  public function getIncludePureServiceAreaBusinesses()
+  {
+    return $this->includePureServiceAreaBusinesses;
+  }
   /**
    * @param string
    */
@@ -155,6 +201,34 @@ class GoogleMapsPlacesV1SearchTextRequest extends \Google\Collection
     return $this->openNow;
   }
   /**
+   * @param int
+   */
+  public function setPageSize($pageSize)
+  {
+    $this->pageSize = $pageSize;
+  }
+  /**
+   * @return int
+   */
+  public function getPageSize()
+  {
+    return $this->pageSize;
+  }
+  /**
+   * @param string
+   */
+  public function setPageToken($pageToken)
+  {
+    $this->pageToken = $pageToken;
+  }
+  /**
+   * @return string
+   */
+  public function getPageToken()
+  {
+    return $this->pageToken;
+  }
+  /**
    * @param string[]
    */
   public function setPriceLevels($priceLevels)
@@ -195,6 +269,34 @@ class GoogleMapsPlacesV1SearchTextRequest extends \Google\Collection
   public function getRegionCode()
   {
     return $this->regionCode;
+  }
+  /**
+   * @param GoogleMapsPlacesV1RoutingParameters
+   */
+  public function setRoutingParameters(GoogleMapsPlacesV1RoutingParameters $routingParameters)
+  {
+    $this->routingParameters = $routingParameters;
+  }
+  /**
+   * @return GoogleMapsPlacesV1RoutingParameters
+   */
+  public function getRoutingParameters()
+  {
+    return $this->routingParameters;
+  }
+  /**
+   * @param GoogleMapsPlacesV1SearchTextRequestSearchAlongRouteParameters
+   */
+  public function setSearchAlongRouteParameters(GoogleMapsPlacesV1SearchTextRequestSearchAlongRouteParameters $searchAlongRouteParameters)
+  {
+    $this->searchAlongRouteParameters = $searchAlongRouteParameters;
+  }
+  /**
+   * @return GoogleMapsPlacesV1SearchTextRequestSearchAlongRouteParameters
+   */
+  public function getSearchAlongRouteParameters()
+  {
+    return $this->searchAlongRouteParameters;
   }
   /**
    * @param bool

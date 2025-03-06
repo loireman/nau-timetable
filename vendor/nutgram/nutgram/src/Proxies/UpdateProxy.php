@@ -6,6 +6,8 @@ namespace SergiX44\Nutgram\Proxies;
 use SergiX44\Nutgram\Telegram\Properties\MessageEntityType;
 use SergiX44\Nutgram\Telegram\Types\Boost\ChatBoostRemoved;
 use SergiX44\Nutgram\Telegram\Types\Boost\ChatBoostUpdated;
+use SergiX44\Nutgram\Telegram\Types\Business\BusinessConnection;
+use SergiX44\Nutgram\Telegram\Types\Business\BusinessMessagesDeleted;
 use SergiX44\Nutgram\Telegram\Types\Chat\Chat;
 use SergiX44\Nutgram\Telegram\Types\Chat\ChatJoinRequest;
 use SergiX44\Nutgram\Telegram\Types\Chat\ChatMemberUpdated;
@@ -15,6 +17,7 @@ use SergiX44\Nutgram\Telegram\Types\Inline\ChosenInlineResult;
 use SergiX44\Nutgram\Telegram\Types\Inline\InlineQuery;
 use SergiX44\Nutgram\Telegram\Types\Message\Message;
 use SergiX44\Nutgram\Telegram\Types\Message\MessageEntity;
+use SergiX44\Nutgram\Telegram\Types\Payment\PaidMediaPurchased;
 use SergiX44\Nutgram\Telegram\Types\Payment\PreCheckoutQuery;
 use SergiX44\Nutgram\Telegram\Types\Payment\ShippingQuery;
 use SergiX44\Nutgram\Telegram\Types\Poll\Poll;
@@ -57,7 +60,16 @@ trait UpdateProxy
 
     public function messageThreadId(): ?int
     {
-        return $this->message()?->message_thread_id;
+        if ($this->message()?->is_topic_message) {
+            return $this->message()?->message_thread_id;
+        }
+
+        return null;
+    }
+
+    public function businessConnectionId(): ?string
+    {
+        return $this->message()?->business_connection_id ?? $this->businessConnection()?->id;
     }
 
     public function inlineMessageId(): ?string
@@ -143,6 +155,16 @@ trait UpdateProxy
         return $this->update?->message_reaction_count;
     }
 
+    public function businessConnection(): ?BusinessConnection
+    {
+        return $this->update?->business_connection;
+    }
+
+    public function deletedBusinessMessages(): ?BusinessMessagesDeleted
+    {
+        return $this->update?->deleted_business_messages;
+    }
+
     public function inlineQuery(): ?InlineQuery
     {
         return $this->update?->inline_query;
@@ -166,6 +188,11 @@ trait UpdateProxy
     public function preCheckoutQuery(): ?PreCheckoutQuery
     {
         return $this->update?->pre_checkout_query;
+    }
+
+    public function purchasedPaidMedia(): ?PaidMediaPurchased
+    {
+        return $this->update?->purchased_paid_media;
     }
 
     public function poll(): ?Poll

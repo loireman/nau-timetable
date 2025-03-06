@@ -34,11 +34,13 @@ enum MessageType: string
     case PINNED_MESSAGE = 'pinned_message';
     case INVOICE = 'invoice';
     case SUCCESSFUL_PAYMENT = 'successful_payment';
+    case REFUNDED_PAYMENT = 'refunded_payment';
     case USERS_SHARED = 'users_shared';
     case CHAT_SHARED = 'chat_shared';
     case CONNECTED_WEBSITE = 'connected_website';
     case PASSPORT_DATA = 'passport_data';
     case PROXIMITY_ALERT_TRIGGERED = 'proximity_alert_triggered';
+    case BOOST_ADDED = 'boost_added';
     case FORUM_TOPIC_CREATED = 'forum_topic_created';
     case FORUM_TOPIC_EDITED = 'forum_topic_edited';
     case FORUM_TOPIC_CLOSED = 'forum_topic_closed';

@@ -2,6 +2,7 @@
 
 namespace SergiX44\Nutgram\Telegram\Types\Passport;
 
+use SergiX44\Hydrator\Annotation\SkipConstructor;
 use SergiX44\Hydrator\Resolver\EnumOrScalar;
 use SergiX44\Nutgram\Telegram\Properties\PassportSource;
 use SergiX44\Nutgram\Telegram\Properties\PassportType;
@@ -12,6 +13,7 @@ use function SergiX44\Nutgram\Support\array_filter_null;
  * The error is considered resolved when new data is added.
  * @see https://core.telegram.org/bots/api#passportelementerrorunspecified
  */
+#[SkipConstructor]
 class PassportElementErrorUnspecified extends PassportElementError
 {
     /** Error source, must be unspecified */
@@ -40,7 +42,7 @@ class PassportElementErrorUnspecified extends PassportElementError
     }
 
     public static function make(
-        PassportType $type,
+        PassportType|string $type,
         string $element_hash,
         string $message
     ): self {
@@ -54,8 +56,8 @@ class PassportElementErrorUnspecified extends PassportElementError
     public function jsonSerialize(): array
     {
         return array_filter_null([
-            'source' => $this->source->value,
-            'type' => $this->type->value,
+            'source' => $this->source,
+            'type' => $this->type,
             'element_hash' => $this->element_hash,
             'message' => $this->message,
         ]);

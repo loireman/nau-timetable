@@ -35,6 +35,8 @@ trait CustomEndpoints
      * @param int|null $reply_to_message_id If the message is a reply, ID of the original message
      * @param bool|null $allow_sending_without_reply Pass True if the message should be sent even if the specified replied-to message is not found
      * @param InlineKeyboardMarkup|ReplyKeyboardMarkup|ReplyKeyboardRemove|ForceReply|null $reply_markup Additional interface options. A JSON-serialized object for an {@see https://core.telegram.org/bots/features#inline-keyboards inline keyboard}, {@see https://core.telegram.org/bots/features#keyboards custom reply keyboard}, instructions to remove reply keyboard or to force a reply from the user.
+     * @param string|null $business_connection_id Unique identifier of the business connection on behalf of which the message will be sent
+     * @param string|null $message_effect_id Unique identifier of the message effect to be added to the message; for private chats only
      * @return Message[]|null
      */
     public function sendChunkedMessage(
@@ -49,8 +51,12 @@ trait CustomEndpoints
         ?int $reply_to_message_id = null,
         ?bool $allow_sending_without_reply = null,
         InlineKeyboardMarkup|ReplyKeyboardMarkup|ReplyKeyboardRemove|ForceReply|null $reply_markup = null,
+        ?string $business_connection_id = null,
+        ?string $message_effect_id = null,
     ): ?array {
         $chat_id ??= $this->chatId();
+        $message_thread_id ??= $this->messageThreadId();
+        $business_connection_id ??= $this->businessConnectionId();
         $parameters = compact(
             'chat_id',
             'message_thread_id',
@@ -62,7 +68,9 @@ trait CustomEndpoints
             'protect_content',
             'reply_to_message_id',
             'allow_sending_without_reply',
-            'reply_markup'
+            'reply_markup',
+            'business_connection_id',
+            'message_effect_id',
         );
         unset($parameters['text']);
 
@@ -107,6 +115,8 @@ trait CustomEndpoints
      * @param int|null $reply_to_message_id If the message is a reply, ID of the original message
      * @param bool|null $allow_sending_without_reply Pass True if the message should be sent even if the specified replied-to message is not found
      * @param InlineKeyboardMarkup|ReplyKeyboardMarkup|ReplyKeyboardRemove|ForceReply|null $reply_markup Additional interface options. A JSON-serialized object for an {@see https://core.telegram.org/bots/features#inline-keyboards inline keyboard}, {@see https://core.telegram.org/bots/features#keyboards custom reply keyboard}, instructions to remove reply keyboard or to force a reply from the user.
+     * @param string|null $business_connection_id Unique identifier of the business connection on behalf of which the message will be sent
+     * @param string|null $message_effect_id Unique identifier of the message effect to be added to the message; for private chats only
      * @param array $clientOpt Client options
      * @return Message[]|null
      */
@@ -123,9 +133,13 @@ trait CustomEndpoints
         ?int $reply_to_message_id = null,
         ?bool $allow_sending_without_reply = null,
         InlineKeyboardMarkup|ReplyKeyboardMarkup|ReplyKeyboardRemove|ForceReply|null $reply_markup = null,
+        ?string $business_connection_id = null,
+        ?string $message_effect_id = null,
         array $clientOpt = [],
     ): ?array {
         $chat_id ??= $this->chatId();
+        $message_thread_id ??= $this->messageThreadId();
+        $business_connection_id ??= $this->businessConnectionId();
         $opt = compact(
             'chat_id',
             'message_thread_id',
@@ -138,6 +152,8 @@ trait CustomEndpoints
             'reply_to_message_id',
             'allow_sending_without_reply',
             'reply_markup',
+            'business_connection_id',
+            'message_effect_id',
         );
         return $this->sendChunkedMedia(
             endpoint: 'sendPhoto',
@@ -172,6 +188,8 @@ trait CustomEndpoints
      * @param int|null $reply_to_message_id If the message is a reply, ID of the original message
      * @param bool|null $allow_sending_without_reply Pass True if the message should be sent even if the specified replied-to message is not found
      * @param InlineKeyboardMarkup|ReplyKeyboardMarkup|ReplyKeyboardRemove|ForceReply|null $reply_markup Additional interface options. A JSON-serialized object for an {@see https://core.telegram.org/bots/features#inline-keyboards inline keyboard}, {@see https://core.telegram.org/bots/features#keyboards custom reply keyboard}, instructions to remove reply keyboard or to force a reply from the user.
+     * @param string|null $business_connection_id Unique identifier of the business connection on behalf of which the message will be sent
+     * @param string|null $message_effect_id Unique identifier of the message effect to be added to the message; for private chats only
      * @param array $clientOpt Client options
      * @return Message[]|null
      */
@@ -191,9 +209,13 @@ trait CustomEndpoints
         ?int $reply_to_message_id = null,
         ?bool $allow_sending_without_reply = null,
         InlineKeyboardMarkup|ReplyKeyboardMarkup|ReplyKeyboardRemove|ForceReply|null $reply_markup = null,
+        ?string $business_connection_id = null,
+        ?string $message_effect_id = null,
         array $clientOpt = [],
     ): ?array {
         $chat_id ??= $this->chatId();
+        $message_thread_id ??= $this->messageThreadId();
+        $business_connection_id ??= $this->businessConnectionId();
         $opt = compact(
             'chat_id',
             'message_thread_id',
@@ -209,6 +231,8 @@ trait CustomEndpoints
             'reply_to_message_id',
             'allow_sending_without_reply',
             'reply_markup',
+            'business_connection_id',
+            'message_effect_id',
         );
 
         return $this->sendChunkedMedia(
@@ -239,6 +263,8 @@ trait CustomEndpoints
      * @param int|null $reply_to_message_id If the message is a reply, ID of the original message
      * @param bool|null $allow_sending_without_reply Pass True if the message should be sent even if the specified replied-to message is not found
      * @param InlineKeyboardMarkup|ReplyKeyboardMarkup|ReplyKeyboardRemove|ForceReply|null $reply_markup Additional interface options. A JSON-serialized object for an {@see https://core.telegram.org/bots/features#inline-keyboards inline keyboard}, {@see https://core.telegram.org/bots/features#keyboards custom reply keyboard}, instructions to remove reply keyboard or to force a reply from the user.
+     * @param string|null $business_connection_id Unique identifier of the business connection on behalf of which the message will be sent
+     * @param string|null $message_effect_id Unique identifier of the message effect to be added to the message; for private chats only
      * @param array $clientOpt Client options
      * @return Message[]|null
      */
@@ -256,9 +282,13 @@ trait CustomEndpoints
         ?int $reply_to_message_id = null,
         ?bool $allow_sending_without_reply = null,
         InlineKeyboardMarkup|ReplyKeyboardMarkup|ReplyKeyboardRemove|ForceReply|null $reply_markup = null,
+        ?string $business_connection_id = null,
+        ?string $message_effect_id = null,
         array $clientOpt = [],
     ): ?array {
         $chat_id ??= $this->chatId();
+        $message_thread_id ??= $this->messageThreadId();
+        $business_connection_id ??= $this->businessConnectionId();
         $opt = compact(
             'chat_id',
             'message_thread_id',
@@ -272,6 +302,8 @@ trait CustomEndpoints
             'reply_to_message_id',
             'allow_sending_without_reply',
             'reply_markup',
+            'business_connection_id',
+            'message_effect_id',
         );
 
         return $this->sendChunkedMedia(
@@ -307,6 +339,8 @@ trait CustomEndpoints
      * @param int|null $reply_to_message_id If the message is a reply, ID of the original message
      * @param bool|null $allow_sending_without_reply Pass True if the message should be sent even if the specified replied-to message is not found
      * @param InlineKeyboardMarkup|ReplyKeyboardMarkup|ReplyKeyboardRemove|ForceReply|null $reply_markup Additional interface options. A JSON-serialized object for an {@see https://core.telegram.org/bots/features#inline-keyboards inline keyboard}, {@see https://core.telegram.org/bots/features#keyboards custom reply keyboard}, instructions to remove reply keyboard or to force a reply from the user.
+     * @param string|null $business_connection_id Unique identifier of the business connection on behalf of which the message will be sent
+     * @param string|null $message_effect_id Unique identifier of the message effect to be added to the message; for private chats only
      * @param array $clientOpt Client options
      * @return Message[]|null
      */
@@ -328,9 +362,13 @@ trait CustomEndpoints
         ?int $reply_to_message_id = null,
         ?bool $allow_sending_without_reply = null,
         InlineKeyboardMarkup|ReplyKeyboardMarkup|ReplyKeyboardRemove|ForceReply|null $reply_markup = null,
+        ?string $business_connection_id = null,
+        ?string $message_effect_id = null,
         array $clientOpt = [],
     ): ?array {
         $chat_id ??= $this->chatId();
+        $message_thread_id ??= $this->messageThreadId();
+        $business_connection_id ??= $this->businessConnectionId();
         $opt = compact(
             'chat_id',
             'message_thread_id',
@@ -348,6 +386,8 @@ trait CustomEndpoints
             'reply_to_message_id',
             'allow_sending_without_reply',
             'reply_markup',
+            'business_connection_id',
+            'message_effect_id',
         );
 
         return $this->sendChunkedMedia(
@@ -381,6 +421,8 @@ trait CustomEndpoints
      * @param int|null $reply_to_message_id If the message is a reply, ID of the original message
      * @param bool|null $allow_sending_without_reply Pass True if the message should be sent even if the specified replied-to message is not found
      * @param InlineKeyboardMarkup|ReplyKeyboardMarkup|ReplyKeyboardRemove|ForceReply|null $reply_markup Additional interface options. A JSON-serialized object for an {@see https://core.telegram.org/bots/features#inline-keyboards inline keyboard}, {@see https://core.telegram.org/bots/features#keyboards custom reply keyboard}, instructions to remove reply keyboard or to force a reply from the user.
+     * @param string|null $business_connection_id Unique identifier of the business connection on behalf of which the message will be sent
+     * @param string|null $message_effect_id Unique identifier of the message effect to be added to the message; for private chats only
      * @param array $clientOpt Client options
      * @return Message[]|null
      */
@@ -401,9 +443,13 @@ trait CustomEndpoints
         ?int $reply_to_message_id = null,
         ?bool $allow_sending_without_reply = null,
         InlineKeyboardMarkup|ReplyKeyboardMarkup|ReplyKeyboardRemove|ForceReply|null $reply_markup = null,
+        ?string $business_connection_id = null,
+        ?string $message_effect_id = null,
         array $clientOpt = [],
     ): ?array {
         $chat_id ??= $this->chatId();
+        $message_thread_id ??= $this->messageThreadId();
+        $business_connection_id ??= $this->businessConnectionId();
         $opt = compact(
             'chat_id',
             'message_thread_id',
@@ -420,6 +466,8 @@ trait CustomEndpoints
             'reply_to_message_id',
             'allow_sending_without_reply',
             'reply_markup',
+            'business_connection_id',
+            'message_effect_id',
         );
 
         return $this->sendChunkedMedia(
@@ -452,6 +500,8 @@ trait CustomEndpoints
      * @param int|null $reply_to_message_id If the message is a reply, ID of the original message
      * @param bool|null $allow_sending_without_reply Pass True if the message should be sent even if the specified replied-to message is not found
      * @param InlineKeyboardMarkup|ReplyKeyboardMarkup|ReplyKeyboardRemove|ForceReply|null $reply_markup Additional interface options. A JSON-serialized object for an {@see https://core.telegram.org/bots/features#inline-keyboards inline keyboard}, {@see https://core.telegram.org/bots/features#keyboards custom reply keyboard}, instructions to remove reply keyboard or to force a reply from the user.
+     * @param string|null $business_connection_id Unique identifier of the business connection on behalf of which the message will be sent
+     * @param string|null $message_effect_id Unique identifier of the message effect to be added to the message; for private chats only
      * @param array $clientOpt Client options
      * @return Message[]|null
      */
@@ -468,9 +518,13 @@ trait CustomEndpoints
         ?int $reply_to_message_id = null,
         ?bool $allow_sending_without_reply = null,
         InlineKeyboardMarkup|ReplyKeyboardMarkup|ReplyKeyboardRemove|ForceReply|null $reply_markup = null,
+        ?string $business_connection_id = null,
+        ?string $message_effect_id = null,
         array $clientOpt = [],
     ): ?array {
         $chat_id ??= $this->chatId();
+        $message_thread_id ??= $this->messageThreadId();
+        $business_connection_id ??= $this->businessConnectionId();
         $opt = compact(
             'chat_id',
             'message_thread_id',
@@ -483,6 +537,8 @@ trait CustomEndpoints
             'reply_to_message_id',
             'allow_sending_without_reply',
             'reply_markup',
+            'business_connection_id',
+            'message_effect_id',
         );
 
         return $this->sendChunkedMedia(
@@ -504,7 +560,15 @@ trait CustomEndpoints
         $caption = $opt['caption'] ?? null;
 
         if ($caption === null) {
-            return [$this->sendAttachment($endpoint, $param, $media, array_filter_null($opt), $clientOpt)];
+            return [
+                $this->sendAttachment(
+                    endpoint: $endpoint,
+                    param: $param,
+                    value: $media,
+                    opt: array_filter_null($opt),
+                    clientOpt: $clientOpt
+                ),
+            ];
         }
 
         $opt = array_filter_null($opt);
@@ -534,10 +598,21 @@ trait CustomEndpoints
 
             if ($index === 0) {
                 $opt['caption'] = $chunk;
-                return $this->sendAttachment($endpoint, $param, $media, $opt, $clientOpt);
+                return $this->sendAttachment(
+                    endpoint: $endpoint,
+                    param: $param,
+                    value: $media,
+                    opt: $opt,
+                    clientOpt: $clientOpt
+                );
             }
 
-            return $this->sendMessage($chunk, $opt);
+            $parameters = [
+                'text' => $chunk,
+                ...$opt,
+            ];
+
+            return $this->sendMessage(...$parameters);
         }, $chunks, array_keys($chunks));
     }
 }

@@ -10,6 +10,10 @@ enum UpdateType: string
     case EDITED_MESSAGE = 'edited_message';
     case CHANNEL_POST = 'channel_post';
     case EDITED_CHANNEL_POST = 'edited_channel_post';
+    case BUSINESS_CONNECTION = 'business_connection';
+    case BUSINESS_MESSAGE = 'business_message';
+    case EDITED_BUSINESS_MESSAGE = 'edited_business_message';
+    case DELETED_BUSINESS_MESSAGES = 'deleted_business_messages';
     case MESSAGE_REACTION = 'message_reaction';
     case MESSAGE_REACTION_COUNT = 'message_reaction_count';
     case INLINE_QUERY = 'inline_query';
@@ -17,6 +21,7 @@ enum UpdateType: string
     case CALLBACK_QUERY = 'callback_query';
     case SHIPPING_QUERY = 'shipping_query';
     case PRE_CHECKOUT_QUERY = 'pre_checkout_query';
+    case PURCHASED_PAID_MEDIA = 'purchased_paid_media';
     case POLL = 'poll';
     case POLL_ANSWER = 'poll_answer';
     case MY_CHAT_MEMBER = 'my_chat_member';
@@ -32,6 +37,8 @@ enum UpdateType: string
             self::EDITED_MESSAGE,
             self::CHANNEL_POST,
             self::EDITED_CHANNEL_POST,
+            self::BUSINESS_MESSAGE,
+            self::EDITED_BUSINESS_MESSAGE,
         ];
     }
 

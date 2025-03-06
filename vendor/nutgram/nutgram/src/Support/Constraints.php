@@ -2,9 +2,13 @@
 
 namespace SergiX44\Nutgram\Support;
 
+use BackedEnum;
+
 trait Constraints
 {
     protected array $constraints = [];
+
+    protected bool $insensitive = false;
 
     public function where(array|string $parameter, ?string $constraint = null): self
     {
@@ -21,6 +25,14 @@ trait Constraints
 
     public function whereIn(string $parameter, array $values): self
     {
+        $values = array_map(function (mixed $item) {
+            if ($item instanceof BackedEnum) {
+                $item = $item->value;
+            }
+
+            return (string)$item;
+        }, $values);
+
         $this->constraints[$parameter] = implode('|', $values);
 
         return $this;
@@ -50,5 +62,17 @@ trait Constraints
     public function getConstraints(): array
     {
         return $this->constraints;
+    }
+
+    public function insensitive(bool $value = true): self
+    {
+        $this->insensitive = $value;
+
+        return $this;
+    }
+
+    public function isInsensitive(): bool
+    {
+        return $this->insensitive;
     }
 }

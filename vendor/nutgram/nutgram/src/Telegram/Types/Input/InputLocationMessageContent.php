@@ -2,12 +2,14 @@
 
 namespace SergiX44\Nutgram\Telegram\Types\Input;
 
+use SergiX44\Hydrator\Annotation\SkipConstructor;
 use function SergiX44\Nutgram\Support\array_filter_null;
 
 /**
  * Represents the {@see https://core.telegram.org/bots/api#inputmessagecontent content} of a location message to be sent as the result of an inline query.
  * @see https://core.telegram.org/bots/api#inputlocationmessagecontent
  */
+#[SkipConstructor]
 class InputLocationMessageContent extends InputMessageContent
 {
     /** Latitude of the location in degrees */
@@ -24,8 +26,7 @@ class InputLocationMessageContent extends InputMessageContent
     public ?float $horizontal_accuracy = null;
 
     /**
-     * Optional.
-     * Period in seconds for which the location can be updated, should be between 60 and 86400.
+     * Optional. Period in seconds during which the location can be updated, should be between 60 and 86400, or 0x7FFFFFFF for live locations that can be edited indefinitely.
      */
     public ?int $live_period = null;
 

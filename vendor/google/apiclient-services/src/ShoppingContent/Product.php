@@ -48,6 +48,8 @@ class Product extends \Google\Collection
    * @var string
    */
   public $ageGroup;
+  protected $autoPricingMinPriceType = Price::class;
+  protected $autoPricingMinPriceDataType = '';
   /**
    * @var string
    */
@@ -153,6 +155,8 @@ class Product extends \Google\Collection
    * @var string
    */
   public $feedLabel;
+  protected $freeShippingThresholdType = FreeShippingThreshold::class;
+  protected $freeShippingThresholdDataType = 'array';
   /**
    * @var string
    */
@@ -207,8 +211,10 @@ class Product extends \Google\Collection
    * @var string
    */
   public $linkTemplate;
-  protected $loyaltyPointsType = LoyaltyPoints::class;
-  protected $loyaltyPointsDataType = '';
+  protected $loyaltyProgramType = LoyaltyProgram::class;
+  protected $loyaltyProgramDataType = '';
+  protected $loyaltyProgramsType = LoyaltyProgram::class;
+  protected $loyaltyProgramsDataType = 'array';
   /**
    * @var string
    */
@@ -333,8 +339,14 @@ class Product extends \Google\Collection
    * @var string
    */
   public $source;
+  protected $structuredDescriptionType = ProductStructuredDescription::class;
+  protected $structuredDescriptionDataType = '';
+  protected $structuredTitleType = ProductStructuredTitle::class;
+  protected $structuredTitleDataType = '';
   protected $subscriptionCostType = ProductSubscriptionCost::class;
   protected $subscriptionCostDataType = '';
+  protected $sustainabilityIncentivesType = ProductSustainabilityIncentive::class;
+  protected $sustainabilityIncentivesDataType = 'array';
   /**
    * @var string
    */
@@ -459,6 +471,20 @@ class Product extends \Google\Collection
   public function getAgeGroup()
   {
     return $this->ageGroup;
+  }
+  /**
+   * @param Price
+   */
+  public function setAutoPricingMinPrice(Price $autoPricingMinPrice)
+  {
+    $this->autoPricingMinPrice = $autoPricingMinPrice;
+  }
+  /**
+   * @return Price
+   */
+  public function getAutoPricingMinPrice()
+  {
+    return $this->autoPricingMinPrice;
   }
   /**
    * @param string
@@ -861,6 +887,20 @@ class Product extends \Google\Collection
     return $this->feedLabel;
   }
   /**
+   * @param FreeShippingThreshold[]
+   */
+  public function setFreeShippingThreshold($freeShippingThreshold)
+  {
+    $this->freeShippingThreshold = $freeShippingThreshold;
+  }
+  /**
+   * @return FreeShippingThreshold[]
+   */
+  public function getFreeShippingThreshold()
+  {
+    return $this->freeShippingThreshold;
+  }
+  /**
    * @param string
    */
   public function setGender($gender)
@@ -1057,18 +1097,32 @@ class Product extends \Google\Collection
     return $this->linkTemplate;
   }
   /**
-   * @param LoyaltyPoints
+   * @param LoyaltyProgram
    */
-  public function setLoyaltyPoints(LoyaltyPoints $loyaltyPoints)
+  public function setLoyaltyProgram(LoyaltyProgram $loyaltyProgram)
   {
-    $this->loyaltyPoints = $loyaltyPoints;
+    $this->loyaltyProgram = $loyaltyProgram;
   }
   /**
-   * @return LoyaltyPoints
+   * @return LoyaltyProgram
    */
-  public function getLoyaltyPoints()
+  public function getLoyaltyProgram()
   {
-    return $this->loyaltyPoints;
+    return $this->loyaltyProgram;
+  }
+  /**
+   * @param LoyaltyProgram[]
+   */
+  public function setLoyaltyPrograms($loyaltyPrograms)
+  {
+    $this->loyaltyPrograms = $loyaltyPrograms;
+  }
+  /**
+   * @return LoyaltyProgram[]
+   */
+  public function getLoyaltyPrograms()
+  {
+    return $this->loyaltyPrograms;
   }
   /**
    * @param string
@@ -1589,6 +1643,34 @@ class Product extends \Google\Collection
     return $this->source;
   }
   /**
+   * @param ProductStructuredDescription
+   */
+  public function setStructuredDescription(ProductStructuredDescription $structuredDescription)
+  {
+    $this->structuredDescription = $structuredDescription;
+  }
+  /**
+   * @return ProductStructuredDescription
+   */
+  public function getStructuredDescription()
+  {
+    return $this->structuredDescription;
+  }
+  /**
+   * @param ProductStructuredTitle
+   */
+  public function setStructuredTitle(ProductStructuredTitle $structuredTitle)
+  {
+    $this->structuredTitle = $structuredTitle;
+  }
+  /**
+   * @return ProductStructuredTitle
+   */
+  public function getStructuredTitle()
+  {
+    return $this->structuredTitle;
+  }
+  /**
    * @param ProductSubscriptionCost
    */
   public function setSubscriptionCost(ProductSubscriptionCost $subscriptionCost)
@@ -1601,6 +1683,20 @@ class Product extends \Google\Collection
   public function getSubscriptionCost()
   {
     return $this->subscriptionCost;
+  }
+  /**
+   * @param ProductSustainabilityIncentive[]
+   */
+  public function setSustainabilityIncentives($sustainabilityIncentives)
+  {
+    $this->sustainabilityIncentives = $sustainabilityIncentives;
+  }
+  /**
+   * @return ProductSustainabilityIncentive[]
+   */
+  public function getSustainabilityIncentives()
+  {
+    return $this->sustainabilityIncentives;
   }
   /**
    * @param string

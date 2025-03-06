@@ -6,8 +6,12 @@ use SergiX44\Hydrator\Annotation\ArrayType;
 use SergiX44\Hydrator\Resolver\EnumOrScalar;
 use SergiX44\Nutgram\Telegram\Properties\ChatType;
 use SergiX44\Nutgram\Telegram\Types\BaseType;
+use SergiX44\Nutgram\Telegram\Types\Business\BusinessIntro;
+use SergiX44\Nutgram\Telegram\Types\Business\BusinessLocation;
+use SergiX44\Nutgram\Telegram\Types\Business\BusinessOpeningHours;
 use SergiX44\Nutgram\Telegram\Types\Message\Message;
 use SergiX44\Nutgram\Telegram\Types\Reaction\ReactionType;
+use SergiX44\Nutgram\Telegram\Types\User\Birthdate;
 
 /**
  * This object represents a chat.
@@ -22,7 +26,7 @@ class Chat extends BaseType
      */
     public int $id;
 
-    /** Type of chat, can be either “private”, “group”, “supergroup” or “channel” */
+    /** Type of the chat, can be either “private”, “group”, “supergroup” or “channel” */
     #[EnumOrScalar]
     public ChatType|string $type;
 
@@ -39,14 +43,12 @@ class Chat extends BaseType
     public ?string $username = null;
 
     /**
-     * Optional.
-     * First name of the other party in a private chat
+     * Optional. First name of the other party in a private chat
      */
     public ?string $first_name = null;
 
     /**
-     * Optional.
-     * Last name of the other party in a private chat
+     * Optional. Last name of the other party in a private chat
      */
     public ?string $last_name = null;
 
@@ -55,6 +57,36 @@ class Chat extends BaseType
      * True, if the supergroup chat is a forum (has {@see https://telegram.org/blog/topics-in-groups-collectible-usernames#topics-in-groups topics} enabled)
      */
     public ?bool $is_forum = null;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ChatFullInfo Properties
+    |--------------------------------------------------------------------------
+    |
+    | https://core.telegram.org/bots/api#chatfullinfo
+    |
+    | The following properties are only returned by getChat method.
+    | https://core.telegram.org/bots/api#getchat
+    |
+    | To not make breaking changes, we will split this class in the next major version.
+    | @deprecated <= Bookmark this line for Nutgram 5.0.0
+    |
+    */
+
+    /**
+     * Optional.
+     * Identifier of the accent color for the chat name and backgrounds of the chat photo, reply header, and link preview.
+     * See {@see https://core.telegram.org/bots/api#accent-colors accent colors} for more details.
+     * Returned only in {@see https://core.telegram.org/bots/api#getchat getChat}.
+     * Always returned in getChat.
+     */
+    public ?int $accent_color_id = null;
+
+    /**
+     * The maximum number of reactions that can be set on a message in the chat
+     */
+    public ?int $max_reaction_count = null;
 
     /**
      * Optional.
@@ -74,6 +106,38 @@ class Chat extends BaseType
 
     /**
      * Optional.
+     * For private chats, the date of birth of the user.
+     * Returned only in {@see https://core.telegram.org/bots/api#getchat getChat}.
+     */
+    public ?Birthdate $birthdate = null;
+
+    /**
+     * Optional. For private chats with business accounts, the intro of the business.
+     * Returned only in {@see https://core.telegram.org/bots/api#getchat getChat}.
+     */
+    public ?BusinessIntro $business_intro = null;
+
+    /**
+     * Optional. For private chats with business accounts, the location of the business.
+     * Returned only in {@see https://core.telegram.org/bots/api#getchat getChat}.
+     */
+    public ?BusinessLocation $business_location = null;
+
+    /**
+     * Optional. For private chats with business accounts, the opening hours of the business.
+     * Returned only in {@see https://core.telegram.org/bots/api#getchat getChat}.
+     */
+    public ?BusinessOpeningHours $business_opening_hours = null;
+
+    /**
+     * Optional.
+     * For private chats, the personal channel of the user.
+     * Returned only in {@see https://core.telegram.org/bots/api#getchat getChat}.
+     */
+    public ?Chat $personal_chat = null;
+
+    /**
+     * Optional.
      * List of available reactions allowed in the chat.
      * If omitted, then all {@see https://core.telegram.org/bots/api#reactiontypeemoji emoji reactions} are allowed.
      * Returned only in {@see https://core.telegram.org/bots/api#getchat getChat}.
@@ -81,15 +145,6 @@ class Chat extends BaseType
      */
     #[ArrayType(ReactionType::class)]
     public ?array $available_reactions = null;
-
-    /**
-     * Optional.
-     * Identifier of the accent color for the chat name and backgrounds of the chat photo, reply header, and link preview.
-     * See {@see https://core.telegram.org/bots/api#accent-colors accent colors} for more details.
-     * Returned only in {@see https://core.telegram.org/bots/api#getchat getChat}.
-     * Always returned in getChat.
-     */
-    public ?int $accent_color_id = null;
 
     /**
      * Optional.
@@ -192,11 +247,32 @@ class Chat extends BaseType
 
     /**
      * Optional.
+     * True, if gifts can be sent to the chat
+     */
+    public ?bool $can_send_gift = null;
+
+    /**
+     * Optional.
+     * True, if paid media messages can be sent or forwarded to the channel chat.
+     * The field is available only for channel chats.
+     */
+    public ?bool $can_send_paid_media = null;
+
+    /**
+     * Optional.
      * For supergroups, the minimum allowed delay between consecutive messages sent by each unpriviledged user;
      * in seconds.
      * Returned only in {@see https://core.telegram.org/bots/api#getchat getChat}.
      */
     public ?int $slow_mode_delay = null;
+
+    /**
+     * Optional.
+     * For supergroups, the minimum number of boosts that a non-administrator user
+     * needs to add in order to ignore slow mode and chat permissions.
+     * Returned only in {@see https://core.telegram.org/bots/api#getchat getChat}.
+     */
+    public ?int $unrestrict_boost_count = null;
 
     /**
      * Optional.
@@ -249,6 +325,13 @@ class Chat extends BaseType
     public ?bool $can_set_sticker_set = null;
 
     /**
+     * Optional. For supergroups, the name of the group's custom emoji sticker set.
+     * Custom emoji from this set can be used by all users and bots in the group.
+     * Returned only in {@see https://core.telegram.org/bots/api#getchat getChat}.
+     */
+    public ?string $custom_emoji_sticker_set_name = null;
+
+    /**
      * Optional.
      * Unique identifier for the linked chat, i.e.
      * the discussion group identifier for a channel and vice versa;
@@ -295,6 +378,8 @@ class Chat extends BaseType
         ?bool $can_set_sticker_set = null,
         ?int $linked_chat_id = null,
         ?ChatLocation $location = null,
+        ?bool $can_send_paid_media = null,
+        ?bool $can_send_gift = null,
     ): Chat {
         $chat = new self();
         $chat->id = $id;
@@ -325,6 +410,8 @@ class Chat extends BaseType
         $chat->can_set_sticker_set = $can_set_sticker_set;
         $chat->linked_chat_id = $linked_chat_id;
         $chat->location = $location;
+        $chat->can_send_paid_media = $can_send_paid_media;
+        $chat->can_send_gift = $can_send_gift;
         return $chat;
     }
 

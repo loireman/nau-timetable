@@ -19,7 +19,7 @@ namespace Google\Service\SQLAdmin;
 
 class DatabaseInstance extends \Google\Collection
 {
-  protected $collection_key = 'suspensionReason';
+  protected $collection_key = 'upgradableDatabaseVersions';
   /**
    * @var string[]
    */
@@ -66,6 +66,12 @@ class DatabaseInstance extends \Google\Collection
    * @var string
    */
   public $gceZone;
+  protected $geminiConfigType = GeminiInstanceConfig::class;
+  protected $geminiConfigDataType = '';
+  /**
+   * @var bool
+   */
+  public $includeReplicasForMajorVersionUpgrade;
   /**
    * @var string
    */
@@ -122,10 +128,16 @@ class DatabaseInstance extends \Google\Collection
    * @var string[]
    */
   public $replicaNames;
+  protected $replicationClusterType = ReplicationCluster::class;
+  protected $replicationClusterDataType = '';
   /**
    * @var string
    */
   public $rootPassword;
+  /**
+   * @var bool
+   */
+  public $satisfiesPzi;
   /**
    * @var bool
    */
@@ -160,6 +172,16 @@ class DatabaseInstance extends \Google\Collection
    * @var string[]
    */
   public $suspensionReason;
+  /**
+   * @var bool
+   */
+  public $switchTransactionLogsToCloudStorageEnabled;
+  /**
+   * @var string[]
+   */
+  public $tags;
+  protected $upgradableDatabaseVersionsType = AvailableDatabaseVersion::class;
+  protected $upgradableDatabaseVersionsDataType = 'array';
   /**
    * @var string
    */
@@ -346,6 +368,34 @@ class DatabaseInstance extends \Google\Collection
   public function getGceZone()
   {
     return $this->gceZone;
+  }
+  /**
+   * @param GeminiInstanceConfig
+   */
+  public function setGeminiConfig(GeminiInstanceConfig $geminiConfig)
+  {
+    $this->geminiConfig = $geminiConfig;
+  }
+  /**
+   * @return GeminiInstanceConfig
+   */
+  public function getGeminiConfig()
+  {
+    return $this->geminiConfig;
+  }
+  /**
+   * @param bool
+   */
+  public function setIncludeReplicasForMajorVersionUpgrade($includeReplicasForMajorVersionUpgrade)
+  {
+    $this->includeReplicasForMajorVersionUpgrade = $includeReplicasForMajorVersionUpgrade;
+  }
+  /**
+   * @return bool
+   */
+  public function getIncludeReplicasForMajorVersionUpgrade()
+  {
+    return $this->includeReplicasForMajorVersionUpgrade;
   }
   /**
    * @param string
@@ -572,6 +622,20 @@ class DatabaseInstance extends \Google\Collection
     return $this->replicaNames;
   }
   /**
+   * @param ReplicationCluster
+   */
+  public function setReplicationCluster(ReplicationCluster $replicationCluster)
+  {
+    $this->replicationCluster = $replicationCluster;
+  }
+  /**
+   * @return ReplicationCluster
+   */
+  public function getReplicationCluster()
+  {
+    return $this->replicationCluster;
+  }
+  /**
    * @param string
    */
   public function setRootPassword($rootPassword)
@@ -584,6 +648,20 @@ class DatabaseInstance extends \Google\Collection
   public function getRootPassword()
   {
     return $this->rootPassword;
+  }
+  /**
+   * @param bool
+   */
+  public function setSatisfiesPzi($satisfiesPzi)
+  {
+    $this->satisfiesPzi = $satisfiesPzi;
+  }
+  /**
+   * @return bool
+   */
+  public function getSatisfiesPzi()
+  {
+    return $this->satisfiesPzi;
   }
   /**
    * @param bool
@@ -724,6 +802,48 @@ class DatabaseInstance extends \Google\Collection
   public function getSuspensionReason()
   {
     return $this->suspensionReason;
+  }
+  /**
+   * @param bool
+   */
+  public function setSwitchTransactionLogsToCloudStorageEnabled($switchTransactionLogsToCloudStorageEnabled)
+  {
+    $this->switchTransactionLogsToCloudStorageEnabled = $switchTransactionLogsToCloudStorageEnabled;
+  }
+  /**
+   * @return bool
+   */
+  public function getSwitchTransactionLogsToCloudStorageEnabled()
+  {
+    return $this->switchTransactionLogsToCloudStorageEnabled;
+  }
+  /**
+   * @param string[]
+   */
+  public function setTags($tags)
+  {
+    $this->tags = $tags;
+  }
+  /**
+   * @return string[]
+   */
+  public function getTags()
+  {
+    return $this->tags;
+  }
+  /**
+   * @param AvailableDatabaseVersion[]
+   */
+  public function setUpgradableDatabaseVersions($upgradableDatabaseVersions)
+  {
+    $this->upgradableDatabaseVersions = $upgradableDatabaseVersions;
+  }
+  /**
+   * @return AvailableDatabaseVersion[]
+   */
+  public function getUpgradableDatabaseVersions()
+  {
+    return $this->upgradableDatabaseVersions;
   }
   /**
    * @param string

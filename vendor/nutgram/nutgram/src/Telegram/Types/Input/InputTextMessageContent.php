@@ -3,6 +3,7 @@
 namespace SergiX44\Nutgram\Telegram\Types\Input;
 
 use SergiX44\Hydrator\Annotation\ArrayType;
+use SergiX44\Hydrator\Annotation\SkipConstructor;
 use SergiX44\Nutgram\Telegram\Properties\ParseMode;
 use SergiX44\Nutgram\Telegram\Types\Message\LinkPreviewOptions;
 use SergiX44\Nutgram\Telegram\Types\Message\MessageEntity;
@@ -12,6 +13,7 @@ use function SergiX44\Nutgram\Support\array_filter_null;
  * Represents the {@see https://core.telegram.org/bots/api#inputmessagecontent content} of a text message to be sent as the result of an inline query.
  * @see https://core.telegram.org/bots/api#inputtextmessagecontent
  */
+#[SkipConstructor]
 class InputTextMessageContent extends InputMessageContent
 {
     /** Text of the message to be sent, 1-4096 characters */
@@ -41,7 +43,6 @@ class InputTextMessageContent extends InputMessageContent
 
     /**
      * Optional. Link preview generation options for the message
-     * @var LinkPreviewOptions|null
      */
     public ?LinkPreviewOptions $link_preview_options = null;
 
@@ -79,6 +80,7 @@ class InputTextMessageContent extends InputMessageContent
             'parse_mode' => $this->parse_mode,
             'entities' => $this->entities,
             'disable_web_page_preview' => $this->disable_web_page_preview,
+            'link_preview_options' => $this->link_preview_options,
         ]);
     }
 }

@@ -8,6 +8,7 @@ use SergiX44\Nutgram\Telegram\Types\Message\Message;
 use SergiX44\Nutgram\Telegram\Types\Message\ReplyParameters;
 use SergiX44\Nutgram\Telegram\Types\Payment\LabeledPrice;
 use SergiX44\Nutgram\Telegram\Types\Payment\ShippingOption;
+use SergiX44\Nutgram\Telegram\Types\Payment\StarTransactions;
 
 /**
  * Trait Payments
@@ -23,8 +24,8 @@ trait Payments
      * @param string $title Product name, 1-32 characters
      * @param string $description Product description, 1-255 characters
      * @param string $payload Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal processes.
-     * @param string $provider_token Payment provider token, obtained via {@see https://t.me/botfather @BotFather}
-     * @param string $currency Three-letter ISO 4217 currency code, see {@see https://core.telegram.org/bots/payments#supported-currencies more on currencies}
+     * @param string $provider_token Payment provider token, obtained via {@see https://t.me/botfather @BotFather}. Pass an empty string for payments in {@see https://t.me/BotNews/90 Telegram Stars}.
+     * @param string $currency Three-letter ISO 4217 currency code, see {@see https://core.telegram.org/bots/payments#supported-currencies more on currencies}. Pass “XTR” for payments in {@see https://t.me/BotNews/90 Telegram Stars}.
      * @param LabeledPrice[] $prices Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
      * @param int|string|null $chat_id Unique identifier for the target chat or username of the target channel (in the format &#64;channelusername)
      * @param int|null $message_thread_id Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
@@ -49,6 +50,8 @@ trait Payments
      * @param bool|null $allow_sending_without_reply Pass True if the message should be sent even if the specified replied-to message is not found
      * @param ReplyParameters|null $reply_parameters Description of the message to reply to
      * @param InlineKeyboardMarkup|null $reply_markup A JSON-serialized object for an {@see https://core.telegram.org/bots/features#inline-keyboards inline keyboard}. If empty, one 'Pay total price' button will be shown. If not empty, the first button must be a Pay button.
+     * @param string|null $message_effect_id Unique identifier of the message effect to be added to the message; for private chats only
+     * @param bool|null $allow_paid_broadcast Pass True to allow up to 1000 messages per second, ignoring {@see https://core.telegram.org/bots/faq#how-can-i-message-all-of-my-bot-39s-subscribers-at-once broadcasting limits} for a fee of 0.1 Telegram Stars per message. The relevant Stars will be withdrawn from the bot's balance
      * @return Message|null
      */
     public function sendInvoice(
@@ -81,8 +84,11 @@ trait Payments
         ?bool $allow_sending_without_reply = null,
         ?ReplyParameters $reply_parameters = null,
         ?InlineKeyboardMarkup $reply_markup = null,
+        ?string $message_effect_id = null,
+        ?bool $allow_paid_broadcast = null,
     ): ?Message {
         $chat_id ??= $this->chatId();
+        $message_thread_id ??= $this->messageThreadId();
         $parameters = compact(
             'chat_id',
             'message_thread_id',
@@ -112,7 +118,9 @@ trait Payments
             'reply_to_message_id',
             'allow_sending_without_reply',
             'reply_parameters',
-            'reply_markup'
+            'reply_markup',
+            'message_effect_id',
+            'allow_paid_broadcast',
         );
         $parameters['prices'] = json_encode($prices, JSON_THROW_ON_ERROR);
         return $this->requestJson(__FUNCTION__, $parameters, Message::class);
@@ -125,8 +133,8 @@ trait Payments
      * @param string $title Product name, 1-32 characters
      * @param string $description Product description, 1-255 characters
      * @param string $payload Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal processes.
-     * @param string $provider_token Payment provider token, obtained via {@see https://t.me/botfather BotFather}
-     * @param string $currency Three-letter ISO 4217 currency code, see {@see https://core.telegram.org/bots/payments#supported-currencies more on currencies}
+     * @param string $provider_token Payment provider token, obtained via {@see https://t.me/botfather BotFather}. Pass an empty string for payments in {@see https://t.me/BotNews/90 Telegram Stars}.
+     * @param string $currency Three-letter ISO 4217 currency code, see {@see https://core.telegram.org/bots/payments#supported-currencies more on currencies}. Pass “XTR” for payments in {@see https://t.me/BotNews/90 Telegram Stars}.
      * @param LabeledPrice[] $prices Price breakdown, a JSON-serialized list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
      * @param int|null $max_tip_amount The maximum accepted amount for tips in the smallest units of the currency (integer, not float/double). For example, for a maximum tip of US$ 1.45 pass max_tip_amount = 145. See the exp parameter in {@see https://core.telegram.org/bots/payments/currencies.json currencies.json}, it shows the number of digits past the decimal point for each currency (2 for the majority of currencies). Defaults to 0
      * @param int[]|null $suggested_tip_amounts A JSON-serialized array of suggested amounts of tips in the smallest units of the currency (integer, not float/double). At most 4 suggested tip amounts can be specified. The suggested tip amounts must be positive, passed in a strictly increased order and must not exceed max_tip_amount.
@@ -142,6 +150,8 @@ trait Payments
      * @param bool|null $send_phone_number_to_provider Pass True if the user's phone number should be sent to the provider
      * @param bool|null $send_email_to_provider Pass True if the user's email address should be sent to the provider
      * @param bool|null $is_flexible Pass True if the final price depends on the shipping method
+     * @param int|null $subscription_period The number of seconds the subscription will be active for before the next payment. The currency must be set to “XTR” (Telegram Stars) if the parameter is used. Currently, it must always be 2592000 (30 days) if specified.
+     * @param string|null $business_connection_id Unique identifier of the business connection on behalf of which the link will be created
      * @return string|null
      */
     public function createInvoiceLink(
@@ -165,6 +175,8 @@ trait Payments
         ?bool $send_phone_number_to_provider = null,
         ?bool $send_email_to_provider = null,
         ?bool $is_flexible = null,
+        ?int $subscription_period = null,
+        ?string $business_connection_id = null,
     ): ?string {
         $parameters = compact(
             'title',
@@ -186,7 +198,9 @@ trait Payments
             'need_shipping_address',
             'send_phone_number_to_provider',
             'send_email_to_provider',
-            'is_flexible'
+            'is_flexible',
+            'subscription_period',
+            'business_connection_id',
         );
         return $this->requestJson(__FUNCTION__, $parameters);
     }
@@ -232,6 +246,59 @@ trait Payments
     ): ?bool {
         $pre_checkout_query_id ??= $this->preCheckoutQuery()?->id;
         $parameters = compact('pre_checkout_query_id', 'ok', 'error_message');
+
+        return $this->requestJson(__FUNCTION__, $parameters);
+    }
+
+    /**
+     * Returns the bot's Telegram Star transactions in chronological order.
+     * On success, returns a {@see https://core.telegram.org/bots/api#startransactions StarTransactions} object.
+     * @param int|null $offset Number of transactions to skip in the response
+     * @param int|null $limit The maximum number of transactions to be retrieved. Values between 1-100 are accepted. Defaults to 100.
+     * @return StarTransactions|null
+     * @see https://core.telegram.org/bots/api#getstartransactions
+     */
+    public function getStarTransactions(?int $offset = null, ?int $limit = null): ?StarTransactions
+    {
+        $parameters = compact('offset', 'limit');
+
+        return $this->requestJson(__FUNCTION__, $parameters, StarTransactions::class);
+    }
+
+    /**
+     * Allows the bot to cancel or re-enable extension of a subscription paid in Telegram Stars.
+     * Returns True on success.
+     * @param string $telegram_payment_charge_id Telegram payment identifier for the subscription
+     * @param bool $is_canceled Pass True to cancel extension of the user subscription; the subscription must be active up to the end of the current subscription period. Pass False to allow the user to re-enable a subscription that was previously canceled by the bot.
+     * @param int|null $user_id Identifier of the user whose subscription will be edited
+     * @return bool|null
+     * @see https://core.telegram.org/bots/api#edituserstarsubscription
+     */
+    public function editUserStarSubscription(
+        string $telegram_payment_charge_id,
+        bool $is_canceled,
+        ?int $user_id = null,
+    ): ?bool {
+        $user_id ??= $this->userId();
+        $parameters = compact('user_id', 'telegram_payment_charge_id', 'is_canceled');
+
+        return $this->requestJson(__FUNCTION__, $parameters);
+    }
+
+    /**
+     * Refunds a successful payment in {@see https://t.me/BotNews/90 Telegram Stars}.
+     * Returns True on success.
+     * @see https://core.telegram.org/bots/api#refundstarpayment
+     * @param int|null $user_id Identifier of the user whose payment will be refunded
+     * @param string $telegram_payment_charge_id Telegram payment identifier
+     * @return bool|null
+     */
+    public function refundStarPayment(
+        string $telegram_payment_charge_id,
+        ?int $user_id = null
+    ): ?bool {
+        $user_id ??= $this->userId();
+        $parameters = compact('user_id', 'telegram_payment_charge_id');
 
         return $this->requestJson(__FUNCTION__, $parameters);
     }

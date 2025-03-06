@@ -5,6 +5,7 @@ namespace SergiX44\Nutgram\Handlers;
 
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use SergiX44\Container\Container;
 use SergiX44\Nutgram\Cache\ConversationCache;
 use SergiX44\Nutgram\Cache\GlobalCache;
 use SergiX44\Nutgram\Cache\UserCache;
@@ -46,6 +47,8 @@ abstract class ResolveHandlers extends CollectHandlers
 
     abstract public function getConfig(): Configuration;
 
+    abstract public function getContainer(): Container;
+
     /**
      * @param int|null $userId
      * @param int|null $chatId
@@ -82,6 +85,9 @@ abstract class ResolveHandlers extends CollectHandlers
             } elseif ($messageType === MessageType::SUCCESSFUL_PAYMENT) {
                 $data = $this->update->getMessage()->successful_payment?->invoice_payload;
                 $this->addHandlersBy($resolvedHandlers, $updateType->value, $messageType->value, $data);
+            } elseif ($messageType === MessageType::REFUNDED_PAYMENT) {
+                $data = $this->update->getMessage()->refunded_payment?->invoice_payload;
+                $this->addHandlersBy($resolvedHandlers, $updateType->value, $messageType->value, $data);
             }
 
             if (count($resolvedHandlers) === 0) {
@@ -98,6 +104,9 @@ abstract class ResolveHandlers extends CollectHandlers
             $this->addHandlersBy($resolvedHandlers, $updateType->value, value: $data);
         } elseif ($updateType === UpdateType::INLINE_QUERY) {
             $data = $this->update->inline_query?->query;
+            $this->addHandlersBy($resolvedHandlers, $updateType->value, value: $data);
+        } elseif ($updateType === UpdateType::PURCHASED_PAID_MEDIA) {
+            $data = $this->update->purchased_paid_media?->paid_media_payload;
             $this->addHandlersBy($resolvedHandlers, $updateType->value, value: $data);
         }
 
@@ -142,7 +151,7 @@ abstract class ResolveHandlers extends CollectHandlers
             if (
                 ($subType !== null && $handler->getPattern() === $subType) ||
                 ($value === null && $handler->getPattern() === null) ||
-                ($value !== null && $handler->matching($value))
+                ($value !== null && $handler->matching($value, $this->getContainer()))
             ) {
                 $handlers[] = $handler;
             }
@@ -209,11 +218,30 @@ abstract class ResolveHandlers extends CollectHandlers
         }
     }
 
+    protected function applyRateLimitersTo(Handler $handler): void
+    {
+        if ($handler->isWithoutRateLimit()) {
+            return;
+        }
+
+        // load handler rate limiter or group rate limiter
+        if ($handler->getRateLimit() !== null) {
+            $handler->middleware($handler->getRateLimit());
+            return;
+        }
+
+        // load global rate limiter
+        if ($this->getRateLimit() !== null) {
+            $handler->middleware($this->getRateLimit()->setKey('global'));
+        }
+    }
+
     protected function applyGlobalMiddleware(): void
     {
         array_walk_recursive($this->handlers, function ($leaf) {
             if ($leaf instanceof Handler) {
                 $this->applyGlobalMiddlewareTo($leaf);
+                $this->applyRateLimitersTo($leaf);
             }
         });
     }
@@ -263,20 +291,27 @@ abstract class ResolveHandlers extends CollectHandlers
         array $currentScopes = [],
         array $currentTags = [],
         array $currentConstraints = [],
+        array $currentRateLimiters = [],
     ) {
         foreach ($groups as $group) {
             $middlewares = [...$group->getMiddlewares(), ...$currentMiddlewares,];
             $scopes = [...$currentScopes, ...$group->getScopes()];
             $tags = [...$currentTags, ...$group->getTags()];
             $constraints = [...$currentConstraints, ...$group->getConstraints()];
+            $rateLimiters = [
+                ...$currentRateLimiters,
+                ...($group->getRateLimit() !== null ? [$group->getRateLimit()->setKey($group->getHash())] : []),
+            ];
             $this->groupHandlers = [];
             ($group->groupCallable)($this);
 
             // apply the middleware stack to the current registered group handlers
             array_walk_recursive(
                 $this->groupHandlers,
-                function ($leaf) use ($constraints, $tags, $middlewares, $scopes, $group) {
+                function ($leaf) use ($rateLimiters, $constraints, $tags, $middlewares, $scopes, $group) {
                     if ($leaf instanceof Handler) {
+                        $leaf->appendRateLimiters(array_reverse($rateLimiters));
+                        $leaf->withoutThrottle($group->isWithoutRateLimit());
                         foreach ($middlewares as $middleware) {
                             $leaf->middleware($middleware);
                         }
@@ -286,6 +321,7 @@ abstract class ResolveHandlers extends CollectHandlers
                         $leaf->tags([...$leaf->getTags(), ...$tags]);
                         $leaf->unless($group->isDisabled());
                         $leaf->where($constraints);
+                        $leaf->insensitive($group->isInsensitive());
                     }
                 }
             );

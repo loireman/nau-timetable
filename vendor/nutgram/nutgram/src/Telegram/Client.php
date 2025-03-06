@@ -27,11 +27,11 @@ use SergiX44\Nutgram\Telegram\Endpoints\UpdateMethods;
 use SergiX44\Nutgram\Telegram\Endpoints\UpdatesMessages;
 use SergiX44\Nutgram\Telegram\Exceptions\TelegramException;
 use SergiX44\Nutgram\Telegram\Types\Internal\InputFile;
+use SergiX44\Nutgram\Telegram\Types\Internal\UnknownType;
 use SergiX44\Nutgram\Telegram\Types\Internal\Uploadable;
 use SergiX44\Nutgram\Telegram\Types\Internal\UploadableArray;
 use SergiX44\Nutgram\Telegram\Types\Media\File;
 use SergiX44\Nutgram\Telegram\Types\Message\Message;
-use stdClass;
 use function SergiX44\Nutgram\Support\array_filter_null;
 use function SergiX44\Nutgram\Support\word_wrap;
 
@@ -54,6 +54,14 @@ trait Client
         UpdateMethods,
         ProvidesHttpResponse;
 
+    protected $progressHandler = null;
+
+    public function withProgress(string|array|callable|object $callable): static
+    {
+        $this->progressHandler = $callable;
+        return $this;
+    }
+
     /**
      * @param string $endpoint
      * @param array $parameters
@@ -65,7 +73,11 @@ trait Client
      */
     public function sendRequest(string $endpoint, array $parameters = [], array $options = []): mixed
     {
-        return $this->requestMultipart($endpoint, $parameters, options: $options);
+        if (!empty($parameters)) {
+            return $this->requestMultipart($endpoint, $parameters, options: $options);
+        }
+
+        return $this->requestJson($endpoint, options: $options);
     }
 
     /**
@@ -123,12 +135,29 @@ trait Client
             return copy($this->downloadUrl($file), $path);
         }
 
+        if ($this->progressHandler !== null) {
+            $clientOpt = [
+                'progress' => function (int $totalDownloadBytes, int $downloadedBytes, int $totalUploadBytes, int $uploadedBytes) {
+                    $this->invoke($this->progressHandler, [
+                        new Progress(
+                            totalDownloadBytes: $totalDownloadBytes,
+                            downloadedBytes: $downloadedBytes,
+                            totalUploadBytes: $totalUploadBytes,
+                            uploadedBytes: $uploadedBytes,
+                        ),
+                    ]);
+                },
+                ...$clientOpt,
+            ];
+        }
+
         $request = ['sink' => $path, ...$clientOpt];
         $endpoint = $this->downloadUrl($file);
 
         $requestPost = $this->fireHandlersBy(self::BEFORE_API_REQUEST, [$request, $endpoint]);
         try {
             $response = $this->http->get($endpoint, $requestPost ?? $request);
+            $this->progressHandler = null;
         } catch (ConnectException $e) {
             $this->redactTokenFromConnectException($e);
         }
@@ -166,11 +195,11 @@ trait Client
     protected function requestMultipart(
         string $endpoint,
         array $multipart = [],
-        string $mapTo = stdClass::class,
+        string $mapTo = UnknownType::class,
         array $options = []
     ): mixed {
         $parameters = [];
-        foreach (array_filter($multipart) as $name => $contents) {
+        foreach (array_filter_null($multipart) as $name => $contents) {
             if ($contents instanceof UploadableArray || $contents instanceof Uploadable) {
                 $files = $contents instanceof UploadableArray ? $contents->files : [$contents];
                 foreach ($files as $file) {
@@ -201,6 +230,22 @@ trait Client
             };
         }
 
+        if ($this->progressHandler !== null) {
+            $options = [
+                'progress' => function (int $totalDownloadBytes, int $downloadedBytes, int $totalUploadBytes, int $uploadedBytes) {
+                    $this->invoke($this->progressHandler, [
+                        new Progress(
+                            totalDownloadBytes: $totalDownloadBytes,
+                            downloadedBytes: $downloadedBytes,
+                            totalUploadBytes: $totalUploadBytes,
+                            uploadedBytes: $uploadedBytes,
+                        ),
+                    ]);
+                },
+                ...$options,
+            ];
+        }
+
         $request = ['multipart' => $parameters, ...$options];
 
         try {
@@ -215,6 +260,7 @@ trait Client
 
             try {
                 $response = $this->http->post($endpoint, $requestData);
+                $this->progressHandler = null;
             } catch (ConnectException $e) {
                 $this->redactTokenFromConnectException($e);
             }
@@ -244,13 +290,29 @@ trait Client
     protected function requestJson(
         string $endpoint,
         array $json = [],
-        string $mapTo = stdClass::class,
+        string $mapTo = UnknownType::class,
         array $options = []
     ): mixed {
         $json = array_map(fn ($item) => match (true) {
             $item instanceof BackedEnum => $item->value,
             default => $item,
         }, array_filter_null($json));
+
+        if ($this->progressHandler !== null) {
+            $options = [
+                'progress' => function (int $totalDownloadBytes, int $downloadedBytes, int $totalUploadBytes, int $uploadedBytes) {
+                    $this->invoke($this->progressHandler, [
+                        new Progress(
+                            totalDownloadBytes: $totalDownloadBytes,
+                            downloadedBytes: $downloadedBytes,
+                            totalUploadBytes: $totalUploadBytes,
+                            uploadedBytes: $uploadedBytes,
+                        ),
+                    ]);
+                },
+                ...$options,
+            ];
+        }
 
         $request = ['json' => $json, ...$options];
 
@@ -273,6 +335,7 @@ trait Client
                     'headers' => ['Content-Type' => 'application/json'],
                     ...$requestData,
                 ]);
+                $this->progressHandler = null;
             } catch (ConnectException $e) {
                 $this->redactTokenFromConnectException($e);
             }
@@ -297,7 +360,7 @@ trait Client
      * @throws JsonException
      * @throws TelegramException
      */
-    protected function mapResponse(ResponseInterface $response, string $mapTo, Exception $clientException = null): mixed
+    protected function mapResponse(ResponseInterface $response, string $mapTo, ?Exception $clientException = null): mixed
     {
         $json = json_decode((string)$response->getBody(), flags: JSON_THROW_ON_ERROR);
         $json = $this->fireHandlersBy(self::AFTER_API_REQUEST, [$json]) ?? $json;

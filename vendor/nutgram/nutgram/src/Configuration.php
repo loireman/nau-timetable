@@ -3,6 +3,7 @@
 namespace SergiX44\Nutgram;
 
 use Closure;
+use DateInterval;
 use Laravel\SerializableClosure\SerializableClosure;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -26,6 +27,10 @@ final readonly class Configuration
         'edited_message',
         'channel_post',
         'edited_channel_post',
+        'business_connection',
+        'business_message',
+        'edited_business_message',
+        'deleted_business_messages',
         'message_reaction',
         'message_reaction_count',
         'inline_query',
@@ -33,6 +38,7 @@ final readonly class Configuration
         'callback_query',
         'shipping_query',
         'pre_checkout_query',
+        'purchased_paid_media',
         'poll',
         'poll_answer',
         'my_chat_member',
@@ -42,6 +48,8 @@ final readonly class Configuration
         'removed_chat_boost',
     ];
     public const DEFAULT_ENABLE_HTTP2 = true;
+
+    public const DEFAULT_CONVERSATION_TTL = 43200;
 
     public function __construct(
         public string $apiUrl = self::DEFAULT_API_URL,
@@ -60,6 +68,7 @@ final readonly class Configuration
         public array $pollingAllowedUpdates = self::DEFAULT_ALLOWED_UPDATES,
         public int $pollingLimit = self::DEFAULT_POLLING_LIMIT,
         public bool $enableHttp2 = self::DEFAULT_ENABLE_HTTP2,
+        public DateInterval|int|null $conversationTtl = self::DEFAULT_CONVERSATION_TTL,
         public array $extra = [],
     ) {
     }
@@ -84,6 +93,9 @@ final readonly class Configuration
             pollingAllowedUpdates: $config['polling']['allowed_updates'] ?? self::DEFAULT_ALLOWED_UPDATES,
             pollingLimit: $config['polling']['limit'] ?? self::DEFAULT_POLLING_LIMIT,
             enableHttp2: $config['enable_http2'] ?? self::DEFAULT_ENABLE_HTTP2,
+            conversationTtl: array_key_exists('conversation_ttl', $config)
+                ? $config['conversation_ttl']
+                : self::DEFAULT_CONVERSATION_TTL,
             extra: $config['extra'] ?? [],
         );
     }
@@ -109,6 +121,7 @@ final readonly class Configuration
                 'limit' => $this->pollingLimit,
                 'allowed_updates' => $this->pollingAllowedUpdates,
             ],
+            'conversation_ttl' => $this->conversationTtl,
             'extra' => $this->extra,
         ];
     }
