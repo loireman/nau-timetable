@@ -21,10 +21,16 @@ class RemoteRepositoryConfig extends \Google\Model
 {
   protected $aptRepositoryType = AptRepository::class;
   protected $aptRepositoryDataType = '';
+  protected $commonRepositoryType = CommonRemoteRepository::class;
+  protected $commonRepositoryDataType = '';
   /**
    * @var string
    */
   public $description;
+  /**
+   * @var bool
+   */
+  public $disableUpstreamValidation;
   protected $dockerRepositoryType = DockerRepository::class;
   protected $dockerRepositoryDataType = '';
   protected $mavenRepositoryType = MavenRepository::class;
@@ -53,6 +59,20 @@ class RemoteRepositoryConfig extends \Google\Model
     return $this->aptRepository;
   }
   /**
+   * @param CommonRemoteRepository
+   */
+  public function setCommonRepository(CommonRemoteRepository $commonRepository)
+  {
+    $this->commonRepository = $commonRepository;
+  }
+  /**
+   * @return CommonRemoteRepository
+   */
+  public function getCommonRepository()
+  {
+    return $this->commonRepository;
+  }
+  /**
    * @param string
    */
   public function setDescription($description)
@@ -65,6 +85,20 @@ class RemoteRepositoryConfig extends \Google\Model
   public function getDescription()
   {
     return $this->description;
+  }
+  /**
+   * @param bool
+   */
+  public function setDisableUpstreamValidation($disableUpstreamValidation)
+  {
+    $this->disableUpstreamValidation = $disableUpstreamValidation;
+  }
+  /**
+   * @return bool
+   */
+  public function getDisableUpstreamValidation()
+  {
+    return $this->disableUpstreamValidation;
   }
   /**
    * @param DockerRepository

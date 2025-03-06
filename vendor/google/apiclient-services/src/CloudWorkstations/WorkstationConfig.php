@@ -20,6 +20,8 @@ namespace Google\Service\CloudWorkstations;
 class WorkstationConfig extends \Google\Collection
 {
   protected $collection_key = 'replicaZones';
+  protected $allowedPortsType = PortRange::class;
+  protected $allowedPortsDataType = 'array';
   /**
    * @var string[]
    */
@@ -54,10 +56,16 @@ class WorkstationConfig extends \Google\Collection
   public $enableAuditAgent;
   protected $encryptionKeyType = CustomerEncryptionKey::class;
   protected $encryptionKeyDataType = '';
+  protected $ephemeralDirectoriesType = EphemeralDirectory::class;
+  protected $ephemeralDirectoriesDataType = 'array';
   /**
    * @var string
    */
   public $etag;
+  /**
+   * @var bool
+   */
+  public $grantWorkstationAdminRoleOnCreate;
   protected $hostType = Host::class;
   protected $hostDataType = '';
   /**
@@ -68,6 +76,10 @@ class WorkstationConfig extends \Google\Collection
    * @var string[]
    */
   public $labels;
+  /**
+   * @var int
+   */
+  public $maxUsableWorkstations;
   /**
    * @var string
    */
@@ -97,6 +109,20 @@ class WorkstationConfig extends \Google\Collection
    */
   public $updateTime;
 
+  /**
+   * @param PortRange[]
+   */
+  public function setAllowedPorts($allowedPorts)
+  {
+    $this->allowedPorts = $allowedPorts;
+  }
+  /**
+   * @return PortRange[]
+   */
+  public function getAllowedPorts()
+  {
+    return $this->allowedPorts;
+  }
   /**
    * @param string[]
    */
@@ -238,6 +264,20 @@ class WorkstationConfig extends \Google\Collection
     return $this->encryptionKey;
   }
   /**
+   * @param EphemeralDirectory[]
+   */
+  public function setEphemeralDirectories($ephemeralDirectories)
+  {
+    $this->ephemeralDirectories = $ephemeralDirectories;
+  }
+  /**
+   * @return EphemeralDirectory[]
+   */
+  public function getEphemeralDirectories()
+  {
+    return $this->ephemeralDirectories;
+  }
+  /**
    * @param string
    */
   public function setEtag($etag)
@@ -250,6 +290,20 @@ class WorkstationConfig extends \Google\Collection
   public function getEtag()
   {
     return $this->etag;
+  }
+  /**
+   * @param bool
+   */
+  public function setGrantWorkstationAdminRoleOnCreate($grantWorkstationAdminRoleOnCreate)
+  {
+    $this->grantWorkstationAdminRoleOnCreate = $grantWorkstationAdminRoleOnCreate;
+  }
+  /**
+   * @return bool
+   */
+  public function getGrantWorkstationAdminRoleOnCreate()
+  {
+    return $this->grantWorkstationAdminRoleOnCreate;
   }
   /**
    * @param Host
@@ -292,6 +346,20 @@ class WorkstationConfig extends \Google\Collection
   public function getLabels()
   {
     return $this->labels;
+  }
+  /**
+   * @param int
+   */
+  public function setMaxUsableWorkstations($maxUsableWorkstations)
+  {
+    $this->maxUsableWorkstations = $maxUsableWorkstations;
+  }
+  /**
+   * @return int
+   */
+  public function getMaxUsableWorkstations()
+  {
+    return $this->maxUsableWorkstations;
   }
   /**
    * @param string

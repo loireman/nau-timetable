@@ -19,6 +19,7 @@ namespace Google\Service\Aiplatform\Resource;
 
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1CopyModelRequest;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1ExportModelRequest;
+use Google\Service\Aiplatform\GoogleCloudAiplatformV1ListModelVersionCheckpointsResponse;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1ListModelVersionsResponse;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1ListModelsResponse;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1MergeVersionAliasesRequest;
@@ -181,8 +182,9 @@ class ProjectsLocationsModels extends \Google\Service\Resource
    * segment of the Model's resource name. * `display_name` supports = and != *
    * `labels` supports general map functions that is: * `labels.key=value` -
    * key:value equality * `labels.key:* or labels:key - key existence * A key
-   * including a space must be quoted. `labels."a key"`. Some examples: *
-   * `model=1234` * `displayName="myDisplayName"` * `labels.myKey="myValue"`
+   * including a space must be quoted. `labels."a key"`. * `base_model_name` only
+   * supports = Some examples: * `model=1234` * `displayName="myDisplayName"` *
+   * `labels.myKey="myValue"` * `baseModelName="text-bison"`
    * @opt_param string orderBy A comma-separated list of fields to order by,
    * sorted in ascending order. Use "desc" after a field name for descending.
    * Supported fields: * `display_name` * `create_time` * `update_time` Example:
@@ -200,6 +202,30 @@ class ProjectsLocationsModels extends \Google\Service\Resource
     $params = ['parent' => $parent];
     $params = array_merge($params, $optParams);
     return $this->call('list', [$params], GoogleCloudAiplatformV1ListModelsResponse::class);
+  }
+  /**
+   * Lists checkpoints of the specified model version. (models.listCheckpoints)
+   *
+   * @param string $name Required. The name of the model version to list
+   * checkpoints for.
+   * `projects/{project}/locations/{location}/models/{model}@{version}` Example:
+   * `projects/{project}/locations/{location}/models/{model}@2` or
+   * `projects/{project}/locations/{location}/models/{model}@golden` If no version
+   * ID or alias is specified, the latest version will be used.
+   * @param array $optParams Optional parameters.
+   *
+   * @opt_param int pageSize Optional. The standard list page size.
+   * @opt_param string pageToken Optional. The standard list page token. Typically
+   * obtained via next_page_token of the previous ListModelVersionCheckpoints
+   * call.
+   * @return GoogleCloudAiplatformV1ListModelVersionCheckpointsResponse
+   * @throws \Google\Service\Exception
+   */
+  public function listCheckpoints($name, $optParams = [])
+  {
+    $params = ['name' => $name];
+    $params = array_merge($params, $optParams);
+    return $this->call('listCheckpoints', [$params], GoogleCloudAiplatformV1ListModelVersionCheckpointsResponse::class);
   }
   /**
    * Lists versions of the specified model. (models.listVersions)

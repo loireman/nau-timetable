@@ -32,6 +32,10 @@ class GoogleCloudAiplatformV1DeployedModel extends \Google\Model
    */
   public $disableContainerLogging;
   /**
+   * @var bool
+   */
+  public $disableExplanations;
+  /**
    * @var string
    */
   public $displayName;
@@ -41,6 +45,8 @@ class GoogleCloudAiplatformV1DeployedModel extends \Google\Model
   public $enableAccessLogging;
   protected $explanationSpecType = GoogleCloudAiplatformV1ExplanationSpec::class;
   protected $explanationSpecDataType = '';
+  protected $fasterDeploymentConfigType = GoogleCloudAiplatformV1FasterDeploymentConfig::class;
+  protected $fasterDeploymentConfigDataType = '';
   /**
    * @var string
    */
@@ -63,6 +69,14 @@ class GoogleCloudAiplatformV1DeployedModel extends \Google\Model
    * @var string
    */
   public $sharedResources;
+  protected $speculativeDecodingSpecType = GoogleCloudAiplatformV1SpeculativeDecodingSpec::class;
+  protected $speculativeDecodingSpecDataType = '';
+  protected $statusType = GoogleCloudAiplatformV1DeployedModelStatus::class;
+  protected $statusDataType = '';
+  /**
+   * @var string[]
+   */
+  public $systemLabels;
 
   /**
    * @param GoogleCloudAiplatformV1AutomaticResources
@@ -121,6 +135,20 @@ class GoogleCloudAiplatformV1DeployedModel extends \Google\Model
     return $this->disableContainerLogging;
   }
   /**
+   * @param bool
+   */
+  public function setDisableExplanations($disableExplanations)
+  {
+    $this->disableExplanations = $disableExplanations;
+  }
+  /**
+   * @return bool
+   */
+  public function getDisableExplanations()
+  {
+    return $this->disableExplanations;
+  }
+  /**
    * @param string
    */
   public function setDisplayName($displayName)
@@ -161,6 +189,20 @@ class GoogleCloudAiplatformV1DeployedModel extends \Google\Model
   public function getExplanationSpec()
   {
     return $this->explanationSpec;
+  }
+  /**
+   * @param GoogleCloudAiplatformV1FasterDeploymentConfig
+   */
+  public function setFasterDeploymentConfig(GoogleCloudAiplatformV1FasterDeploymentConfig $fasterDeploymentConfig)
+  {
+    $this->fasterDeploymentConfig = $fasterDeploymentConfig;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1FasterDeploymentConfig
+   */
+  public function getFasterDeploymentConfig()
+  {
+    return $this->fasterDeploymentConfig;
   }
   /**
    * @param string
@@ -245,6 +287,48 @@ class GoogleCloudAiplatformV1DeployedModel extends \Google\Model
   public function getSharedResources()
   {
     return $this->sharedResources;
+  }
+  /**
+   * @param GoogleCloudAiplatformV1SpeculativeDecodingSpec
+   */
+  public function setSpeculativeDecodingSpec(GoogleCloudAiplatformV1SpeculativeDecodingSpec $speculativeDecodingSpec)
+  {
+    $this->speculativeDecodingSpec = $speculativeDecodingSpec;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1SpeculativeDecodingSpec
+   */
+  public function getSpeculativeDecodingSpec()
+  {
+    return $this->speculativeDecodingSpec;
+  }
+  /**
+   * @param GoogleCloudAiplatformV1DeployedModelStatus
+   */
+  public function setStatus(GoogleCloudAiplatformV1DeployedModelStatus $status)
+  {
+    $this->status = $status;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1DeployedModelStatus
+   */
+  public function getStatus()
+  {
+    return $this->status;
+  }
+  /**
+   * @param string[]
+   */
+  public function setSystemLabels($systemLabels)
+  {
+    $this->systemLabels = $systemLabels;
+  }
+  /**
+   * @return string[]
+   */
+  public function getSystemLabels()
+  {
+    return $this->systemLabels;
   }
 }
 

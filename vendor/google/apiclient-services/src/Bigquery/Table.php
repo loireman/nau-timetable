@@ -52,6 +52,8 @@ class Table extends \Google\Collection
    * @var string
    */
   public $expirationTime;
+  protected $externalCatalogTableOptionsType = ExternalCatalogTableOptions::class;
+  protected $externalCatalogTableOptionsDataType = '';
   protected $externalDataConfigurationType = ExternalDataConfiguration::class;
   protected $externalDataConfigurationDataType = '';
   /**
@@ -78,6 +80,10 @@ class Table extends \Google\Collection
    * @var string
    */
   public $location;
+  /**
+   * @var string
+   */
+  public $managedTableType;
   protected $materializedViewType = MaterializedViewDefinition::class;
   protected $materializedViewDataType = '';
   protected $materializedViewStatusType = MaterializedViewStatus::class;
@@ -100,6 +106,10 @@ class Table extends \Google\Collection
    * @var string
    */
   public $numBytes;
+  /**
+   * @var string
+   */
+  public $numCurrentPhysicalBytes;
   /**
    * @var string
    */
@@ -136,6 +146,8 @@ class Table extends \Google\Collection
    * @var string
    */
   public $numTotalPhysicalBytes;
+  protected $partitionDefinitionType = PartitioningDefinition::class;
+  protected $partitionDefinitionDataType = '';
   protected $rangePartitioningType = RangePartitioning::class;
   protected $rangePartitioningDataType = '';
   protected $replicasType = TableReference::class;
@@ -148,6 +160,8 @@ class Table extends \Google\Collection
    * @var string[]
    */
   public $resourceTags;
+  protected $restrictionsType = RestrictionConfig::class;
+  protected $restrictionsDataType = '';
   protected $schemaType = TableSchema::class;
   protected $schemaDataType = '';
   /**
@@ -314,6 +328,20 @@ class Table extends \Google\Collection
     return $this->expirationTime;
   }
   /**
+   * @param ExternalCatalogTableOptions
+   */
+  public function setExternalCatalogTableOptions(ExternalCatalogTableOptions $externalCatalogTableOptions)
+  {
+    $this->externalCatalogTableOptions = $externalCatalogTableOptions;
+  }
+  /**
+   * @return ExternalCatalogTableOptions
+   */
+  public function getExternalCatalogTableOptions()
+  {
+    return $this->externalCatalogTableOptions;
+  }
+  /**
    * @param ExternalDataConfiguration
    */
   public function setExternalDataConfiguration(ExternalDataConfiguration $externalDataConfiguration)
@@ -412,6 +440,20 @@ class Table extends \Google\Collection
     return $this->location;
   }
   /**
+   * @param string
+   */
+  public function setManagedTableType($managedTableType)
+  {
+    $this->managedTableType = $managedTableType;
+  }
+  /**
+   * @return string
+   */
+  public function getManagedTableType()
+  {
+    return $this->managedTableType;
+  }
+  /**
    * @param MaterializedViewDefinition
    */
   public function setMaterializedView(MaterializedViewDefinition $materializedView)
@@ -508,6 +550,20 @@ class Table extends \Google\Collection
   public function getNumBytes()
   {
     return $this->numBytes;
+  }
+  /**
+   * @param string
+   */
+  public function setNumCurrentPhysicalBytes($numCurrentPhysicalBytes)
+  {
+    $this->numCurrentPhysicalBytes = $numCurrentPhysicalBytes;
+  }
+  /**
+   * @return string
+   */
+  public function getNumCurrentPhysicalBytes()
+  {
+    return $this->numCurrentPhysicalBytes;
   }
   /**
    * @param string
@@ -636,6 +692,20 @@ class Table extends \Google\Collection
     return $this->numTotalPhysicalBytes;
   }
   /**
+   * @param PartitioningDefinition
+   */
+  public function setPartitionDefinition(PartitioningDefinition $partitionDefinition)
+  {
+    $this->partitionDefinition = $partitionDefinition;
+  }
+  /**
+   * @return PartitioningDefinition
+   */
+  public function getPartitionDefinition()
+  {
+    return $this->partitionDefinition;
+  }
+  /**
    * @param RangePartitioning
    */
   public function setRangePartitioning(RangePartitioning $rangePartitioning)
@@ -690,6 +760,20 @@ class Table extends \Google\Collection
   public function getResourceTags()
   {
     return $this->resourceTags;
+  }
+  /**
+   * @param RestrictionConfig
+   */
+  public function setRestrictions(RestrictionConfig $restrictions)
+  {
+    $this->restrictions = $restrictions;
+  }
+  /**
+   * @return RestrictionConfig
+   */
+  public function getRestrictions()
+  {
+    return $this->restrictions;
   }
   /**
    * @param TableSchema

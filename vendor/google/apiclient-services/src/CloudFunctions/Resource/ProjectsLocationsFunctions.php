@@ -20,6 +20,7 @@ namespace Google\Service\CloudFunctions\Resource;
 use Google\Service\CloudFunctions\AbortFunctionUpgradeRequest;
 use Google\Service\CloudFunctions\CloudfunctionsFunction;
 use Google\Service\CloudFunctions\CommitFunctionUpgradeRequest;
+use Google\Service\CloudFunctions\DetachFunctionRequest;
 use Google\Service\CloudFunctions\GenerateDownloadUrlRequest;
 use Google\Service\CloudFunctions\GenerateDownloadUrlResponse;
 use Google\Service\CloudFunctions\GenerateUploadUrlRequest;
@@ -122,6 +123,22 @@ class ProjectsLocationsFunctions extends \Google\Service\Resource
     return $this->call('delete', [$params], Operation::class);
   }
   /**
+   * Detaches 2nd Gen function to Cloud Run function. (functions.detachFunction)
+   *
+   * @param string $name Required. The name of the function for which should be
+   * detached.
+   * @param DetachFunctionRequest $postBody
+   * @param array $optParams Optional parameters.
+   * @return Operation
+   * @throws \Google\Service\Exception
+   */
+  public function detachFunction($name, DetachFunctionRequest $postBody, $optParams = [])
+  {
+    $params = ['name' => $name, 'postBody' => $postBody];
+    $params = array_merge($params, $optParams);
+    return $this->call('detachFunction', [$params], Operation::class);
+  }
+  /**
    * Returns a signed URL for downloading deployed function source code. The URL
    * is only valid for a limited period and should be used within 30 minutes of
    * generation. For more information about the signed URL usage see:
@@ -177,6 +194,13 @@ class ProjectsLocationsFunctions extends \Google\Service\Resource
    * @param string $name Required. The name of the function which details should
    * be obtained.
    * @param array $optParams Optional parameters.
+   *
+   * @opt_param string revision Optional. The optional version of the 1st gen
+   * function whose details should be obtained. The version of a 1st gen function
+   * is an integer that starts from 1 and gets incremented on redeployments. GCF
+   * may keep historical configs for old versions of 1st gen function. This field
+   * can be specified to fetch the historical configs. This field is valid only
+   * for GCF 1st gen function.
    * @return CloudfunctionsFunction
    * @throws \Google\Service\Exception
    */
@@ -232,7 +256,7 @@ class ProjectsLocationsFunctions extends \Google\Service\Resource
    * @opt_param string filter The filter for Functions that match the filter
    * expression, following the syntax outlined in https://google.aip.dev/160.
    * @opt_param string orderBy The sorting order of the resources returned. Value
-   * should be a comma separated list of fields. The default sorting oder is
+   * should be a comma separated list of fields. The default sorting order is
    * ascending. See https://google.aip.dev/132#ordering.
    * @opt_param int pageSize Maximum number of functions to return per call. The
    * largest allowed page_size is 1,000, if the page_size is omitted or specified
@@ -260,7 +284,7 @@ class ProjectsLocationsFunctions extends \Google\Service\Resource
    * @param array $optParams Optional parameters.
    *
    * @opt_param string updateMask The list of fields to be updated. If no field
-   * mask is provided, all provided fields in the request will be updated.
+   * mask is provided, all fields will be updated.
    * @return Operation
    * @throws \Google\Service\Exception
    */
