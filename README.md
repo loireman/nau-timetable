@@ -1,66 +1,144 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# NAU Timetable
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Основні компоненти
 
-## About Laravel
+```
+nau-timetable/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Admin/
+│   │   │   │   ├── ConfigController.php
+│   │   │   │   ├── DepartmentController.php
+│   │   │   │   ├── GroupController.php
+│   │   │   │   ├── PermissionController.php
+│   │   │   │   ├── RoleController.php
+│   │   │   │   ├── StreamController.php
+│   │   │   │   └── TimetableController.php
+│   │   │   ├── Api/
+│   │   │   │   ├── DepartmentController.php
+│   │   │   │   ├── ParseController.php
+│   │   │   │   └── SearchController.php
+│   │   │   ├── FrontController.php
+│   │   │   └── Telegram/
+│   │   │   │   ├── StartConversation.php
+│   │   │   │   └── Timetables.php
+│   ├── Models/
+│   │   ├── Departments.php
+│   │   ├── Groups.php
+│   │   ├── Permission.php
+│   │   ├── Role.php
+│   │   ├── Setting.php
+│   │   ├── Stream.php
+│   │   ├── Timetable.php
+│   │   └── User.php
+├── resources/
+│   ├── js/
+│   │   ├── Components/
+│   │   ├── Layouts/
+│   │   ├── Pages/
+│   │   ├── app.js
+│   │   └── bootstrap.js
+├── routes/
+│   ├── api.php
+│   ├── channels.php
+│   ├── console.php
+│   └── web.php
+```
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Налаштування
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. Клонувати репозиторій:
+    ```sh
+    git clone https://github.com/yourusername/nau-timetable.git
+    cd nau-timetable
+    ```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+2. Налаштувати файл `.env`:
+    ```sh
+    cp .env.example .env
+    ```
 
-## Learning Laravel
+    ```.env
+    APP_URL=http://localhost
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=example_app
+    DB_USERNAME=root
+    DB_PASSWORD=
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+    TELEGRAM_TOKEN="user_token"
+    TELEGRAM_BOT_NAME="bot_name"
+    ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+3. Встановити залежності Composer:
+    ```sh
+    composer install
+    ```
 
-## Laravel Sponsors
+4. Встановити залежності NPM:
+    ```sh
+    npm install && npm run build
+    ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+5. Згенерувати ключ додатку:
+    ```sh
+    php artisan key:generate
+    ```
 
-### Premium Partners
+6. Запустити міграції:
+    ```sh
+    php artisan migrate --seed
+    ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+## API Routes
 
-## Contributing
+-   `GET /api/v1/search/group/{name?}` - Пошук групи за назвою
+-   `GET /api/v1/group/{group}` - Отримати розклад групи
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+-   `GET /api/v1/search/teacher/{name?}` - Пошук викладача за ім'ям
+-   `GET /api/v1/teacher/{teacher}` - Отримати розклад викладача
 
-## Code of Conduct
+-   `GET /api/v1/fetchDep` - Отримати список назв факультетів
+-   `POST /api/parseDep` - Парсинг факультету
+-   `POST /api/parseGroup` - Парсинг групи
+-   `POST /api/parseTimetable` - Парсинг розкладу
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Web Routes
 
-## Security Vulnerabilities
+-   `GET /` - Головна сторінка (Welcome).
+-   `GET /google/auth/redirect` - Перенаправлення на Google для аутентифікації.
+-   `GET /google/auth/callback` - Зворотній виклик від Google після аутентифікації.
+-   `GET /api` - Документація API.
+-   `GET /timetable` - Розклад групи.
+-   `GET /timetable/teacher` - Розклад викладача.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Admin Routes (middleware auth, can:admin page)
 
-## License
+-   `GET /admin` - Панель адміністратора.
+-   `GET /admin/permission` - Список дозволів.
+-   `GET /admin/permission/create` - Форма створення дозволу.
+-   `GET /admin/permission/{permission}` - Деталі дозволу.
+-   `GET /admin/permission/{permission}/edit` - Форма редагування дозволу.
+-   `POST /admin/permission` - Створення дозволу.
+-   `PUT /admin/permission/{permission}` - Оновлення дозволу.
+-   `DELETE /admin/permission/{permission}` - Видалення дозволу.
+-   Аналогічні маршрути для `role`, `user`, `config`, `department`, `stream`, `group`, `timetable`.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Profile Routes (middleware auth)
+
+-   `GET /profile` - Редагування профілю.
+-   `PATCH /profile` - Оновлення профілю.
+-   `DELETE /profile` - Видалення профілю.
+
+## Telegram Commands
+
+-   `/start` - Розпочати роботу з ботом.
+-   `/selectgroup` - Змінити інформацію про групу.
+-   `/help` - Вивести інформацію про бота.
+-   `/time` - Вивести поточний час та номер пари що проходить.
+-   `/lesson` - Вивести поточну пару якщо є.
+-   `/today` - Вивести пари за поточний день.
+-   `/tomorrow` - Вивести пари за наступний день. Якщо поточний день - неділя, виводить пари понеділка наступного тижня.

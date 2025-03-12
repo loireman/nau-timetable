@@ -9,7 +9,7 @@ return [
 
     // Extra or specific configurations
     'config' => [
-        'bot_name' => 'lo1ri_bot',
+        'bot_name' => env('TELEGRAM_BOT_NAME', ''),
     ],
 
     // Set if the service provider should automatically load

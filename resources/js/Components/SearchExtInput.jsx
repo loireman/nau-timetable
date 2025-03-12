@@ -23,7 +23,8 @@ export default forwardRef(function SearchExtInput(
         axios
             .get(`${suggestionsEndpoint}`)
             .then((response) => {
-                setSuggestions(response.data);
+                console.log("Fetched suggestions:", response.data.original);
+                setSuggestions(response.data.original);
             })
             .catch((error) => {
                 console.error("Error fetching suggestions:", error);
