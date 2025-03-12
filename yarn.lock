@@ -1966,11 +1966,6 @@ esutils@^2.0.2:
   resolved "https://registry.npmjs.org/esutils/-/esutils-2.0.3.tgz"
   integrity sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==
 
-eventemitter2@~0.4.13:
-  version "0.4.14"
-  resolved "https://registry.npmjs.org/eventemitter2/-/eventemitter2-0.4.14.tgz"
-  integrity sha512-K7J4xq5xAD5jHsGM5ReWXRTFa3JRGofHiMcVgQ8PRwgWxzjHpMWCIzsmyf60+mh8KLsqYPcjUMa0AC4hd6lPyQ==
-
 events@^3.2.0:
   version "3.3.0"
   resolved "https://registry.npmjs.org/events/-/events-3.3.0.tgz"
@@ -1980,11 +1975,6 @@ fast-deep-equal@^3.1.3:
   version "3.1.3"
   resolved "https://registry.npmjs.org/fast-deep-equal/-/fast-deep-equal-3.1.3.tgz"
   integrity sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==
-
-fast-diff@~1.0.0:
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/fast-diff/-/fast-diff-1.0.1.tgz"
-  integrity sha512-anEzYJ8VOA5iAMjDOVMTVMrUOXveDTMMk5x0E4p0nJ3VPoIOolF51AqYyE+UD0QIyggUwqppqH7XVA9lF3fdaQ==
 
 fast-glob@^3.3.2:
   version "3.3.3"
@@ -2388,11 +2378,6 @@ lodash.isequal@^4.5.0:
   resolved "https://registry.npmjs.org/lodash.isequal/-/lodash.isequal-4.5.0.tgz"
   integrity sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==
 
-lodash@~2.4.1:
-  version "2.4.2"
-  resolved "https://registry.npmjs.org/lodash/-/lodash-2.4.2.tgz"
-  integrity sha512-Kak1hi6/hYHGVPmdyiZijoQyz5x2iGVzs6w9GYB/HiXEtylY7tIoYEROMjvM1d9nXJqPOrG2MNPMn01bJ+S0Rw==
-
 loose-envify@^1.1.0, loose-envify@^1.4.0:
   version "1.4.0"
   resolved "https://registry.npmjs.org/loose-envify/-/loose-envify-1.4.0.tgz"
@@ -2729,15 +2714,6 @@ queue-microtask@^1.2.2:
   resolved "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
-quilljs@^0.18.1:
-  version "0.18.1"
-  resolved "https://registry.npmjs.org/quilljs/-/quilljs-0.18.1.tgz"
-  integrity sha512-VKaO7GNehgnH4LlFPx5ZAl+KFDoRVtboY0I6UUbYXUsPHP8kR80Tg/CFEYqrqrpCOGQr4OQ5Tjm813gV1DUyQw==
-  dependencies:
-    eventemitter2 "~0.4.13"
-    lodash "~2.4.1"
-    rich-text "~1.0.2"
-
 randombytes@^2.1.0:
   version "2.1.0"
   resolved "https://registry.npmjs.org/randombytes/-/randombytes-2.1.0.tgz"
@@ -2764,13 +2740,6 @@ react-paginate@^8.2.0:
   integrity sha512-TptZE37HPkT3R+7AszWA++LOTIsIHXcCSWMP9WW/abeF8sLpJzExFB/dVs7xbtqteJ5njF6kk+udTDC0AR3y5w==
   dependencies:
     prop-types "^15"
-
-react-quill@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.npmjs.org/react-quill/-/react-quill-0.0.2.tgz"
-  integrity sha512-PeiHXZ63Sumh41OdovBQExXJH7B4UsJpyCW8CtRvXrNBa2RJXdciaJvTeb0x6pYQfqkoCYPT5EbUvEr0Z1tohg==
-  dependencies:
-    quilljs "^0.18.1"
 
 react-refresh@^0.14.2:
   version "0.14.2"
@@ -2824,7 +2793,7 @@ react-transition-group@^4.3.0:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-"react@^16 || ^17 || ^18", "react@^16 || ^17 || ^18 || ^19", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^16.9.0 || ^17.0.0 || ^18.0.0", "react@^16.9.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", react@^18.2.0, react@^18.3.1, react@>=0.11.0, react@>=16, react@>=16.6.0, react@>=16.8, react@>=16.8.0:
+"react@^16 || ^17 || ^18", "react@^16 || ^17 || ^18 || ^19", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^16.9.0 || ^17.0.0 || ^18.0.0", "react@^16.9.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", react@^18.2.0, react@^18.3.1, react@>=16, react@>=16.6.0, react@>=16.8, react@>=16.8.0:
   version "18.3.1"
   resolved "https://registry.npmjs.org/react/-/react-18.3.1.tgz"
   integrity sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==
@@ -2956,13 +2925,6 @@ reusify@^1.0.4:
   version "1.1.0"
   resolved "https://registry.npmjs.org/reusify/-/reusify-1.1.0.tgz"
   integrity sha512-g6QUff04oZpHs0eG5p83rFLhHeV00ug/Yf9nZM6fLeUrPguBTkTQOdpAWWspMh55TZfVQDPaN3NQJfbVRAxdIw==
-
-rich-text@~1.0.2:
-  version "1.0.3"
-  resolved "https://registry.npmjs.org/rich-text/-/rich-text-1.0.3.tgz"
-  integrity sha512-L+Mi0fBH4/TBGH68XZqUXdUr5Ze+ViYkrKuwEvCpeyB1Blbp4CLO4LyYleutTNybujCMQfcmivaNrE3YLrEUgg==
-  dependencies:
-    fast-diff "~1.0.0"
 
 rollup@^3.27.1:
   version "3.29.5"

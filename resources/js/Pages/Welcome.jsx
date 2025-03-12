@@ -52,7 +52,6 @@ export default function Welcome({ auth, laravelVersion, phpVersion, globalAlert 
             <TextInput type="Password" placeholder="Password" />
             <InputError message="error with code" />
             <TextInput type="time" />
-            {/* <QuillInput value={value} onChange={setValue} /> */}
             <InputSwitch
                 label="Active"
                 initialValue={isEnabled}
