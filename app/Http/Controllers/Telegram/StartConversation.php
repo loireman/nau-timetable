@@ -81,44 +81,53 @@ class StartConversation extends Conversation
     public function askChangeGroup(Nutgram $bot)
     {
         $string = 'Впишіть назву групи (наприклад, Б-123-21-4-КС)';
-
         $bot->sendMessage(
             $string,
             reply_markup: InlineKeyboardMarkup::make()
                 ->addRow(InlineKeyboardButton::make('Вийти', callback_data: 'exit')),
         );
-
         $this->next('askChangePGroup');
     }
 
     public function askChangePGroup(Nutgram $bot)
     {
-        if (!$bot->isCallbackQuery()) {
-            $bot->deleteMessage($bot->chatId(), $bot->messageId());
-
-            $group = strtoupper($bot->message()->text);
-            $groupModel = Groups::where('name', $group)->first();
-
-            if ($groupModel) {
-                $this->group = $groupModel;
-                $bot->sendMessage(
-                    'Ви вибрали групу: ' . $groupModel->name,
-                );
-
-                $bot->sendMessage(
-                    'Тепер виберіть підгрупу:',
-                    reply_markup: InlineKeyboardMarkup::make()
-                        ->addRow(InlineKeyboardButton::make('Перша', callback_data: '1'), 
-                                InlineKeyboardButton::make('Друга', callback_data: '2'))
-                        ->addRow(InlineKeyboardButton::make('Обидві', callback_data: '3'))
-                );
-                $this->next('endChanges');
-            } else {
-                $bot->sendMessage('Група з назвою "' . $group . '" не знайдена. Спробуйте ще раз.');
+        if ($bot->isCallbackQuery()) {
+            if ($bot->callbackQuery()->data === 'exit') {
+                $bot->editMessageText('Процес відмінено.');
+                $this->end();
             }
-        } else if ($bot->callbackQuery()->data == 'exit') {
-            $bot->editMessageText('Процес відмінено.');
-            $this->end();
+            return;
+        }
+
+        // Try to delete the previous message
+        try {
+            $bot->deleteMessage($bot->chatId(), $bot->messageId() - 1);
+        } catch (\Exception $e) {
+            // Silently continue if deletion fails
+        }
+
+        // Convert to uppercase once and store in variable
+        $group = strtoupper($bot->message()->text);
+
+        // Use first() only if needed (more efficient database query)
+        $groupModel = Groups::where('name', $group)->first();
+
+        if ($groupModel) {
+            $this->group = $groupModel;
+
+            // Combine messages to reduce API calls
+            $bot->sendMessage(
+                'Ви вибрали групу: ' . $groupModel->name . "\n\nТепер виберіть підгрупу:",
+                reply_markup: InlineKeyboardMarkup::make()
+                    ->addRow(
+                        InlineKeyboardButton::make('Перша', callback_data: '1'),
+                        InlineKeyboardButton::make('Друга', callback_data: '2')
+                    )
+                    ->addRow(InlineKeyboardButton::make('Обидві', callback_data: '3'))
+            );
+            $this->next('endChanges');
+        } else {
+            $bot->sendMessage('Група з назвою "' . $group . '" не знайдена. Спробуйте ще раз.');
         }
     }
 
@@ -131,8 +140,10 @@ class StartConversation extends Conversation
         $bot->editMessageText(
             'Виберіть підгрупу:',
             reply_markup: InlineKeyboardMarkup::make()
-                ->addRow(InlineKeyboardButton::make('Перша', callback_data: '1'), 
-                        InlineKeyboardButton::make('Друга', callback_data: '2'))
+                ->addRow(
+                    InlineKeyboardButton::make('Перша', callback_data: '1'),
+                    InlineKeyboardButton::make('Друга', callback_data: '2')
+                )
                 ->addRow(InlineKeyboardButton::make('Обидві', callback_data: '3'))
         );
         $this->next('endChanges');
