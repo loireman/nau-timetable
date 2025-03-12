@@ -101,7 +101,7 @@ class Timetables extends Controller
         $info = self::checkUserGroup($chat_id);
 
         if (!$info) {
-            return 'У вас не вказано групу. Це можна зробити у /selectGroup';
+            return 'У вас не вказано групу. Це можна зробити у /selectgroup';
         }
 
 
@@ -153,7 +153,7 @@ class Timetables extends Controller
         $days = ['Сьогодні', 'Завтра', 'Сьогодні Неділя, у Понеділок наступного тижня'];
 
         if (!$info) {
-            return 'У вас не вказано групу. Це можна зробити у /selectGroup';
+            return 'У вас не вказано групу. Це можна зробити у /selectgroup';
         }
 
         try {
@@ -180,7 +180,7 @@ class Timetables extends Controller
                 ->sortBy('lesson');
 
             if ($timetables->isEmpty()) {
-                return $message . ($info['pgroup'] == 0 ?: ' cпільних') . ' пар немає';
+                return $message . ' пар немає';
             }
 
             $message .= ' такі пари: ';
@@ -197,7 +197,7 @@ class Timetables extends Controller
             }
         } catch (Exception $e) {
             Log::error($e->getMessage());
-            return 'Сьогодні пар немає';
+            return 'Виникла помилка при отриманні розкладу.';
         }
 
         return $message;
