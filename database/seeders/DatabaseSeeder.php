@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
     {
         Setting::create([ 'name' => 'global_alert', 'value' => '{"a": "hello world"}' ]);
         Setting::create([ 'name' => 'bot_token', 'value' => 'bot token value' ]);
+        Setting::create([ 'name' => 'start_week', 'value' => '1' ]);
         $this->call(BasicAdminPermissionSeeder::class);
 
         // \App\Models\User::factory(10)->create();
