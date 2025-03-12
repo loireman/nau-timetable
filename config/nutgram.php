@@ -9,7 +9,7 @@ return [
 
     // Extra or specific configurations
     'config' => [
-        'botName' => 'lo1ri_bot',
+        'bot_name' => 'lo1ri_bot',
     ],
 
     // Set if the service provider should automatically load
