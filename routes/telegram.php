@@ -15,9 +15,9 @@ $bot->onCommand('start', function (Nutgram $bot) {
     $bot->sendMessage('Привіт! Я функціональний бот розкладу.');
 
     $groupInfo = Timetables::checkUserGroup($bot->chatId());
-    $group = Groups::where('id', $groupInfo["group_id"])->first();
-
+    
     if($groupInfo) {
+        $group = Groups::where('id', $groupInfo["group_id"])->first();
         $bot->sendMessage('Наразі встановлено таку групу: ' . $group->name . '
         Підгрупа: ' . $pginfo[$groupInfo["pgroup"]]);
         $bot->sendMessage('Натисни /help щоб дізнатись перелік доступних команд.');
