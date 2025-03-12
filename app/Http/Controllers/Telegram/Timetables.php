@@ -177,6 +177,7 @@ class Timetables extends Controller
             $timetables = $group->timetables()
                 ->where('week', $week)
                 ->where('day', $currDay)
+                ->sortBy('lesson')
                 ->get();
 
             if ($timetables->isEmpty()) {
