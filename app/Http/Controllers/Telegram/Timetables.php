@@ -173,12 +173,11 @@ class Timetables extends Controller
                 return 'Група не знайдена.';
             }
 
-            // Fetch timetables using the many-to-many relationship
             $timetables = $group->timetables()
                 ->where('week', $week)
                 ->where('day', $currDay)
-                ->sortBy('lesson')
-                ->get();
+                ->get()
+                ->sortBy('lesson');
 
             if ($timetables->isEmpty()) {
                 return $message . ($info['pgroup'] == 0 ?: ' cпільних') . ' пар немає';
