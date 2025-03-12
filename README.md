@@ -93,6 +93,15 @@ nau-timetable/
     php artisan migrate --seed
     ```
 
+7. Запустити тестовий сервер
+    ```sh
+    php artisan serve
+    ```
+    За замовчуванням буде сервер на http://127.0.0.1:8000
+    Для перевірки парсера можна зайти в панель адміністратора http://127.0.0.1:8000/admin
+    Базовий логін: admin@example.com
+    Базовий пароль: password
+
 ## API Routes
 
 -   `GET /api/v1/search/group/{name?}` - Пошук групи за назвою
