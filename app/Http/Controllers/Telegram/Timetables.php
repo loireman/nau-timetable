@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 
 class Timetables extends Controller
 {
-    private static $startWeek = 05;
+    private static $startWeek = 04;
 
     public static function getStrWeeks()
     {
@@ -69,7 +69,7 @@ class Timetables extends Controller
     public static function getCurrentWeek(): int
     {
         if (config('config.start_week') == 1) {
-            self::$startWeek = 4;
+            self::$startWeek = 05;
         }
         return (date_format(self::getKyivTimezone(), 'W') - self::$startWeek) % 2;
     }
