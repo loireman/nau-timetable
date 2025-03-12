@@ -12,7 +12,10 @@ use SergiX44\Nutgram\Telegram\Types\Internal\InputFile;
 $bot->onCommand('start', function (Nutgram $bot) {
     $pginfo = ['Не встановлена', 'Перша', 'Друга'];
 
-    $bot->sendMessage('Привіт! Я функціональний бот розкладу.');
+    $bot->sendMessage(`Привіт! Я функціональний бот розкладу КАІ.
+Сайт розкладу: https://timetable.loiri.com.ua
+Автор: @lo1ri_andy
+Вихідний код тут: https://github.com/loireman/nau-timetable`, parse_mode: ParseMode::HTML);
 
     $groupInfo = Timetables::checkUserGroup($bot->chatId());
     
