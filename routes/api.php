@@ -82,32 +82,4 @@ Route::group(
     }
 );
 
-Route::group(
-    [
-        'namespace'  => 'App\Http\Controllers\Api',
-        'prefix'     => 'v1/auth',
-    ],
-    function () {
-        Route::post('/register', [App\Http\Controllers\Api\ApiRegisteredUserController::class, 'store'])
-            ->middleware('guest')
-            ->name('register');
-
-        Route::post('/login', [App\Http\Controllers\Api\ApiAuthenticatedSessionController::class, 'store'])
-            ->name('login');
-
-        Route::get('/check-login', [App\Http\Controllers\Api\ApiAuthenticatedSessionController::class, 'checkLogin']);
-
-        Route::middleware('check.api')->get('/user', function (Request $request) {
-            return response([
-                'status' => 200,
-                'name' => $request->user->name,
-            ]);
-        });
-
-        Route::post('/logout', [App\Http\Controllers\Api\ApiAuthenticatedSessionController::class, 'destroy'])
-            ->middleware('auth:sanctum')
-            ->name('logout');
-    }
-);
-
 Route::post('/webhook', FrontController::class);

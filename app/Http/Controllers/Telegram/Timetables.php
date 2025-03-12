@@ -135,7 +135,8 @@ class Timetables extends Controller
 
 <b>' . $timetable->lesson . ' Пара: ' . self::getStrPairs()[$timetable->lesson]['time_start'] . '-' . self::getStrPairs()[$timetable->lesson]['time_end'] . '</b>
 Назва: <b>' . $timetable->name . '</b>
-Тип: ' . ['Лекція', 'Практична', 'Лабораторна'][$timetable->type] . '
+Тип: ' . ['Лекція', 'Практична', 'Лабораторна'][$timetable->type] . ($timetable->type == 2 ? '
+Підгрупа: ' . $timetable->pgroup : '') . '
 Викладач: <b>' . $timetable->teacher . ($timetable->auditory ? '</b>
 Аудиторія: <b>' . $timetable->auditory . '</b>' : '</b>') . ($timetable->auditory_link ? '
 Посилання на міт: <a href="' . $timetable->auditory_link . '">Посилання</a>' : '');
@@ -191,7 +192,8 @@ class Timetables extends Controller
 
 <b>' . $timetable->lesson . ' Пара: ' . self::getStrPairs()[$timetable->lesson]['time_start'] . '-' . self::getStrPairs()[$timetable->lesson]['time_end'] . '</b>
 Назва: <b>' . $timetable->name . '</b>
-Тип: ' . ['Лекція', 'Практична', 'Лабораторна'][$timetable->type] . '
+Тип: ' . ['Лекція', 'Практична', 'Лабораторна'][$timetable->type] . ($timetable->type == 2 ? '
+Підгрупа: <b>' . $timetable->pgroup . '<b>' : '') . '
 Викладач: <b>' . $timetable->teacher . ($timetable->auditory ? '</b>
 Аудиторія: <b>' . $timetable->auditory . '</b>' : '</b>');
             }

@@ -10,6 +10,7 @@ use App\Models\Timetable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ParseController extends Controller
@@ -122,6 +123,8 @@ class ParseController extends Controller
                 }
             }
 
+            Cache::forget('search_group_all');
+
             return response()->json(['message' => 'Групи успішно оброблені']);
         } catch (\Exception $e) {
             Log::error("Error fetching groups: " . $e->getMessage());
@@ -232,6 +235,8 @@ class ParseController extends Controller
                     }
                 }
             }
+
+            Cache::forget('search_group_all');
 
             return response()->json(['message' => 'Групи успішно оброблені']);
         } catch (\Exception $e) {

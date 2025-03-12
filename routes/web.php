@@ -40,32 +40,12 @@ Route::get('/', function () {
     return Inertia::render('Welcome1', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
     ]);
-});
-
-
-
-Route::middleware('web')->get('google/auth/redirect', function () {
-    return Socialite::driver('google')->redirect();
-})->name('google.redirect');
-Route::middleware('web')->get('google/auth/callback', function () {
-    $user = Socialite::driver('google')->user();
-
-    return Redirect('/timetable');
-    // $user->token
 });
 
 Route::get('/api', function () {
     return Inertia::render('Api');
 })->name('docs.api');
-
-Route::get('/test', function () {
-    $globalAlert = config('config.global_alert');
-
-    return Inertia::render('Welcome', ['globalAlert' => $globalAlert]);
-})->name('test1');
 
 Route::group([
     'prefix'     => 'timetable',
