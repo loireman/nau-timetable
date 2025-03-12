@@ -430,8 +430,8 @@ class ComposerStaticInit957eb6482e712acffe056d7498951d6f
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -491,8 +491,8 @@ class ComposerStaticInit957eb6482e712acffe056d7498951d6f
         ),
         'League\\Uri\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/uri-interfaces',
-            1 => __DIR__ . '/..' . '/league/uri',
+            0 => __DIR__ . '/..' . '/league/uri',
+            1 => __DIR__ . '/..' . '/league/uri-interfaces',
         ),
         'League\\OAuth2\\Server\\' => 
         array (
@@ -734,8 +734,11 @@ class ComposerStaticInit957eb6482e712acffe056d7498951d6f
         'App\\Http\\Controllers\\Auth\\RegisteredUserController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/RegisteredUserController.php',
         'App\\Http\\Controllers\\Auth\\VerifyEmailController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/VerifyEmailController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
+        'App\\Http\\Controllers\\FrontController' => __DIR__ . '/../..' . '/app/Http/Controllers/FrontController.php',
         'App\\Http\\Controllers\\ProfileController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProfileController.php',
         'App\\Http\\Controllers\\TelegramController' => __DIR__ . '/../..' . '/app/Http/Controllers/TelegramController.php',
+        'App\\Http\\Controllers\\Telegram\\StartConversation' => __DIR__ . '/../..' . '/app/Http/Controllers/Telegram/StartConversation.php',
+        'App\\Http\\Controllers\\Telegram\\Timetables' => __DIR__ . '/../..' . '/app/Http/Controllers/Telegram/Timetables.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
         'App\\Http\\Middleware\\CheckApiAuthentication' => __DIR__ . '/../..' . '/app/Http/Middleware/CheckApiAuthentication.php',
@@ -772,6 +775,7 @@ class ComposerStaticInit957eb6482e712acffe056d7498951d6f
         'App\\Models\\Role' => __DIR__ . '/../..' . '/app/Models/Role.php',
         'App\\Models\\Setting' => __DIR__ . '/../..' . '/app/Models/Setting.php',
         'App\\Models\\Stream' => __DIR__ . '/../..' . '/app/Models/Stream.php',
+        'App\\Models\\TguserGroupRelation' => __DIR__ . '/../..' . '/app/Models/TguserGroupRelation.php',
         'App\\Models\\Timetable' => __DIR__ . '/../..' . '/app/Models/Timetable.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',

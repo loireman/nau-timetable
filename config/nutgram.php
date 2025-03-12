@@ -8,7 +8,9 @@ return [
     'safe_mode' => env('APP_ENV', 'local') === 'production',
 
     // Extra or specific configurations
-    'config' => [],
+    'config' => [
+        'botName' => 'lo1ri_bot',
+    ],
 
     // Set if the service provider should automatically load
     // handlers from /routes/telegram.php
