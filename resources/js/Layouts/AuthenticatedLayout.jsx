@@ -4,6 +4,7 @@ import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link } from "@inertiajs/react";
+import { Icon } from "@iconify/react";
 
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
@@ -92,7 +93,7 @@ export default function Authenticated({ user, header, children }) {
                                     </div>
                                 ) : (
                                     <div className="p-5 flex gap-5">
-                                        <Link
+                                        {/* <Link
                                             href={route("login")}
                                             className="font-bold text-black hover:text-red-500"
                                         >
@@ -103,7 +104,18 @@ export default function Authenticated({ user, header, children }) {
                                             className="font-bold text-black hover:text-red-500"
                                         >
                                             Реєстрація
-                                        </Link>
+                                        </Link> */}
+                                        <a
+                                            target="_blank"
+                                            href="https://github.com/loireman/nau-timetable"
+                                            className="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none transition ease-in-out duration-150"
+                                        >
+                                            <Icon
+                                                icon="mdi:github"
+                                                className="h-5 w-5 mr-2"
+                                            />
+                                            GitHub
+                                        </a>
                                     </div>
                                 )}
                             </div>
@@ -208,7 +220,7 @@ export default function Authenticated({ user, header, children }) {
                         </div>
                     ) : (
                         <div className="p-5 flex flex-col gap-5">
-                            <Link
+                            {/* <Link
                                 href={route("login")}
                                 className="font-bold text-black hover:text-red-500"
                             >
@@ -219,7 +231,18 @@ export default function Authenticated({ user, header, children }) {
                                 className="font-bold text-black hover:text-red-500"
                             >
                                 Реєстрація
-                            </Link>
+                            </Link> */}
+                            <a
+                                target="_blank"
+                                href="https://github.com/loireman/nau-timetable"
+                                className="inline-flex justify-center items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none transition ease-in-out duration-150"
+                            >
+                                <Icon
+                                    icon="mdi:github"
+                                    className="h-5 w-5 mr-2"
+                                />
+                                GitHub
+                            </a>
                         </div>
                     )}
                 </div>

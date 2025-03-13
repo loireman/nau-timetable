@@ -23,7 +23,6 @@ export default forwardRef(function SearchExtInput(
         axios
             .get(`${suggestionsEndpoint}`)
             .then((response) => {
-                console.log("Fetched suggestions:", response.data.original);
                 setSuggestions(response.data.original);
             })
             .catch((error) => {

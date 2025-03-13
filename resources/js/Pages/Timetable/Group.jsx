@@ -39,10 +39,10 @@ export default function Group({ auth, group, startWeek }) {
         var time = date.getHours() * 60 + date.getMinutes();
         var value = 0;
 
-        if (time > 525 && time < 1275) {
-            time = time - 525;
+        if (time >= 415 && time < 1275) {
+            time = time - 415;
             value++;
-            while (time > 0) {
+            while (time > 110) {
                 time = time - 110;
                 value++;
             }
