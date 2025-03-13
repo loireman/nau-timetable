@@ -20,8 +20,8 @@ export default function Edit({ auth, timetable, groups, selected }) {
         auditory: timetable.auditory,
         auditory_link: timetable.auditory_link,
         pgroup: timetable.type == 2 ? timetable.pgroup : 0,
-        group_id: timetable.type != 0 ? selected : null,
-        group_ids: timetable.type == 0 ? [...selected] : [],
+        group_id: timetable.type == 2 ? selected : null,
+        group_ids: timetable.type != 2 ? [...selected] : [],
     });
 
     console.log(errors);
@@ -130,7 +130,7 @@ export default function Edit({ auth, timetable, groups, selected }) {
                             </div>
                         </div>
 
-                        {data.type == 0 ? (
+                        {data.type != 2 ? (
                             <>
                                 <InputLabel htmlFor="name" value="Група" />
                                 <div className="flex gap-3">
@@ -183,8 +183,8 @@ export default function Edit({ auth, timetable, groups, selected }) {
                             </>
                         )}
 
-                        {(data.type == 0 && data.group_ids.length != 0) ||
-                        (data.type != 0 && data.group_id != null) ? (
+                        {(data.type != 2 && data.group_ids.length != 0) ||
+                        (data.type == 2 && data.group_id != null) ? (
                             <>
                                 {data.type == 2 ? (
                                     <>

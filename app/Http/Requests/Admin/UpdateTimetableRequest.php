@@ -44,7 +44,7 @@ class UpdateTimetableRequest extends FormRequest
                     $type = $this->input('type');
 
                     // If type is 0 (lecture) and no groups provided, we'll check if there are existing groups
-                    if ($type == 0 && empty($value)) {
+                    if ($type != 2 && empty($value)) {
                         $existingGroups = DB::table('group_timetable')
                             ->where('timetable_id', $currentId)
                             ->exists();
@@ -56,7 +56,7 @@ class UpdateTimetableRequest extends FormRequest
                     }
 
                     // For non-lectures (type 1 or 2), enforce single group
-                    if ($type != 0 && count($value) > 1) {
+                    if ($type == 2 && count($value) > 1) {
                         $fail('Only one group can be selected for non-lecture classes.');
                     }
 
@@ -66,7 +66,7 @@ class UpdateTimetableRequest extends FormRequest
                     }
 
                     // Validate time conflicts for new group assignments
-                    if ($type != 0) {
+                    if ($type == 2) {
 
                         foreach ($value as $groupId) {
                             $exists = DB::table('group_timetable')

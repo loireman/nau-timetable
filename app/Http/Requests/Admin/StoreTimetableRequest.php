@@ -32,12 +32,12 @@ class StoreTimetableRequest extends FormRequest
                     $type = $this->input('type'); // Get the type from the request
 
                     // Validate lecture type (0): At least one group must be selected
-                    if ($type == 0 && empty($value)) {
+                    if ($type != 2 && empty($value)) {
                         $fail('At least one group must be selected for lectures.');
                     }
 
                     // Validate non-lectures (1 or 2): Only one group can be assigned
-                    if ($type != 0 && count($value) > 1) {
+                    if ($type == 2 && count($value) > 1) {
                         $fail('Only one group can be selected for non-lecture classes.');
                     }
 
