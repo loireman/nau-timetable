@@ -71,6 +71,13 @@ $bot->onCommand('lesson', function (Nutgram $bot) {
     $bot->sendMessage($pair, parse_mode: ParseMode::HTML);
 })->description('Вивести поточну пару якщо є');
 
+$bot->onCommand('week', function (Nutgram $bot) {
+
+    $week = Timetables::getCurrentWeek() + 1;
+
+    $bot->sendMessage('Наразі тиждень: ' . $week, parse_mode: ParseMode::HTML);
+})->description('Вивести поточний тиждень');
+
 $bot->onCommand('today', function (Nutgram $bot) {
     $message = Timetables::getPairsToday($bot->chatId(), 0);
 
