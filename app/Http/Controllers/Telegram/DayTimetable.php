@@ -182,7 +182,7 @@ class DayTimetable extends Conversation
 
             return $message;
         } catch (Exception $e) {
-            Log::error($e->getMessage());
+            Log::error($e);
             return 404;
         }
     }
