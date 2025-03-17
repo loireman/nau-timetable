@@ -139,8 +139,8 @@ class DayTimetable extends Conversation
             if (config('config.start_week') == 1) {
                 self::$startWeek = 05;
             }
-            
-            $week = self::getCurrentWeek() == 0 ? self::getCurrentWeek() + 2 : self::getCurrentWeek();
+
+            $week = self::getCurrentWeek() + 1;
             $currDay = date('w', strtotime(self::$date));
             $group = Groups::find(self::checkUserGroup($bot->chatId())["group_id"]);
 
@@ -149,7 +149,7 @@ class DayTimetable extends Conversation
             }
 
             $timetables = $group->timetables()
-                ->where('week', $week)
+                ->where('week', $week + 1)
                 ->where('day', $currDay)
                 ->get()
                 ->sortBy('lesson');
