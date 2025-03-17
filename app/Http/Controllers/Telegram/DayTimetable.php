@@ -96,8 +96,8 @@ class DayTimetable extends Conversation
             $message,
             reply_markup: InlineKeyboardMarkup::make()
                 ->addRow(
-                    InlineKeyboardButton::make('Попередній', callback_data: '1'), 
-                    InlineKeyboardButton::make('Наступний', callback_data: '2')
+                    InlineKeyboardButton::make('Попередній', callback_data: date('Y-m-d', strtotime(self::$date . ' -1 day'))), 
+                    InlineKeyboardButton::make('Наступний', callback_data: date('Y-m-d', strtotime(self::$date . ' +1 day')))
             ),
             parse_mode: ParseMode::HTML
         );
@@ -111,19 +111,7 @@ class DayTimetable extends Conversation
             return;
         }
 
-        $choice = $bot->callbackQuery()->data;
-
-        switch ($choice) {
-            case '1':
-                self::$date = date('Y-m-d', strtotime(self::$date . ' -1 day'));
-                break;
-            case '2':
-                self::$date = date('Y-m-d', strtotime(self::$date . ' +1 day'));
-                break;
-            default:
-                $this->end();
-                break;
-        }
+        self::$date = $bot->callbackQuery()->data;
 
         $message = self::getPairsDate($bot);
 
@@ -137,8 +125,8 @@ class DayTimetable extends Conversation
             $message,
             reply_markup: InlineKeyboardMarkup::make()
                 ->addRow(
-                    InlineKeyboardButton::make('Попередній день', callback_data: '1'), 
-                    InlineKeyboardButton::make('Наступний день', callback_data: '2')
+                    InlineKeyboardButton::make('Попередній', callback_data: date('Y-m-d', strtotime(self::$date . ' -1 day'))), 
+                    InlineKeyboardButton::make('Наступний', callback_data: date('Y-m-d', strtotime(self::$date . ' +1 day')))
             ),
             parse_mode: ParseMode::HTML
         );
