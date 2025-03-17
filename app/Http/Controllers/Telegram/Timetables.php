@@ -148,6 +148,7 @@ class Timetables extends Controller
 
         return $message;
     }
+    
     public static function getPairsToday($chat_id, $isToday = 0): string
     {
         $info = self::checkUserGroup($chat_id);

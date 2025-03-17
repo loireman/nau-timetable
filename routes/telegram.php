@@ -1,6 +1,8 @@
 <?php
+
 /** @var SergiX44\Nutgram\Nutgram $bot */
 
+use App\Http\Controllers\Telegram\DayTimetable;
 use SergiX44\Nutgram\Nutgram;
 use App\Http\Controllers\Telegram\StartConversation;
 use App\Http\Controllers\Telegram\Timetables;
@@ -8,6 +10,8 @@ use App\Models\Groups;
 use Illuminate\Support\Facades\Storage;
 use SergiX44\Nutgram\Telegram\Properties\ParseMode;
 use SergiX44\Nutgram\Telegram\Types\Internal\InputFile;
+use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
+use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardMarkup;
 
 $bot->onCommand('start', function (Nutgram $bot) {
     $pginfo = ['Не встановлена', 'Перша', 'Друга'];
@@ -18,25 +22,24 @@ $bot->onCommand('start', function (Nutgram $bot) {
 Вихідний код тут: https://github.com/loireman/nau-timetable', parse_mode: ParseMode::HTML);
 
     $groupInfo = Timetables::checkUserGroup($bot->chatId());
-    
-    if($groupInfo) {
+
+    if ($groupInfo) {
         $group = Groups::where('id', $groupInfo["group_id"])->first();
         $bot->sendMessage('Наразі встановлено таку групу: ' . $group->name . '
         Підгрупа: ' . $pginfo[$groupInfo["pgroup"]]);
         $bot->sendMessage('Натисни /help щоб дізнатись перелік доступних команд.');
-    }
-    else {
+    } else {
         $bot->sendMessage('Схоже, що у вас не вибрана група. Ви можете її встановити за допомогою /selectgroup');
     };
 })->description('Розпочати роботу з ботом');
 
 $bot->onCommand('selectgroup', StartConversation::class)
-->description('Змінити інформацію про групу');
+    ->description('Змінити інформацію про групу');
 
 $bot->onCommand('help', function (Nutgram $bot) {
     $photo = InputFile::make(fopen(Storage::path('public/TelebotLogoNew.png'), 'rb'));
-    $message = $bot->sendPhoto($photo)->
-    sendMessage('Наразі бот відкукується на такі команди:
+    $message = $bot->sendPhoto($photo)->sendMessage(
+        'Наразі бот відкукується на такі команди:
 /start - розпочати роботу з ботом.
 /selectgroup - вибрати групу для розкладу.
 /help - вивести інформацію про бота.
@@ -45,8 +48,9 @@ $bot->onCommand('help', function (Nutgram $bot) {
 /today - вивести пари за поточний день.
 /tomorrow - вивести пари за наступний день. Якщо поточний день - неділя, виводить пари понеділка наступного тижня.
 
-Також функціонал оновлюється. Приємного користування :)', parse_mode: ParseMode::HTML
-        );
+Також функціонал оновлюється. Приємного користування :)',
+        parse_mode: ParseMode::HTML
+    );
     return $message;
 })->description('Вивести інформацію про бота');
 
@@ -89,3 +93,6 @@ $bot->onCommand('tomorrow', function (Nutgram $bot) {
 
     $bot->sendMessage($message, parse_mode: ParseMode::HTML);
 })->description('Вивести пари за наступний день');
+
+$bot->onCommand('day', DayTimetable::class)->description('Вивести пари на певну дату (формат: /day дд.мм)');
+$bot->onCommand('day {date}', DayTimetable::class)->description('Вивести пари на певну дату (формат: /day дд.мм)');
