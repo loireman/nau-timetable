@@ -77,7 +77,7 @@ class DayTimetable extends Conversation
             return 'У вас не вказано групу. Це можна зробити у /selectgroup';
         }
 
-        $date = str_replace('/day', '', $bot->message()->text);
+        $date = str_replace(['/day', '@', env('TELEGRAM_BOT_NAME')], '', $bot->message()->text);
         if ($date != "") {
             self::$date = date("Y-m-d", strtotime(str_replace(" ", '', $date) . '.2025'));
         } else {
@@ -155,10 +155,10 @@ class DayTimetable extends Conversation
                 ->sortBy('lesson');
 
             if ($timetables->isEmpty()) {
-                return 'На ' . date('d.m', strtotime(self::$date)) . ' (' . self::$strDays[$currDay]['long'] . ', ' . self::$strWeeks[self::getCurrentWeek() + 1] . ') ' . ' пар немає';
+                return 'На ' . date('d.m', strtotime(self::$date)) . ' (' . self::$strDays[$currDay]['long'] . ', ' . self::$strWeeks[$week] . ') ' . ' пар немає';
             }
 
-            $message = 'На ' . date('d.m', strtotime(self::$date)) . ' (' . self::$strDays[$currDay]['long'] . ', ' . self::$strWeeks[self::getCurrentWeek() + 1] . ') ' . ' такі пари: ';
+            $message = 'На ' . date('d.m', strtotime(self::$date)) . ' (' . self::$strDays[$currDay]['long'] . ', ' . self::$strWeeks[$week] . ') ' . ' такі пари: ';
 
             foreach ($timetables as $timetable) {
 
