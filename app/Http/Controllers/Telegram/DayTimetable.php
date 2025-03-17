@@ -77,7 +77,7 @@ class DayTimetable extends Conversation
             return 'У вас не вказано групу. Це можна зробити у /selectgroup';
         }
 
-        $date = str_replace('/lessontest', '', $bot->message()->text);
+        $date = str_replace('/day', '', $bot->message()->text);
         if ($date != "") {
             self::$date = date("Y-m-d", strtotime(str_replace(" ", '', $date) . '.2025'));
         } else {
