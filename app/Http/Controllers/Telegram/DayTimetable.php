@@ -136,6 +136,10 @@ class DayTimetable extends Conversation
     public static function getPairsDate(Nutgram $bot): string
     {
         try {
+            if (config('config.start_week') == 1) {
+                self::$startWeek = 05;
+            }
+            
             $week = self::getCurrentWeek() == 0 ? self::getCurrentWeek() + 2 : self::getCurrentWeek();
             $currDay = date('w', strtotime(self::$date));
             $group = Groups::find(self::checkUserGroup($bot->chatId())["group_id"]);
