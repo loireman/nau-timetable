@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Telegram;
 
 use App\Models\Groups;
+use App\Models\TguserGroupRelation;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use SergiX44\Nutgram\Conversations\Conversation;
@@ -14,7 +15,6 @@ use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardMarkup;
 class DayTimetable extends Conversation
 {
     private static $startWeek = 04;
-    private static $groupInfo;
     private static $date;
 
     public function __construct()
@@ -71,9 +71,9 @@ class DayTimetable extends Conversation
 
     public function start(Nutgram $bot)
     {
-        self::$groupInfo = Timetables::checkUserGroup($bot->chatId());
+        $groupInfo = self::checkUserGroup($bot->chatId());
 
-        if (!self::$groupInfo) {
+        if (!$groupInfo) {
             return 'У вас не вказано групу. Це можна зробити у /selectgroup';
         }
 
@@ -84,7 +84,7 @@ class DayTimetable extends Conversation
             self::$date = date("Y-m-d");
         }
 
-        $message = self::getPairsDate();
+        $message = self::getPairsDate($bot);
 
         if ($message == '404') {
             $bot->sendMessage('Помилка при отриманні даних на задану дату');
@@ -125,7 +125,7 @@ class DayTimetable extends Conversation
                 break;
         }
 
-        $message = self::getPairsDate();
+        $message = self::getPairsDate($bot);
 
         if ($message == '404') {
             $bot->editMessageText('Помилка при отриманні даних на задану дату');
@@ -145,12 +145,12 @@ class DayTimetable extends Conversation
         $this->next('getUpdates');
     }
 
-    public static function getPairsDate(): string
+    public static function getPairsDate(Nutgram $bot): string
     {
         try {
             $week = self::getCurrentWeek() == 0 ? self::getCurrentWeek() + 2 : self::getCurrentWeek();
             $currDay = date('w', strtotime(self::$date));
-            $group = Groups::find(self::$groupInfo["group_id"]);
+            $group = Groups::find(self::checkUserGroup($bot->chatId())["group_id"]);
 
             if (!$group) {
                 return 'Група не знайдена.';
@@ -185,5 +185,12 @@ class DayTimetable extends Conversation
             Log::error($e);
             return 404;
         }
+    }
+
+    public static function checkUserGroup($chat_id): array | null
+    {
+        return TguserGroupRelation::where('telegram_id', $chat_id)->first()
+            ? TguserGroupRelation::where('telegram_id', $chat_id)->first()->toArray()
+            : null;
     }
 }
