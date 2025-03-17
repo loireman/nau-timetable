@@ -149,7 +149,7 @@ class DayTimetable extends Conversation
             }
 
             $timetables = $group->timetables()
-                ->where('week', $week + 1)
+                ->where('week', $week)
                 ->where('day', $currDay)
                 ->get()
                 ->sortBy('lesson');
