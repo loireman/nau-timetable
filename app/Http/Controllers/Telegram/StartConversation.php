@@ -107,6 +107,9 @@ class StartConversation extends Conversation
         }
 
         // Convert to uppercase once and store in variable
+        if(!$bot->message()) {
+            return;
+        }
         $group = strtoupper($bot->message()->text);
 
         // Use first() only if needed (more efficient database query)

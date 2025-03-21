@@ -7,6 +7,8 @@ use SergiX44\Nutgram\Nutgram;
 use App\Http\Controllers\Telegram\StartConversation;
 use App\Http\Controllers\Telegram\Timetables;
 use App\Models\Groups;
+use App\Models\TguserGroupRelation;
+use App\Models\Timetable;
 use Illuminate\Support\Facades\Storage;
 use SergiX44\Nutgram\Telegram\Properties\ParseMode;
 use SergiX44\Nutgram\Telegram\Types\Internal\InputFile;
@@ -74,7 +76,7 @@ $bot->onCommand('lesson', function (Nutgram $bot) {
 
     $pair = Timetables::getCurrentDay() ? Timetables::getCurrentPair($bot->chatId()) : 'Сьогодні вихідний, пар немає';
 
-    $bot->sendMessage($pair, parse_mode: ParseMode::HTML);
+    $bot->sendMessage($pair[0], parse_mode: ParseMode::HTML);
 })->description('Вивести поточну пару якщо є');
 
 $bot->onCommand('week', function (Nutgram $bot) {
@@ -98,3 +100,17 @@ $bot->onCommand('tomorrow', function (Nutgram $bot) {
 
 $bot->onCommand('day', DayTimetable::class)->description('Вивести пари на певну дату (формат: /day дд.мм)');
 $bot->onCommand('day {date}', DayTimetable::class)->description('Вивести пари на певну дату (формат: /day дд.мм)');
+
+$bot->onCommand('subscription', function (Nutgram $bot) {
+    $user = Timetables::checkUserGroup($bot->chatId());
+
+    if (!$user) {
+        return 'У вас не вказано групу. Це можна зробити у /selectgroup';
+    }
+
+    $user->update(['subscription' => !$user->subscription]);
+    $message = 'Ви ' . ["відписались від розсилки", "підписались на розсилку"][$user->subscription] . ' розкладу.';
+    $bot->sendMessage($message, parse_mode: ParseMode::HTML);
+    
+    return;
+})->description('Підписка на розклад');

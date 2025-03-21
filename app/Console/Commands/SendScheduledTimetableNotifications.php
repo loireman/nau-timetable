@@ -46,8 +46,8 @@ class SendScheduledTimetableNotifications extends Command
             foreach ($subscribedUsers as $telegramId) {                
                 $timetableMessage = Timetables::getCurrentPair($telegramId);
 
-                if ($timetableMessage) {
-                    app(Nutgram::class)->sendMessage($timetableMessage, $telegramId, parse_mode: ParseMode::HTML);
+                if ($timetableMessage[1]) {
+                    app(Nutgram::class)->sendMessage($timetableMessage[0], $telegramId, parse_mode: ParseMode::HTML);
                 }
             }
             $this->info("Timetable notifications sent for {$currentTime}.");

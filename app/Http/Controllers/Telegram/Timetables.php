@@ -39,7 +39,7 @@ class Timetables extends Controller
     {
         return
             [
-                '0' => ['name' => 'Ще рано, поспи трохи', 'time_start' => '12:00', 'time_end' => '7:45'],
+                '0' => ['name' => 'Ще рано, поспи трохи', 'time_start' => '00:00', 'time_end' => '7:45'],
                 '1' => ['name' => 'Наразі <b>Перша пара</b>', 'time_start' => '8:00', 'time_end' => '9:35'],
                 '2' => ['name' => 'Наразі <b>Друга пара</b>', 'time_start' => '9:50', 'time_end' => '11:25'],
                 '3' => ['name' => 'Наразі <b>Третя пара</b>', 'time_start' => '11:40', 'time_end' => '13:15'],
@@ -47,7 +47,7 @@ class Timetables extends Controller
                 '5' => ['name' => 'Наразі <b>П\'ята пара</b>', 'time_start' => '15:20', 'time_end' => '16:55'],
                 '6' => ['name' => 'Наразі <b>Шоста пара</b>', 'time_start' => '17:10', 'time_end' => '18:45'],
                 '7' => ['name' => 'Наразі <b>Сьома пара</b>', 'time_start' => '19:00', 'time_end' => '20:35'],
-                '8' => ['name' => 'Лягай спати, пізно вже', 'time_start' => '20:50', 'time_end' => '12:00'],
+                '8' => ['name' => 'Лягай спати, пізно вже', 'time_start' => '20:50', 'time_end' => '24:00'],
             ];
     }
 
@@ -94,16 +94,15 @@ class Timetables extends Controller
         }
     }
 
-    public static function getCurrentPair($chat_id): string
+    public static function getCurrentPair($chat_id): array
     {
         $num = self::getCurrentPairNum();
         $message = self::getStrPairs()[$num]['name'];
         $info = self::checkUserGroup($chat_id);
 
         if (!$info) {
-            return 'У вас не вказано групу. Це можна зробити у /selectgroup';
+            return ['У вас не вказано групу. Це можна зробити у /selectgroup', 0];
         }
-
 
         try {
             if (self::getCurrentDay() == 0) {
@@ -117,7 +116,7 @@ class Timetables extends Controller
             $group = Groups::find($info["group_id"]);
 
             if (!$group) {
-                return 'Група не знайдена.';
+                return ['Група не знайдена.', 0];
             }
 
             // Fetch timetables using the many-to-many relationship
@@ -128,7 +127,7 @@ class Timetables extends Controller
                 ->first();
 
             if ($timetable == null) {
-                return $message;
+                return [$message, 0];
             }
 
             $message .= '
@@ -140,13 +139,12 @@ class Timetables extends Controller
 Викладач: <b>' . $timetable->teacher . ($timetable->auditory ? '</b>
 Аудиторія: <b>' . $timetable->auditory . '</b>' : '</b>') . ($timetable->auditory_link ? '
 Посилання на міт: <a href="' . $timetable->auditory_link . '">Посилання</a>' : '');
-            return $message;
         } catch (Exception $e) {
             Log::error($e->getMessage());
-            return $message;
+            return [$message, 0];
         }
 
-        return $message;
+        return [$message, 1];
     }
     
     public static function getPairsToday($chat_id, $isToday = 0): string
@@ -207,10 +205,10 @@ class Timetables extends Controller
     }
 
 
-    public static function checkUserGroup($chat_id): array | null
+    public static function checkUserGroup($chat_id): TguserGroupRelation
     {
         return TguserGroupRelation::where('telegram_id', $chat_id)->first()
-            ? TguserGroupRelation::where('telegram_id', $chat_id)->first()->toArray()
+            ? TguserGroupRelation::where('telegram_id', $chat_id)->first()
             : null;
     }
 }
