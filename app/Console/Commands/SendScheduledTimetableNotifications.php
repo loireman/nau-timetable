@@ -17,13 +17,13 @@ class SendScheduledTimetableNotifications extends Command
     protected $description = 'Sends scheduled timetable notifications to subscribed users.';
 
     protected $scheduledTimes = [
-        '07:55',
-        '09:45',
-        '11:35',
-        '13:25',
-        '15:15',
-        '16:05',
-        '18:55',
+        '05:55',
+        '07:45',
+        '09:35',
+        '11:25',
+        '13:15',
+        '15:05',
+        '16:55',
     ];
 
     public function handle()
