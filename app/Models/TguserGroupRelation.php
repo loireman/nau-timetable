@@ -13,6 +13,7 @@ class TguserGroupRelation extends Model
         'telegram_id',
         'group_id',
         'pgroup',
+        'subscription',
         'updated_at',
         'created_at'
     ];
