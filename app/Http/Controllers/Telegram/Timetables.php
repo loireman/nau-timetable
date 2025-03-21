@@ -205,7 +205,7 @@ class Timetables extends Controller
     }
 
 
-    public static function checkUserGroup($chat_id): TguserGroupRelation
+    public static function checkUserGroup($chat_id): TguserGroupRelation|null
     {
         return TguserGroupRelation::where('telegram_id', $chat_id)->first()
             ? TguserGroupRelation::where('telegram_id', $chat_id)->first()
