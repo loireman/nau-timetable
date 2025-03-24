@@ -130,6 +130,10 @@ class Timetables extends Controller
                 return [$message, 0];
             }
 
+            if ($info['pgroup'] != 0 && ($timetable->pgroup != $info['pgroup'] && $timetable->type == 2)) {
+                return [$message, 0];
+            }
+
             $message .= '
 
 <b>' . $timetable->lesson . ' Пара: ' . self::getStrPairs()[$timetable->lesson]['time_start'] . '-' . self::getStrPairs()[$timetable->lesson]['time_end'] . '</b>
@@ -186,6 +190,9 @@ class Timetables extends Controller
             $message .= ' такі пари: ';
 
             foreach ($timetables as $timetable) {
+                if ($info['pgroup'] != 0 && ($timetable->pgroup != $info['pgroup'] && $timetable->type == 2)) {
+                    continue;
+                }
 
                 $message .= '
 

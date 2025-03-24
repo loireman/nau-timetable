@@ -140,9 +140,11 @@ class DayTimetable extends Conversation
                 self::$startWeek = 05;
             }
 
+            $info = self::checkUserGroup($bot->chatId());
+
             $week = self::getCurrentWeek() + 1;
             $currDay = date('w', strtotime(self::$date));
-            $group = Groups::find(self::checkUserGroup($bot->chatId())["group_id"]);
+            $group = Groups::find($info["group_id"]);
 
             if (!$group) {
                 return 'Група не знайдена.';
@@ -161,6 +163,9 @@ class DayTimetable extends Conversation
             $message = 'На ' . date('d.m', strtotime(self::$date)) . ' (' . self::$strDays[$currDay]['long'] . ', ' . self::$strWeeks[$week] . ') ' . ' такі пари: ';
 
             foreach ($timetables as $timetable) {
+                if ($info['pgroup'] != 0 && ($timetable->pgroup != $info['pgroup'] && $timetable->type == 2)) {
+                    continue;
+                }
 
                 $message .= '
 

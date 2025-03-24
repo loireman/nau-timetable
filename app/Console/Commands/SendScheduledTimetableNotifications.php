@@ -4,8 +4,6 @@ namespace App\Console\Commands;
 
 use App\Http\Controllers\Telegram\Timetables;
 use App\Models\TguserGroupRelation;
-use App\Models\User;
-use App\Notifications\ScheduledNotification;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use SergiX44\Nutgram\Nutgram;
@@ -38,7 +36,7 @@ class SendScheduledTimetableNotifications extends Command
 
         $currentTime = $now->format('H:i');
 
-        if (in_array($currentTime, $this->scheduledTimes)) {
+        if (env('APP_ENV') == 'local' || in_array($currentTime, $this->scheduledTimes)) {
             $subscribedUsers = TguserGroupRelation::where('subscription', true)
                 ->whereNotNull('telegram_id')
                 ->pluck('telegram_id');
