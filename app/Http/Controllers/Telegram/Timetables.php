@@ -120,21 +120,23 @@ class Timetables extends Controller
             }
 
             // Fetch timetables using the many-to-many relationship
-            $timetable = $group->timetables()
+            $timetables = $group->timetables()
                 ->where('week', $week)
                 ->where('day', $currDay)
                 ->where('lesson', $num)
-                ->first();
+                ->get()
+                ->sortBy('lesson');
 
-            if ($timetable == null) {
+            if ($timetables->isEmpty()) {
                 return [$message, 0];
             }
 
-            if ($info['pgroup'] != 0 && ($timetable->pgroup != $info['pgroup'] && $timetable->type == 2)) {
-                return [$message, 0];
-            }
+            foreach ($timetables as $timetable) {
+                if ($info['pgroup'] != 0 && ($timetable->pgroup != $info['pgroup'] && $timetable->type == 2)) {
+                    continue;
+                }
 
-            $message .= '
+                $message .= '
 
 <b>' . $timetable->lesson . ' Пара: ' . self::getStrPairs()[$timetable->lesson]['time_start'] . '-' . self::getStrPairs()[$timetable->lesson]['time_end'] . '</b>
 Назва: <b>' . $timetable->name . '</b>
@@ -143,6 +145,7 @@ class Timetables extends Controller
 Викладач: <b>' . $timetable->teacher . ($timetable->auditory ? '</b>
 Аудиторія: <b>' . $timetable->auditory . '</b>' : '</b>') . ($timetable->auditory_link ? '
 Посилання на міт: <a href="' . $timetable->auditory_link . '">Посилання</a>' : '');
+            }
         } catch (Exception $e) {
             Log::error($e->getMessage());
             return [$message, 0];
