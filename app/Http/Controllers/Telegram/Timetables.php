@@ -127,15 +127,17 @@ class Timetables extends Controller
                 ->get()
                 ->sortBy('lesson');
 
+
+            $timetables = $timetables->filter(function ($timetable) use ($info) {
+                return $info['pgroup'] == 0 || ($timetable->pgroup == $info['pgroup'] || $timetable->type != 2);
+            });
+
             if ($timetables->isEmpty()) {
-                return [$message, 0];
+                return [$message . '
+Пар немає', 0];
             }
 
             foreach ($timetables as $timetable) {
-                if ($info['pgroup'] != 0 && ($timetable->pgroup != $info['pgroup'] && $timetable->type == 2)) {
-                    continue;
-                }
-
                 $message .= '
 
 <b>' . $timetable->lesson . ' Пара: ' . self::getStrPairs()[$timetable->lesson]['time_start'] . '-' . self::getStrPairs()[$timetable->lesson]['time_end'] . '</b>
@@ -153,7 +155,7 @@ class Timetables extends Controller
 
         return [$message, 1];
     }
-    
+
     public static function getPairsToday($chat_id, $isToday = 0): string
     {
         $info = self::checkUserGroup($chat_id);
