@@ -708,6 +708,7 @@ class ComposerStaticInit957eb6482e712acffe056d7498951d6f
     public static $classMap = array (
         'App\\Actions\\Admin\\User\\CreateUser' => __DIR__ . '/../..' . '/app/Actions/Admin/User/CreateUser.php',
         'App\\Actions\\Admin\\User\\UpdateUser' => __DIR__ . '/../..' . '/app/Actions/Admin/User/UpdateUser.php',
+        'App\\Console\\Commands\\SendScheduledTimetableNotifications' => __DIR__ . '/../..' . '/app/Console/Commands/SendScheduledTimetableNotifications.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\Admin\\ConfigController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/ConfigController.php',
@@ -737,6 +738,7 @@ class ComposerStaticInit957eb6482e712acffe056d7498951d6f
         'App\\Http\\Controllers\\FrontController' => __DIR__ . '/../..' . '/app/Http/Controllers/FrontController.php',
         'App\\Http\\Controllers\\ProfileController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProfileController.php',
         'App\\Http\\Controllers\\TelegramController' => __DIR__ . '/../..' . '/app/Http/Controllers/TelegramController.php',
+        'App\\Http\\Controllers\\Telegram\\DayTimetable' => __DIR__ . '/../..' . '/app/Http/Controllers/Telegram/DayTimetable.php',
         'App\\Http\\Controllers\\Telegram\\StartConversation' => __DIR__ . '/../..' . '/app/Http/Controllers/Telegram/StartConversation.php',
         'App\\Http\\Controllers\\Telegram\\Timetables' => __DIR__ . '/../..' . '/app/Http/Controllers/Telegram/Timetables.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',

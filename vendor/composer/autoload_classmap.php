@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'App\\Actions\\Admin\\User\\CreateUser' => $baseDir . '/app/Actions/Admin/User/CreateUser.php',
     'App\\Actions\\Admin\\User\\UpdateUser' => $baseDir . '/app/Actions/Admin/User/UpdateUser.php',
+    'App\\Console\\Commands\\SendScheduledTimetableNotifications' => $baseDir . '/app/Console/Commands/SendScheduledTimetableNotifications.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
     'App\\Http\\Controllers\\Admin\\ConfigController' => $baseDir . '/app/Http/Controllers/Admin/ConfigController.php',
@@ -37,6 +38,7 @@ return array(
     'App\\Http\\Controllers\\FrontController' => $baseDir . '/app/Http/Controllers/FrontController.php',
     'App\\Http\\Controllers\\ProfileController' => $baseDir . '/app/Http/Controllers/ProfileController.php',
     'App\\Http\\Controllers\\TelegramController' => $baseDir . '/app/Http/Controllers/TelegramController.php',
+    'App\\Http\\Controllers\\Telegram\\DayTimetable' => $baseDir . '/app/Http/Controllers/Telegram/DayTimetable.php',
     'App\\Http\\Controllers\\Telegram\\StartConversation' => $baseDir . '/app/Http/Controllers/Telegram/StartConversation.php',
     'App\\Http\\Controllers\\Telegram\\Timetables' => $baseDir . '/app/Http/Controllers/Telegram/Timetables.php',
     'App\\Http\\Kernel' => $baseDir . '/app/Http/Kernel.php',
